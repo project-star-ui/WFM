@@ -591,7 +591,9 @@
       if (agentsForExpectations.length > 0) {
           const expectationsMessageDiv = document.createElement("div");
           expectationsMessageDiv.className = "expectations-message";
-          expectationsMessageDiv.innerHTML = `<strong>Setting Expectations for ${shiftSchedule} Shift:</strong> The agents listed below will handle IM tasks in sequence if a transfer to the IM queue is needed, with the order arranged according to their break schedules: <br><strong>${agentsForExpectations.join(', ')}</strong>`;
+          // Modified line to use an unordered list for agents
+          const agentsList = agentsForExpectations.map(agent => `<li>${agent}</li>`).join('');
+          expectationsMessageDiv.innerHTML = `<strong>Setting Expectations for ${shiftSchedule} Shift:</strong> The agents listed below will handle IM tasks in sequence if a transfer to the IM queue is needed, with the order arranged according to their break schedules: <ul>${agentsList}</ul>`;
           scheduleContent.appendChild(expectationsMessageDiv);
       }
 
