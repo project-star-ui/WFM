@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WF Helper</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      margin: 0;
+      padding: 20px;
+      color: #f0f0f0;
+    }
+
+    h1 {
+      color: #00bcd4; /* Changed to teal */
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+      font-size: 3.5em;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid #00bcd4;
+      border-radius: 12px;
+      margin: 0 5px;
+      transition: background 0.3s;
+    }
+
+    .tab:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .active {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 25px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+      padding: 40px 50px;
+      max-width: 600px;
+      width: 100%;
+      transition: transform 0.3s;
+      margin: 0 auto;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 15px;
+      display: block;
+      color: #00bcd4; /* Changed to teal */
+      font-size: 1.2em;
+    }
+
+    textarea, input, select {
+      width: 100%;
+      padding: 15px;
+      margin-top: 5px;
+      border-radius: 12px;
+      border: 1px solid #00bcd4; /* Changed to teal */
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff; /* Changed text color to white */
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    textarea:focus, input:focus, select:focus {
+      border-color: #00bcd4; /* Changed to teal */
+      background: rgba(255, 255, 255, 0.3);
+      outline: none;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 15px 30px;
+      background-color: #00bcd4; /* Changed to teal */
+      color: #1c1c1c;
+      border: none;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    button:hover {
+      background-color: #0097a7; /* Darker teal */
+      transform: translateY(-2px);
+    }
+
+    .results {
+      margin-top: 30px;
+      width: 100%;
+    }
+
+    .agent-block {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 20px;
+      margin-bottom: 15px;
+      border-left: 5px solid #00bcd4; /* Changed to teal */
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s;
+      position: relative;
+    }
+
+    .agent-block:hover {
+      transform: scale(1.02);
+    }
+
+    .agent-block strong {
+      color: #00bcd4; /* Changed to teal */
+      font-size: 1.2em;
+    }
+
+    .break-schedule {
+      margin-top: 20px;
+    }
+
+    .break-schedule input {
+      margin-bottom: 10px;
+    }
+
+    .edit-button, .delete-button, .done-button {
+      background: transparent;
+      border: none;
+      color: #00bcd4;
+      cursor: pointer;
+      font-size: 16px;
+      margin-left: 10px;
+    }
+
+    .done-button {
+        color: #4CAF50; /* Green color for done button */
+    }
+
+    /* Additional styles for better visibility */
+    select {
+      color: #000; /* Black text for dropdown */
+    }
+
+    option {
+      color: #000; /* Black text for dropdown options */
+    }
+
+    ::placeholder {
+      color: #ffffff; /* White placeholder text */
+      opacity: 0.7; /* Slightly transparent */
+    }
+
+    .report-output {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 20px;
+        white-space: pre-wrap; /* To preserve newlines in the report */
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>WF Helper</h1>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('tasks')">IM Tasks</div>
+    <div class="tab" onclick="showTab('breaks')">Break Schedule</div>
+    <div class="tab" onclick="showTab('report')">Report Generator</div>
+  </div>
+
+  <div class="container" id="tasks">
+    <label for="agents">Enter Agent Names with Break Times (one per line, format: Name, Break Time):</label>
+    <textarea id="agents" rows="6" placeholder="e.g. John Doe, 10:00&#10;Jane Smith, 10:15&#10;Alex Johnson, 09:45"></textarea>
+
+    <label for="taskCount">Enter Total IM Task Volume:</label>
+    <input type="number" id="taskCount" min="1" placeholder="e.g. 12" />
+
+    <button onclick="generateSkills()">Generate IM Assignment</button>
+
+    <div class="results" id="results"></div>
+  </div>
+
+  <div class="container" id="breaks" style="display: none;">
+    <label for="breakType">Break Type:</label>
+    <select id="breakType" onchange="updateBreakType()">
+      <option value="Break">Break</option>
+      <option value="Lunch">Lunch</option>
+      <option value="Training">Training</option>
+      <option value="Meeting">Meeting</option>
+      <option value="Coaching">Coaching</option>
+    </select>
+
+    <label for="breakAgent">Agent Name(s):</label>
+    <input type="text" id="breakAgent" placeholder="Enter agent name(s), separated by commas for Training, Meeting, Coaching" />
+
+    <label for="breakTime">Break Time:</label>
+    <input type="time" id="breakTime" />
+
+    <button onclick="addBreakSchedule()">Add Break Schedule</button>
+
+    <div class="break-schedule" id="breakSchedule"></div>
+  </div>
+
+  <div class="container" id="report" style="display: none;">
+    <label for="imQueueTasks">IM Queue Tasks:</label>
+    <input type="number" id="imQueueTasks" min="0" value="0" />
+
+    <label for="imAgentsWorking">IM Agents Working:</label>
+    <input type="number" id="imAgentsWorking" min="0" value="0" />
+
+    <label for="ticketQueueTasks">Ticket Queue Tasks:</label>
+    <input type="number" id="ticketQueueTasks" min="0" value="0" />
+
+    <label for="ticketAgentsWorking">Ticket Agents Working:</label>
+    <input type="number" id="ticketAgentsWorking" min="0" value="0" />
+
+    <button onclick="generateReport()">Generate Report</button>
+
+    <div class="report-output" id="reportOutput"></div>
+  </div>
+
+  <audio id="breakSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+
+  <script>
+    let breakSchedules = []; // This array is not actively used for storing, but the DOM elements are.
+
+    function showTab(tab) {
+      document.getElementById('tasks').style.display = 'none';
+      document.getElementById('breaks').style.display = 'none';
+      document.getElementById('report').style.display = 'none';
+
+      document.getElementById(tab).style.display = 'block';
+
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      // Find the tab element by its text content and add the active class
+      if (tab === 'tasks') {
+        document.querySelector(`.tab:contains('IM Tasks')`).classList.add('active');
+      } else if (tab === 'breaks') {
+        document.querySelector(`.tab:contains('Break Schedule')`).classList.add('active');
+      } else if (tab === 'report') {
+        document.querySelector(`.tab:contains('Report Generator')`).classList.add('active');
+      }
+    }
+
+    function updateBreakType() {
+      const breakType = document.getElementById("breakType").value;
+      const breakAgentInput = document.getElementById("breakAgent");
+      if (breakType === "Training" || breakType === "Meeting" || breakType === "Coaching") {
+        breakAgentInput.placeholder = `Enter agent name(s) for ${breakType}, separated by commas`;
+      } else {
+        breakAgentInput.placeholder = "Enter agent name(s)";
+      }
+    }
+
+    function generateSkills() {
+      const agentsInput = document.getElementById("agents").value.trim();
+      const taskCount = parseInt(document.getElementById("taskCount").value);
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "";
+
+      if (!agentsInput || isNaN(taskCount) || taskCount < 1) {
+        alert("Please enter valid agent names and task count.");
+        return;
+      }
+
+      let agents = agentsInput.split("\n").map(line => {
+        const [name, breakTime] = line.split(",").map(item => item.trim());
+        return { name, breakTime };
+      }).filter(agent => agent.name && agent.breakTime);
+
+      const maxTasksPerAgent = 3;
+      const minAgentsRequired = Math.ceil(taskCount / maxTasksPerAgent);
+
+      if (agents.length < minAgentsRequired) {
+        alert(`You need at least ${minAgentsRequired} agents for ${taskCount} tasks.`);
+        return;
+      }
+
+      // Sort agents by break time (later breaks first)
+      agents.sort((a, b) => b.breakTime.localeCompare(a.breakTime));
+
+      // Select only the number of agents we need
+      const selectedAgents = agents.slice(0, minAgentsRequired);
+      const taskDistribution = {};
+      let tasksLeft = taskCount;
+
+      for (let i = 0; i < selectedAgents.length; i++) {
+        const agent = selectedAgents[i].name;
+        taskDistribution[agent] = "Assigned to IM Tasks"; // Updated message
+      }
+
+      // Show results
+      resultsDiv.innerHTML = "<h3>IM Task Assignment</h3>";
+      for (const [agent, message] of Object.entries(taskDistribution)) {
+        const div = document.createElement("div");
+        div.className = "agent-block";
+        div.innerHTML = `<strong>${agent}</strong> - ${message}
+                         <button class="done-button" onclick="removeTaskAssignment(this)">Done</button>`;
+        resultsDiv.appendChild(div);
+      }
+    }
+
+    function removeTaskAssignment(button) {
+        button.parentElement.remove();
+    }
+
+    function addBreakSchedule() {
+      const breakType = document.getElementById("breakType").value;
+      const agentNames = document.getElementById("breakAgent").value.trim();
+      const breakTime = document.getElementById("breakTime").value;
+
+      if (!agentNames || !breakTime) {
+        alert("Please enter both agent name(s) and break time.");
+        return;
+      }
+
+      const agents = agentNames.split(',').map(name => name.trim());
+      const breakScheduleDiv = document.getElementById("breakSchedule");
+
+      agents.forEach(agentName => {
+        const div = document.createElement("div");
+        div.className = "agent-block";
+        div.setAttribute('data-break-time', breakTime); // Store break time for easy lookup
+        div.setAttribute('data-agent-name', agentName); // Store agent name for report
+        div.setAttribute('data-break-type', breakType); // Store break type for report
+        div.innerHTML = `<strong>${agentName}</strong> - ${breakType} at ${breakTime}
+                         <button class="edit-button" onclick="editBreakSchedule('${agentName}', '${breakType}', '${breakTime}', this)">Edit</button>
+                         <button class="delete-button" onclick="deleteBreakSchedule(this)">Delete</button>`;
+        breakScheduleDiv.appendChild(div);
+
+        // Set an alarm for the break time
+        const now = new Date();
+        const breakDate = new Date();
+        const [hours, minutes] = breakTime.split(':');
+        breakDate.setHours(hours, minutes, 0, 0);
+
+        const timeUntilBreak = breakDate - now;
+        if (timeUntilBreak > 0) {
+          setTimeout(() => {
+            document.getElementById("breakSound").play(); // Play sound
+            alert(`${agentName} is on ${breakType.toLowerCase()} now!`);
+            // Remove all break entries with the same time after notification
+            const blocksToRemove = document.querySelectorAll(`.agent-block[data-break-time="${breakTime}"]`);
+            blocksToRemove.forEach(block => block.remove());
+          }, timeUntilBreak);
+        } else {
+          alert("Break time must be in the future.");
+        }
+      });
+
+      // Clear input fields
+      document.getElementById("breakAgent").value = '';
+      document.getElementById("breakTime").value = '';
+    }
+
+    function editBreakSchedule(agentName, breakType, breakTime, button) {
+      const breakAgentInput = document.getElementById("breakAgent");
+      const breakTimeInput = document.getElementById("breakTime");
+      const breakTypeSelect = document.getElementById("breakType");
+
+      breakAgentInput.value = agentName;
+      breakTimeInput.value = breakTime;
+      breakTypeSelect.value = breakType;
+
+      // Remove the current entry
+      deleteBreakSchedule(button);
+    }
+
+    function deleteBreakSchedule(button) {
+      const breakScheduleDiv = document.getElementById("breakSchedule");
+      breakScheduleDiv.removeChild(button.parentElement);
+    }
+
+    function generateReport() {
+        const imQueueTasks = parseInt(document.getElementById("imQueueTasks").value);
+        const imAgentsWorking = parseInt(document.getElementById("imAgentsWorking").value);
+        const ticketQueueTasks = parseInt(document.getElementById("ticketQueueTasks").value);
+        const ticketAgentsWorking = parseInt(document.getElementById("ticketAgentsWorking").value);
+        const reportOutputDiv = document.getElementById("reportOutput");
+
+        // Corrected grammar for "agent/agents"
+        const imAgentText = imAgentsWorking === 1 ? "agent" : "agents";
+        const ticketAgentText = ticketAgentsWorking === 1 ? "agent" : "agents";
+
+        // Corrected grammar for "task/tasks"
+        const imTaskText = imQueueTasks === 1 ? "task" : "tasks";
+        const ticketTaskText = ticketQueueTasks === 1 ? "task" : "tasks";
+
+        let report = `IM Queue ${imTaskText}: ${imQueueTasks} ${imTaskText} with ${imAgentsWorking} ${imAgentText} working.\n`;
+        report += `Ticket Queue ${ticketTaskText}: ${ticketQueueTasks} ${ticketTaskText} with ${ticketAgentsWorking} ${ticketAgentText} working.\n\n`;
+
+        const breakScheduleBlocks = document.querySelectorAll('#breakSchedule .agent-block');
+        const otherActivities = {};
+
+        breakScheduleBlocks.forEach(block => {
+            const agentName = block.getAttribute('data-agent-name');
+            const breakType = block.getAttribute('data-break-type');
+            const breakTime = block.getAttribute('data-break-time');
+
+            if (breakType === "Coaching" || breakType === "Meeting" || breakType === "Training") {
+                if (!otherActivities[breakType]) {
+                    otherActivities[breakType] = [];
+                }
+                otherActivities[breakType].push(`${agentName} at ${breakTime}`);
+            }
+        });
+
+        for (const activityType in otherActivities) {
+            if (otherActivities.hasOwnProperty(activityType)) {
+                report += `${activityType}: ${otherActivities[activityType].join(', ')}\n`;
+            }
+        }
+
+        reportOutputDiv.textContent = report;
+    }
+  </script>
+</body>
+</html>
