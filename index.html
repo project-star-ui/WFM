@@ -11,6 +11,10 @@
       margin: 0;
       padding: 20px;
       color: #f0f0f0;
+      min-height: 100vh; /* Ensure body takes full viewport height */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     h1 {
@@ -20,12 +24,16 @@
       font-size: 3.5em;
       letter-spacing: 2px;
       text-align: center;
+      width: 100%; /* Ensure heading is responsive */
     }
 
     .tabs {
       display: flex;
       justify-content: center;
       margin-bottom: 20px;
+      flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
+      width: 100%;
+      max-width: 600px; /* Constrain tabs width */
     }
 
     .tab {
@@ -34,8 +42,11 @@
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid #00bcd4;
       border-radius: 12px;
-      margin: 0 5px;
+      margin: 5px; /* Adjust margin for better spacing on mobile */
       transition: background 0.3s;
+      flex-grow: 1; /* Allow tabs to grow and fill space */
+      text-align: center;
+      min-width: 120px; /* Minimum width for tabs */
     }
 
     .tab:hover {
@@ -56,6 +67,7 @@
       width: 100%;
       transition: transform 0.3s;
       margin: 0 auto;
+      box-sizing: border-box; /* Include padding in width calculation */
     }
 
     label {
@@ -76,6 +88,7 @@
       background: rgba(255, 255, 255, 0.2);
       color: #ffffff; /* Changed text color to white */
       transition: border-color 0.3s, background 0.3s;
+      box-sizing: border-box; /* Include padding and border in width calculation */
     }
 
     textarea:focus, input:focus, select:focus {
@@ -96,6 +109,11 @@
       cursor: pointer;
       transition: background-color 0.3s, transform 0.2s;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      width: 100%; /* Full width button for better mobile usability */
+      max-width: 300px; /* Limit button width on desktop */
+      display: block; /* Ensure button takes full width */
+      margin-left: auto; /* Center button */
+      margin-right: auto; /* Center button */
     }
 
     button:hover {
@@ -117,6 +135,10 @@
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
       transition: transform 0.2s;
       position: relative;
+      display: flex; /* Use flexbox for better alignment of content and buttons */
+      flex-wrap: wrap; /* Allow content to wrap */
+      align-items: center;
+      justify-content: space-between; /* Space out content and buttons */
     }
 
     .agent-block:hover {
@@ -126,6 +148,13 @@
     .agent-block strong {
       color: #00bcd4; /* Changed to teal */
       font-size: 1.2em;
+      flex-basis: 100%; /* Take full width on small screens */
+      margin-bottom: 5px; /* Add some space below name */
+    }
+
+    .agent-block span { /* For the message part */
+        flex-grow: 1; /* Allow message to take available space */
+        margin-right: 10px; /* Space between message and buttons */
     }
 
     .break-schedule {
@@ -143,10 +172,21 @@
       cursor: pointer;
       font-size: 16px;
       margin-left: 10px;
+      padding: 5px 10px; /* Add padding for easier tapping on mobile */
+      border-radius: 5px; /* Slightly rounded corners for buttons */
+      transition: background-color 0.2s;
+    }
+
+    .edit-button:hover, .delete-button:hover {
+        background-color: rgba(255, 255, 255, 0.1);
     }
 
     .done-button {
         color: #4CAF50; /* Green color for done button */
+    }
+
+    .done-button:hover {
+        background-color: rgba(76, 175, 80, 0.2);
     }
 
     /* Additional styles for better visibility */
@@ -169,8 +209,83 @@
         border-radius: 12px;
         margin-top: 20px;
         white-space: pre-wrap; /* To preserve newlines in the report */
+        word-wrap: break-word; /* Ensure long lines break */
     }
 
+    /* Media Queries for Responsiveness */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: 2.5em;
+      }
+
+      .container {
+        padding: 20px 25px; /* Reduce padding on smaller screens */
+        border-radius: 15px; /* Slightly smaller border-radius */
+      }
+
+      .tabs {
+        flex-direction: column; /* Stack tabs vertically on small screens */
+        align-items: stretch; /* Make tabs fill available width */
+      }
+
+      .tab {
+        margin: 5px 0; /* Adjust margin for vertical stacking */
+        padding: 12px 15px; /* Increase padding for easier tapping */
+      }
+
+      button {
+        font-size: 18px;
+        padding: 12px 20px;
+      }
+
+      .agent-block {
+        flex-direction: column; /* Stack content and buttons vertically */
+        align-items: flex-start; /* Align items to the start */
+      }
+
+      .agent-block strong, .agent-block span {
+        flex-basis: auto; /* Reset flex-basis */
+        width: 100%; /* Take full width */
+        margin-bottom: 10px; /* Add space between elements */
+      }
+
+      .agent-block .edit-button,
+      .agent-block .delete-button,
+      .agent-block .done-button {
+        margin-left: 0; /* Remove left margin */
+        margin-top: 5px; /* Add top margin for stacked buttons */
+        width: auto; /* Allow buttons to size naturally */
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2em;
+        letter-spacing: 1px;
+      }
+
+      .container {
+        padding: 15px 20px;
+      }
+
+      label {
+        font-size: 1em;
+      }
+
+      textarea, input, select {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      button {
+        font-size: 16px;
+        padding: 10px 15px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -248,13 +363,8 @@
       const tabs = document.querySelectorAll('.tab');
       tabs.forEach(t => t.classList.remove('active'));
       // Find the tab element by its text content and add the active class
-      if (tab === 'tasks') {
-        document.querySelector(`.tab:contains('IM Tasks')`).classList.add('active');
-      } else if (tab === 'breaks') {
-        document.querySelector(`.tab:contains('Break Schedule')`).classList.add('active');
-      } else if (tab === 'report') {
-        document.querySelector(`.tab:contains('Report Generator')`).classList.add('active');
-      }
+      // Using a more robust way to find the tab by its text content
+      Array.from(tabs).find(t => t.textContent.includes(tab === 'tasks' ? 'IM Tasks' : tab === 'breaks' ? 'Break Schedule' : 'Report Generator')).classList.add('active');
     }
 
     function updateBreakType() {
@@ -309,7 +419,7 @@
       for (const [agent, message] of Object.entries(taskDistribution)) {
         const div = document.createElement("div");
         div.className = "agent-block";
-        div.innerHTML = `<strong>${agent}</strong> - ${message}
+        div.innerHTML = `<strong>${agent}</strong> <span>- ${message}</span>
                          <button class="done-button" onclick="removeTaskAssignment(this)">Done</button>`;
         resultsDiv.appendChild(div);
       }
@@ -338,7 +448,7 @@
         div.setAttribute('data-break-time', breakTime); // Store break time for easy lookup
         div.setAttribute('data-agent-name', agentName); // Store agent name for report
         div.setAttribute('data-break-type', breakType); // Store break type for report
-        div.innerHTML = `<strong>${agentName}</strong> - ${breakType} at ${breakTime}
+        div.innerHTML = `<strong>${agentName}</strong> <span>- ${breakType} at ${breakTime}</span>
                          <button class="edit-button" onclick="editBreakSchedule('${agentName}', '${breakType}', '${breakTime}', this)">Edit</button>
                          <button class="delete-button" onclick="deleteBreakSchedule(this)">Delete</button>`;
         breakScheduleDiv.appendChild(div);
@@ -359,7 +469,10 @@
             blocksToRemove.forEach(block => block.remove());
           }, timeUntilBreak);
         } else {
-          alert("Break time must be in the future.");
+          // If the break time is in the past, alert the user but still add it to the list
+          // This allows for manual entry of past breaks if needed for reporting,
+          // but the alarm won't fire.
+          alert("Break time is in the past. The alarm will not fire.");
         }
       });
 
