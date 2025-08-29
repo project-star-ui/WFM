@@ -796,8 +796,8 @@
         const ticketAgentText = ticketAgentsWorking === 1 ? "agent" : "agents";
 
         // Corrected grammar for "task/tasks"
-        const imTaskText = imQueueTasks === 1 ? "task" : "tasks";
-        const ticketTaskText = ticketQueueTasks === 1 ? "task" : "tasks";
+        const imTaskText = imQueueTasks === 1 ? "waiting" : "waiting";
+        const ticketTaskText = ticketQueueTasks === 1 ? "waiting" : "waiting";
 
         let report = `IM Queue ${imTaskText}: ${imQueueTasks} ${imTaskText} with ${imAgentsWorking} ${imAgentText} working.\n`;
         report += `Ticket Queue ${ticketTaskText}: ${ticketQueueTasks} ${ticketTaskText} with ${ticketAgentsWorking} ${ticketAgentText} working.\n\n`;
