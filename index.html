@@ -997,6 +997,29 @@
             showToast("Task assignment removed.", 'info');
         }
 
+        function sortBreakBlocks() {
+            const breakScheduleDiv = document.getElementById("breakSchedule");
+            const breakBlocks = Array.from(breakScheduleDiv.children); // Get all current break blocks
+
+            breakBlocks.sort((a, b) => {
+                const typeA = a.getAttribute('data-break-type');
+                const typeB = b.getAttribute('data-break-type');
+                const timeA = a.getAttribute('data-break-time');
+                const timeB = b.getAttribute('data-break-time');
+
+                // Primary sort by break type (alphabetical)
+                if (typeA < typeB) return -1;
+                if (typeA > typeB) return 1;
+
+                // Secondary sort by break time (chronological)
+                return timeA.localeCompare(timeB);
+            });
+
+            // Clear the container and re-append sorted blocks
+            breakScheduleDiv.innerHTML = '';
+            breakBlocks.forEach(block => breakScheduleDiv.appendChild(block));
+        }
+
         function saveBreakSchedule() {
             const breakType = document.getElementById("breakType").value;
             const agentNames = document.getElementById("breakAgent").value.trim();
@@ -1014,7 +1037,7 @@
             if (editingBreakId) {
                 const existingBlock = document.getElementById(editingBreakId);
                 if (existingBlock) {
-                    const agentName = agents[0];
+                    const agentName = agents[0]; // Assuming only one agent for edit, or first if multiple
                     existingBlock.innerHTML = `<strong>${agentName}</strong> <span>- ${breakType} at ${breakTime}</span>
                         <button class="edit-button" onclick="editBreakSchedule('${existingBlock.id}')"><i class="fas fa-edit"></i></button>
                         <button class="delete-button" onclick="deleteBreakSchedule(this)"><i class="fas fa-trash-alt"></i></button>`;
@@ -1041,6 +1064,9 @@
                 });
                 showToast("Break schedule added.", 'success');
             }
+
+            // Sort the break blocks after adding/updating
+            sortBreakBlocks();
 
             document.getElementById("breakAgent").value = '';
             document.getElementById("breakTime").value = '';
@@ -1113,7 +1139,10 @@
             const agentBlock = button.parentElement;
             agentBlock.style.opacity = 0;
             agentBlock.style.transform = 'translateX(100%)';
-            agentBlock.addEventListener('transitionend', () => agentBlock.remove(), { once: true });
+            agentBlock.addEventListener('transitionend', () => {
+                agentBlock.remove();
+                sortBreakBlocks(); // Re-sort after deletion
+            }, { once: true });
 
             if (document.getElementById("editingBreakId").value === agentBlock.id) {
                 document.getElementById("breakAgent").value = '';
@@ -1148,7 +1177,11 @@
 
             // Calculate US Central Time (UST) which is UTC-6.
             // PH is UTC+8, so UST is 14 hours behind PH (8 - (-6) = 14)
-            const usTimeDate = new Date(phTimeDate.getTime() - (14 * 60 * 60 * 1000));
+            let usTimeDate = new Date(phTimeDate.getTime() - (14 * 60 * 60 * 1000));
+
+            // Subtract 1 hour from US Central Time
+            usTimeDate.setHours(usTimeDate.getHours() - 1);
+
             const usHours = String(usTimeDate.getHours()).padStart(2, '0');
             const formattedUsTime = `${usHours}:00`;
 
