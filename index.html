@@ -1,868 +1,1204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>WF Helper</title>
-<!-- Font Awesome CDN for icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<style>
-body {
-font-family: "Arial", sans-serif;
-background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-margin: 0;
-padding: 20px;
-color: #f0f0f0;
-min-height: 100vh; /* Ensure body takes full viewport height */
-display: flex;
-flex-direction: column;
-align-items: center;
-}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>WF Helper Pro</title>
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* CSS Variables for easy theming */
+        :root {
+            --primary-color: #00bcd4; /* Teal */
+            --primary-dark: #0097a7;
+            --secondary-color: #4CAF50; /* Green */
+            --danger-color: #f44336; /* Red */
+            --background-gradient-start: #0f2027;
+            --background-gradient-mid: #203a43;
+            --background-gradient-end: #2c5364;
+            --card-background: rgba(255, 255, 255, 0.08);
+            --card-background-blur: rgba(255, 255, 255, 0.05);
+            --text-color: #f0f0f0;
+            --input-background: rgba(255, 255, 255, 0.15);
+            --input-border: var(--primary-color);
+            --input-focus-background: rgba(255, 255, 255, 0.25);
+            --shadow-light: rgba(0, 0, 0, 0.3);
+            --shadow-medium: rgba(0, 0, 0, 0.5);
+            --shadow-heavy: rgba(0, 0, 0, 0.7);
+            --border-radius-small: 8px;
+            --border-radius-medium: 12px;
+            --border-radius-large: 25px;
+        }
 
-h1 {
-color: #00bcd4; /* Changed to teal */
-margin-bottom: 20px;
-text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
-font-size: 3.5em;
-letter-spacing: 2px;
-text-align: center;
-width: 100%; /* Ensure heading is responsive */
-}
+        /* Global Styles */
+        body {
+            font-family: "Segoe UI", "Arial", sans-serif;
+            background: linear-gradient(135deg, var(--background-gradient-start), var(--background-gradient-mid), var(--background-gradient-end));
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            position: relative; /* For toast notifications */
+        }
 
-.tabs {
-display: flex;
-justify-content: center;
-margin-bottom: 20px;
-flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
-width: 100%;
-max-width: 600px; /* Constrain tabs width */
-}
+        /* Typography */
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px var(--primary-color), 0 0 10px var(--shadow-heavy);
+            font-size: 4em; /* Larger, more impactful */
+            letter-spacing: 3px;
+            text-align: center;
+            width: 100%;
+            font-weight: 700;
+            animation: fadeInDown 1s ease-out;
+        }
 
-.tab {
-padding: 10px 20px;
-cursor: pointer;
-background: rgba(255, 255, 255, 0.1);
-border: 1px solid #00bcd4;
-border-radius: 12px;
-margin: 5px; /* Adjust margin for better spacing on mobile */
-transition: background 0.3s;
-flex-grow: 1; /* Allow tabs to grow and fill space */
-text-align: center;
-min-width: 120px; /* Minimum width for tabs */
-}
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-.tab:hover {
-background: rgba(255, 255, 255, 0.2);
-}
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 700px; /* Slightly wider tabs */
+            gap: 10px; /* Space between tabs */
+        }
 
-.active {
-background: rgba(255, 255, 255, 0.3);
-}
+        .tab {
+            padding: 12px 25px;
+            cursor: pointer;
+            background: var(--card-background);
+            border: 1px solid var(--primary-color);
+            border-radius: var(--border-radius-medium);
+            transition: all 0.3s ease-in-out;
+            flex-grow: 1;
+            text-align: center;
+            min-width: 150px; /* Larger min-width */
+            font-weight: 600;
+            font-size: 1.1em;
+            box-shadow: 0 4px 15px var(--shadow-light);
+            position: relative;
+            overflow: hidden;
+        }
 
-.container {
-background: rgba(255, 255, 255, 0.1);
-backdrop-filter: blur(15px);
-border-radius: 25px;
-box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
-padding: 40px 50px;
-max-width: 600px;
-width: 100%;
-transition: transform 0.3s;
-margin: 0 auto;
-box-sizing: border-box; /* Include padding in width calculation */
-}
+        .tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: all 0.5s ease;
+        }
 
-label {
-font-weight: bold;
-margin-top: 15px;
-display: block;
-color: #00bcd4; /* Changed to teal */
-font-size: 1.2em;
-}
+        .tab:hover::before {
+            left: 100%;
+        }
 
-textarea, input, select {
-width: 100%;
-padding: 15px;
-margin-top: 5px;
-border-radius: 12px;
-border: 1px solid #00bcd4; /* Changed to teal */
-font-size: 16px;
-background: rgba(255, 255, 255, 0.2);
-color: #ffffff; /* Changed text color to white */
-transition: border-color 0.3s, background 0.3s;
-box-sizing: border-box; /* Include padding and border in width calculation */
-}
+        .tab:hover {
+            background: var(--input-focus-background);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px var(--shadow-medium);
+            border-color: var(--primary-dark);
+        }
 
-textarea:focus, input:focus, select:focus {
-border-color: #00bcd4; /* Changed to teal */
-background: rgba(255, 255, 255, 0.3);
-outline: none;
-}
+        .tab.active {
+            background: var(--primary-color);
+            color: #1c1c1c;
+            box-shadow: 0 6px 20px var(--primary-color);
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
 
-/* Main Buttons (Generate IM Assignment, Add Break Schedule, Generate Report) */
-button {
-margin-top: 20px;
-padding: 15px 30px;
-background-color: #00bcd4; /* Teal */
-color: #1c1c1c;
-border: none;
-border-radius: 12px;
-font-size: 20px;
-font-weight: bold;
-cursor: pointer;
-transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-width: 100%;
-max-width: 300px;
-display: block;
-margin-left: auto;
-margin-right: auto;
-position: relative;
-overflow: hidden;
-z-index: 1;
-}
+        /* Main Content Container */
+        .container {
+            background: var(--card-background);
+            backdrop-filter: blur(15px);
+            border-radius: var(--border-radius-large);
+            box-shadow: 0 15px 40px var(--shadow-heavy);
+            padding: 40px 50px;
+            max-width: 700px; /* Wider container */
+            width: 100%;
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+            margin: 0 auto 30px auto; /* Add bottom margin */
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+        }
 
-button::before {
-content: '';
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.0) 100%);
-transform: translateX(-100%);
-transition: transform 0.5s ease-out;
-z-index: -1;
-}
+        /* Form Elements */
+        label {
+            font-weight: bold;
+            margin-top: 20px;
+            display: block;
+            color: var(--primary-color);
+            font-size: 1.25em; /* Slightly larger labels */
+            margin-bottom: 8px;
+        }
 
-button:hover::before {
-transform: translateX(0%);
-}
+        textarea, input, select {
+            width: 100%;
+            padding: 15px;
+            border-radius: var(--border-radius-medium);
+            border: 1px solid var(--input-border);
+            font-size: 1.1em;
+            background: var(--input-background);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            box-shadow: inset 0 1px 5px var(--shadow-light);
+        }
 
-button:hover {
-background-color: #0097a7; /* Darker teal */
-transform: translateY(-2px);
-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-}
+        textarea:focus, input:focus, select:focus {
+            border-color: var(--primary-dark);
+            background: var(--input-focus-background);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.3), inset 0 1px 5px var(--shadow-medium);
+        }
 
-button:active {
-transform: translateY(0);
-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-}
+        select {
+            color: var(--text-color); /* Keep text white for select */
+            -webkit-appearance: none; /* Remove default arrow */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2300bcd4%22%20d%3D%22M287%2C114.7L159.7%2C242c-3.2%2C3.2-8.3%2C3.2-11.5%2C0L5.4%2C114.7c-3.2-3.2-3.2-8.3%2C0-11.5l11.5-11.5c3.2-3.2%2C8.3-3.2%2C11.5%2C0l115.5%2C115.5l115.5-115.5c3.2-3.2%2C8.3-3.2%2C11.5%2C0l11.5%2C11.5C290.2%2C106.4%2C290.2%2C111.5%2C287%2C114.7z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 12px;
+            padding-right: 40px; /* Make space for the custom arrow */
+        }
 
-.results {
-margin-top: 30px;
-width: 100%;
-}
+        option {
+            background-color: var(--background-gradient-mid); /* Darker background for options */
+            color: var(--text-color);
+        }
 
-.agent-block {
-background: rgba(255, 255, 255, 0.15);
-padding: 20px;
-margin-bottom: 15px;
-border-left: 5px solid #00bcd4; /* Changed to teal */
-border-radius: 12px;
-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-transition: transform 0.2s;
-position: relative;
-display: flex;
-flex-wrap: wrap;
-align-items: center;
-justify-content: space-between;
-}
+        ::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            opacity: 1;
+        }
 
-.agent-block:hover {
-transform: scale(1.02);
-}
+        /* Main Buttons */
+        button {
+            margin-top: 30px;
+            padding: 18px 35px; /* Larger padding */
+            background-color: var(--primary-color);
+            color: #1c1c1c;
+            border: none;
+            border-radius: var(--border-radius-medium);
+            font-size: 1.3em; /* Larger font */
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 8px 25px var(--primary-color); /* Stronger shadow */
+            width: 100%;
+            max-width: 350px; /* Wider button */
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            letter-spacing: 0.5px;
+        }
 
-.agent-block strong {
-color: #00bcd4; /* Changed to teal */
-font-size: 1.2em;
-flex-basis: 100%;
-margin-bottom: 5px;
-}
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.0) 100%);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease-out;
+            z-index: -1;
+        }
 
-.agent-block span {
-flex-grow: 1;
-margin-right: 10px;
-}
+        button:hover::before {
+            transform: translateX(0%);
+        }
 
-.break-schedule {
-margin-top: 20px;
-}
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-4px) scale(1.02); /* More pronounced lift */
+            box-shadow: 0 12px 35px var(--primary-dark);
+            color: #fff; /* White text on hover for contrast */
+        }
 
-.break-schedule input {
-margin-bottom: 10px;
-}
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px var(--shadow-medium);
+        }
 
-/* Action Buttons within Agent Blocks (Edit, Delete, Done) */
-.edit-button, .delete-button, .done-button {
-background: transparent; /* Make background transparent */
-border: 1px solid transparent; /* Transparent border by default */
-color: #00bcd4;
-cursor: pointer;
-font-size: 16px; /* Standard icon size */
-margin-left: 5px;
-padding: 4px; /* Minimal padding to just fit the icon */
-border-radius: 8px;
-transition: background-color 0.2s, transform 0.2s, box-shadow 0.3s, border-color 0.3s;
-position: relative;
-overflow: hidden;
-z-index: 1;
-flex-shrink: 0;
-display: inline-flex; /* Use flexbox to center icon */
-align-items: center;
-justify-content: center;
-width: 32px; /* Fixed width and height for square buttons */
-height: 32px;
-}
+        /* Results Area */
+        .results {
+            margin-top: 40px;
+            width: 100%;
+        }
 
-.edit-button::before, .delete-button::before, .done-button::before {
-content: '';
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.0) 100%);
-transform: translateX(-100%);
-transition: transform 0.5s ease-out;
-z-index: -1;
-}
+        .agent-block {
+            background: var(--card-background);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: var(--border-radius-medium);
+            box-shadow: 0 5px 15px var(--shadow-light);
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden; /* For subtle glow effect */
+        }
 
-.edit-button:hover::before, .delete-button:hover::before, .done-button:hover::before {
-transform: translateX(0%);
-}
+        .agent-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 10%, rgba(0,188,212,0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
 
-.edit-button:hover {
-background-color: rgba(0, 188, 212, 0.2); /* Teal background on hover */
-border-color: #00bcd4; /* Teal border on hover */
-box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4); /* Teal shadow */
-transform: translateY(-2px) scale(1.05); /* Slightly larger and lifted */
-color: #fff; /* White text on hover */
-}
+        .agent-block:hover::before {
+            opacity: 1;
+        }
 
-.delete-button {
-color: #f44336; /* Red color for delete button */
-}
+        .agent-block:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 8px 20px var(--shadow-medium);
+            border-left-color: var(--primary-dark);
+        }
 
-.delete-button:hover {
-background-color: rgba(244, 67, 54, 0.2); /* Red background on hover */
-border-color: #f44336; /* Red border on hover */
-box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4); /* Red shadow */
-transform: translateY(-2px) scale(1.05); /* Slightly larger and lifted */
-color: #fff; /* White text on hover */
-}
+        .agent-block strong {
+            color: var(--primary-color);
+            font-size: 1.3em;
+            flex-basis: 100%;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
 
-.done-button {
-color: #4CAF50; /* Green color for done button */
-}
+        .agent-block span {
+            flex-grow: 1;
+            margin-right: 15px;
+            font-size: 1.05em;
+        }
 
-.done-button:hover {
-background-color: rgba(76, 175, 80, 0.1); /* Subtle green background on hover */
-border-color: #4CAF50; /* Green border on hover */
-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-transform: translateY(-1px);
-}
+        /* Action Buttons within Agent Blocks */
+        .edit-button, .delete-button, .done-button {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 1.2em; /* Larger icons */
+            margin-left: 8px;
+            padding: 8px; /* More padding for click area */
+            border-radius: var(--border-radius-small);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px; /* Larger square buttons */
+            height: 40px;
+            box-shadow: 0 2px 8px var(--shadow-light);
+        }
 
-/* Additional styles for better visibility */
-select {
-color: #000; /* Black text for dropdown */
-}
+        .edit-button::before, .delete-button::before, .done-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.0) 100%);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease-out;
+            z-index: -1;
+        }
 
-option {
-color: #000; /* Black text for dropdown options */
-}
+        .edit-button:hover::before, .delete-button:hover::before, .done-button:hover::before {
+            transform: translateX(0%);
+        }
 
-::placeholder {
-color: #ffffff; /* White placeholder text */
-opacity: 0.7; /* Slightly transparent */
-}
+        .edit-button:hover {
+            background-color: rgba(0, 188, 212, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 6px 18px rgba(0, 188, 212, 0.4);
+            transform: translateY(-2px) scale(1.1);
+            color: #fff;
+        }
 
-.report-output {
-background: rgba(255, 255, 255, 0.15);
-padding: 20px;
-border-radius: 12px;
-margin-top: 20px;
-white-space: pre-wrap; /* To preserve newlines in the report */
-word-wrap: break-word; /* Ensure long lines break */
-}
+        .delete-button {
+            color: var(--danger-color);
+        }
 
-.expectations-message {
-margin-top: 20px;
-padding: 15px;
-background: rgba(0, 188, 212, 0.1); /* Light teal background */
-border-left: 5px solid #00bcd4; /* Teal border */
-border-radius: 8px;
-color: #e0f7fa; /* Lighter teal text */
-font-size: 1.1em;
-line-height: 1.5;
-}
+        .delete-button:hover {
+            background-color: rgba(244, 67, 54, 0.2);
+            border-color: var(--danger-color);
+            box-shadow: 0 6px 18px rgba(244, 67, 54, 0.4);
+            transform: translateY(-2px) scale(1.1);
+            color: #fff;
+        }
 
-/* New styles for collapsible sections */
-.schedule-section {
-margin-top: 20px;
-border: 1px solid #00bcd4;
-border-radius: 12px;
-overflow: hidden;
-}
+        .done-button {
+            color: var(--secondary-color);
+        }
 
-.schedule-header {
-background: rgba(0, 188, 212, 0.2);
-padding: 15px 20px;
-cursor: pointer;
-display: flex;
-justify-content: space-between;
-align-items: center;
-font-weight: bold;
-font-size: 1.3em;
-color: #e0f7fa;
-}
+        .done-button:hover {
+            background-color: rgba(76, 175, 80, 0.2);
+            border-color: var(--secondary-color);
+            box-shadow: 0 6px 18px rgba(76, 175, 80, 0.4);
+            transform: translateY(-2px) scale(1.1);
+            color: #fff;
+        }
 
-.schedule-header i {
-transition: transform 0.3s ease; /* Keep icon rotation smooth */
-}
+        /* Report Output */
+        .report-output {
+            background: var(--card-background);
+            padding: 25px;
+            border-radius: var(--border-radius-medium);
+            margin-top: 30px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px var(--shadow-light);
+            line-height: 1.6;
+            font-size: 1.05em;
+        }
 
-.schedule-header.hidden-content i {
-transform: rotate(-90deg);
-}
+        /* Expectations Message */
+        .expectations-message {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(0, 188, 212, 0.15);
+            border-left: 5px solid var(--primary-color);
+            border-radius: var(--border-radius-medium);
+            color: #e0f7fa;
+            font-size: 1.1em;
+            line-height: 1.6;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
 
-.schedule-content {
-padding: 0 20px;
-overflow-y: auto; /* Keep scrollability when visible */
-max-height: 300px; /* Set a max-height for scrollable content when visible */
-display: block; /* Default to block display */
-}
+        .expectations-message strong {
+            color: var(--primary-color);
+            font-size: 1.1em;
+        }
 
-.schedule-content.hidden-content {
-display: none; /* Instantly hide the content */
-padding: 0; /* Remove padding when hidden */
-}
+        .expectations-message ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
 
-/* Media Queries for Responsiveness */
-@media (max-width: 768px) {
-body {
-padding: 10px;
-}
+        .expectations-message li {
+            padding: 5px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
 
-h1 {
-font-size: 2.5em;
-}
+        .expectations-message li:last-child {
+            border-bottom: none;
+        }
 
-.container {
-padding: 20px 25px;
-border-radius: 15px;
-}
+        /* Collapsible Sections */
+        .schedule-section {
+            margin-top: 25px;
+            border: 1px solid var(--primary-color);
+            border-radius: var(--border-radius-medium);
+            overflow: hidden;
+            box-shadow: 0 8px 25px var(--shadow-medium);
+            background: var(--card-background);
+            transition: all 0.3s ease;
+        }
 
-.tabs {
-flex-direction: column;
-align-items: stretch;
-}
+        .schedule-section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px var(--shadow-heavy);
+        }
 
-.tab {
-margin: 5px 0;
-padding: 12px 15px;
-}
+        .schedule-header {
+            background: rgba(0, 188, 212, 0.25);
+            padding: 18px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.4em; /* Larger header */
+            color: #e0f7fa;
+            border-bottom: 1px solid rgba(0, 188, 212, 0.3);
+            transition: background 0.3s ease;
+        }
 
-button {
-font-size: 18px;
-padding: 12px 20px;
-}
+        .schedule-header:hover {
+            background: rgba(0, 188, 212, 0.35);
+        }
 
-.agent-block {
-flex-direction: column;
-align-items: flex-start;
-}
+        .schedule-header i {
+            transition: transform 0.4s ease;
+            font-size: 0.9em;
+        }
 
-.agent-block .edit-button,
-.agent-block .delete-button,
-.agent-block .done-button {
-margin-left: 0;
-margin-top: 5px;
-width: 30px; /* Adjust for smaller screens */
-height: 30px; /* Adjust for smaller screens */
-font-size: 14px; /* Adjust icon size for smaller screens */
-}
-}
+        .schedule-header.hidden-content i {
+            transform: rotate(-90deg);
+        }
 
-@media (max-width: 480px) {
-h1 {
-font-size: 2em;
-letter-spacing: 1px;
-}
+        .schedule-content {
+            padding: 0 25px;
+            overflow-y: auto;
+            max-height: 0; /* Start collapsed */
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+            will-change: max-height; /* Optimize for animation */
+        }
 
-.container {
-padding: 15px 20px;
-}
+        .schedule-content.expanded {
+            max-height: 500px; /* Sufficiently large for content */
+            padding: 20px 25px;
+        }
 
-label {
-font-size: 1em;
-}
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column-reverse; /* Newest on top */
+            gap: 10px;
+        }
 
-textarea, input, select {
-padding: 10px;
-font-size: 14px;
-}
+        .toast {
+            background-color: rgba(50, 50, 50, 0.9);
+            color: var(--text-color);
+            padding: 15px 20px;
+            border-radius: var(--border-radius-medium);
+            box-shadow: 0 5px 15px var(--shadow-heavy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: toastIn 0.5s forwards, toastOut 0.5s forwards 3s; /* In, then out after 3s */
+            min-width: 250px;
+            max-width: 350px;
+            border-left: 5px solid var(--primary-color);
+        }
 
-button {
-font-size: 16px;
-padding: 10px 15px;
-}
+        .toast.success { border-left-color: var(--secondary-color); }
+        .toast.error { border-left-color: var(--danger-color); }
+        .toast.info { border-left-color: var(--primary-color); }
 
-.edit-button, .delete-button, .done-button {
-width: 28px; /* Even smaller on very small screens */
-height: 28px;
-font-size: 12px; /* Even smaller icon size */
-padding: 2px; /* Minimal padding */
-}
-}
-</style>
+        .toast i {
+            font-size: 1.5em;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(20px); }
+        }
+
+        /* New styles for compact report input fields */
+        .report-input-grid {
+            display: grid;
+            /* Adjust grid columns: first column for labels, second for inputs */
+            grid-template-columns: 1fr minmax(50px, 100px); /* Label takes flexible space, input fixed/max width */
+            gap: 10px 20px; /* Row gap, column gap */
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .report-input-grid .form-group-inline {
+            display: contents; /* Makes children participate in the grid directly */
+        }
+
+        .report-input-grid label {
+            margin-top: 0; /* Remove top margin as grid handles spacing */
+            margin-bottom: 0;
+            font-size: 1.1em; /* Slightly smaller for compactness */
+            text-align: left; /* Keep labels left-aligned */
+            white-space: nowrap; /* Prevent labels from wrapping */
+            padding-right: 10px; /* Add some space between label and input */
+        }
+
+        .report-input-grid input[type="number"] {
+            width: 100%; /* Fill the grid column */
+            max-width: 100px; /* Limit width for number inputs */
+            text-align: center; /* Center the numbers */
+            padding: 8px 12px; /* Smaller padding for compactness */
+            font-size: 1em;
+            justify-self: end; /* Align input to the end of its grid cell (right) */
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 3em;
+                margin-bottom: 20px;
+            }
+
+            .container {
+                padding: 30px 35px;
+                border-radius: var(--border-radius-large);
+            }
+
+            .tabs {
+                flex-direction: column;
+                align-items: stretch;
+                max-width: 100%;
+            }
+
+            .tab {
+                margin: 5px 0;
+                padding: 15px 20px;
+                min-width: unset;
+            }
+
+            button {
+                font-size: 1.2em;
+                padding: 15px 25px;
+                max-width: 100%;
+            }
+
+            .agent-block {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px;
+            }
+
+            .agent-block strong {
+                font-size: 1.2em;
+                margin-bottom: 5px;
+            }
+
+            .agent-block span {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .edit-button, .delete-button, .done-button {
+                width: 36px;
+                height: 36px;
+                font-size: 1.1em;
+                padding: 6px;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .schedule-header {
+                font-size: 1.2em;
+                padding: 15px 20px;
+            }
+
+            .schedule-content.expanded {
+                padding: 15px 20px;
+            }
+
+            .toast-container {
+                bottom: 10px;
+                right: 10px;
+                left: 10px; /* Full width on small screens */
+                flex-direction: column; /* Newest on bottom for better visibility */
+            }
+
+            .toast {
+                min-width: unset;
+                max-width: unset;
+                width: auto;
+            }
+
+            .report-input-grid {
+                grid-template-columns: 1fr; /* Stack on small screens */
+                gap: 5px;
+            }
+
+            .report-input-grid label {
+                text-align: left; /* Align labels to left when stacked */
+                padding-right: 0; /* Remove padding when stacked */
+            }
+
+            .report-input-grid input[type="number"] {
+                max-width: 100%; /* Allow full width on small screens */
+                justify-self: stretch; /* Stretch to fill width */
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.5em;
+                letter-spacing: 1px;
+            }
+
+            .container {
+                padding: 25px 20px;
+            }
+
+            label {
+                font-size: 1.1em;
+            }
+
+            textarea, input, select {
+                padding: 12px;
+                font-size: 1em;
+            }
+
+            button {
+                font-size: 1.1em;
+                padding: 12px 20px;
+            }
+
+            .edit-button, .delete-button, .done-button {
+                width: 32px;
+                height: 32px;
+                font-size: 1em;
+                padding: 4px;
+            }
+
+            .expectations-message {
+                font-size: 1em;
+                padding: 15px;
+            }
+
+            .report-output {
+                font-size: 0.95em;
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<h1>WF Helper</h1>
-<div class="tabs">
-<div class="tab active" onclick="showTab('tasks')">IM Tasks</div>
-<div class="tab" onclick="showTab('breaks')">Break Schedule</div>
-<div class="tab" onclick="showTab('report')">Report Generator</div>
-</div>
-
-<div class="container" id="tasks">
-<label for="agents">Enter Agent Names with Break Times (one per line, format: Name, Break Time):</label>
-<textarea id="agents" rows="6" placeholder="e.g. John Doe, 10:00&#10;Jane Smith, 10:15&#10;Alex Johnson, 09:45"></textarea>
-
-<label for="taskCount">Enter Total IM Task Volume:</label>
-<input type="number" id="taskCount" min="1" placeholder="e.g. 12" />
-
-<label for="shiftSchedule">Select Shift Schedule:</label>
-<select id="shiftSchedule">
-<option value="8PM">8:00 PM</option>
-<option value="10PM">10:00 PM</option>
-<option value="10:30PM">10:30 PM</option>
-<option value="3AM">3:00 AM</option>
-<option value="5AM">5:00 AM</option>
-</select>
-
-<button onclick="generateSkills()">Generate IM Assignment</button>
-
-<div class="results" id="results"></div>
-</div>
-
-<div class="container" id="breaks" style="display: none;">
-<label for="breakType">Break Type:</label>
-<select id="breakType" onchange="updateBreakType()">
-<option value="Break">Break</option>
-<option value="Lunch">Lunch</option>
-<option value="Training">Training</option>
-<option value="Meeting">Meeting</option>
-<option value="Coaching">Coaching</option>
-</select>
-
-<label for="breakAgent">Agent Name(s):</label>
-<input type="text" id="breakAgent" placeholder="Enter agent name(s), separated by commas for Training, Meeting, Coaching" />
-
-<label for="breakTime">Break Time:</label>
-<input type="time" id="breakTime" />
-
-<!-- Hidden input to store the ID of the break being edited -->
-<input type="hidden" id="editingBreakId" value="" />
-
-<button id="saveBreakButton" onclick="saveBreakSchedule()">Add Break Schedule</button>
-
-<div class="break-schedule" id="breakSchedule"></div>
-</div>
-
-<div class="container" id="report" style="display: none;">
-<label for="imQueueTasks">IM Queue Waiting:</label>
-<input type="number" id="imQueueTasks" min="0" value="0" />
-
-<label for="imAgentsWorking">IM Agents Working:</label>
-<input type="number" id="imAgentsWorking" min="0" value="0" />
-
-<label for="ticketQueueTasks">Ticket Queue Waiting:</label>
-<input type="number" id="ticketQueueTasks" min="0" value="0" />
-
-<label for="ticketAgentsWorking">Ticket Agents Working:</label>
-<input type="number" id="ticketAgentsWorking" min="0" value="0" />
-
-<label for="agentsOnBreak">Agents on Break:</label>
-<input type="number" id="agentsOnBreak" min="0" value="0" />
-
-<label for="agentsOnLunch">Agents on Lunch:</label>
-<input type="number" id="agentsOnLunch" min="0" value="0" />
-
-<label for="agentsOnCoaching">Agents on Coaching:</label>
-<input type="number" id="agentsOnCoaching" min="0" value="0" />
-
-<label for="agentsOnMeeting">Agents on Meeting:</label>
-<input type="number" id="agentsOnMeeting" min="0" value="0" />
-
-<label for="agentsOnTraining">Agents on Training:</label>
-<input type="number" id="agentsOnTraining" min="0" value="0" />
-
-<button onclick="generateReport()">Generate Report</button>
-
-<div class="report-output" id="reportOutput"></div>
-</div>
-
-<audio id="breakSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
-
-<script>
-let breakCounter = 0; // To generate unique IDs for break schedule entries
-
-// Store generated schedule sections globally to allow sorting
-let generatedScheduleSections = [];
-
-// Define a custom sort order for shift schedules
-const shiftOrder = {
-"8PM": 1,
-"10PM": 2,
-"10:30PM": 3,
-"3AM": 4,
-"5AM": 5
-};
-
-function showTab(tab) {
-document.getElementById('tasks').style.display = 'none';
-document.getElementById('breaks').style.display = 'none';
-document.getElementById('report').style.display = 'none';
-
-document.getElementById(tab).style.display = 'block';
-
-const tabs = document.querySelectorAll('.tab');
-tabs.forEach(t => t.classList.remove('active'));
-// Find the tab element by its text content and add the active class
-// Using a more robust way to find the tab by its text content
-Array.from(tabs).find(t => t.textContent.includes(tab === 'tasks' ? 'IM Tasks' : tab === 'breaks' ? 'Break Schedule' : 'Report Generator')).classList.add('active');
-
-// Removed default date/time setting for report generator as it's now automatic
-}
-
-function updateBreakType() {
-const breakType = document.getElementById("breakType").value;
-const breakAgentInput = document.getElementById("breakAgent");
-if (breakType === "Training" || breakType === "Meeting" || breakType === "Coaching") {
-breakAgentInput.placeholder = `Enter agent name(s) for ${breakType}, separated by commas`;
-} else {
-breakAgentInput.placeholder = "Enter agent name(s)";
-}
-}
-
-function generateSkills() {
-const agentsInput = document.getElementById("agents").value.trim();
-const taskCount = parseInt(document.getElementById("taskCount").value);
-const shiftSchedule = document.getElementById("shiftSchedule").value;
-const resultsDiv = document.getElementById("results");
-
-if (!agentsInput || isNaN(taskCount) || taskCount < 1) {
-alert("Please enter valid agent names and task count.");
-return;
-}
-
-let agents = agentsInput.split("\n").map(line => {
-const [name, breakTime] = line.split(",").map(item => item.trim());
-return { name, breakTime };
-}).filter(agent => agent.name && agent.breakTime);
-
-const maxTasksPerAgent = 3;
-const minAgentsRequired = Math.ceil(taskCount / maxTasksPerAgent);
-
-if (agents.length < minAgentsRequired) {
-alert(`You need at least ${minAgentsRequired} agents for ${taskCount} tasks.`);
-return;
-}
-
-// Sort agents by break time (later breaks first)
-agents.sort((a, b) => b.breakTime.localeCompare(a.breakTime));
-
-// Select only the number of agents we need
-const selectedAgents = agents.slice(0, minAgentsRequired);
-const taskDistribution = {};
-const agentsForExpectations = [];
-
-for (let i = 0; i < selectedAgents.length; i++) {
-const agent = selectedAgents[i].name;
-taskDistribution[agent] = "will make transfer to IM Queue";
-agentsForExpectations.push(agent);
-}
-
-// Create a new section for this specific schedule
-const scheduleSection = document.createElement("div");
-scheduleSection.className = "schedule-section";
-const sectionId = `schedule-${Date.now()}`; // Unique ID for the section
-scheduleSection.id = sectionId;
-scheduleSection.setAttribute('data-shift-schedule', shiftSchedule); // Store shift schedule for sorting
-
-const scheduleHeader = document.createElement("div");
-scheduleHeader.className = "schedule-header";
-scheduleHeader.innerHTML = `
-<span>${shiftSchedule} Shift - IM Assignment & Expectations</span>
-<i class="fas fa-chevron-down"></i>
-`;
-scheduleHeader.onclick = () => toggleCollapse(sectionId);
-
-const scheduleContent = document.createElement("div");
-scheduleContent.className = "schedule-content"; // No 'expanded' class initially for instant show
-scheduleContent.id = `${sectionId}-content`;
-
-// Add expectations message to the content with updated phrasing
-if (agentsForExpectations.length > 0) {
-const expectationsMessageDiv = document.createElement("div");
-expectationsMessageDiv.className = "expectations-message";
-// Modified line to use an unordered list for agents
-const agentsList = agentsForExpectations.map(agent => `<li>${agent}</li>`).join('');
-expectationsMessageDiv.innerHTML = `<strong>Setting Expectations for ${shiftSchedule} Shift:</strong> The agents listed below will handle IM tasks in sequence if a transfer to the IM queue is needed, with the order arranged according to their break schedules: <ul>${agentsList}</ul>`;
-scheduleContent.appendChild(expectationsMessageDiv);
-}
-
-// Add IM Task Assignment to the content
-const imAssignmentHeader = document.createElement("h3");
-imAssignmentHeader.textContent = "IM Task Assignment";
-scheduleContent.appendChild(imAssignmentHeader);
-
-for (const [agent, message] of Object.entries(taskDistribution)) {
-const div = document.createElement("div");
-div.className = "agent-block";
-div.innerHTML = `<strong>${agent}</strong> <span>- ${message}</span>
-<button class="done-button" onclick="removeTaskAssignment(this)"><i class="fas fa-check"></i></button>`;
-scheduleContent.appendChild(div);
-}
-
-scheduleSection.appendChild(scheduleHeader);
-scheduleSection.appendChild(scheduleContent);
-
-// Add the new section to our global array
-generatedScheduleSections.push(scheduleSection);
-
-// Sort the array and re-render the results
-sortAndRenderSchedules();
-}
-
-function sortAndRenderSchedules() {
-const resultsDiv = document.getElementById("results");
-resultsDiv.innerHTML = ""; // Clear current results
-
-// Sort the sections based on the custom shiftOrder
-generatedScheduleSections.sort((a, b) => {
-const shiftA = a.getAttribute('data-shift-schedule');
-const shiftB = b.getAttribute('data-shift-schedule');
-return (shiftOrder[shiftA] || Infinity) - (shiftOrder[shiftB] || Infinity);
-});
-
-// Append sorted sections back to the DOM
-generatedScheduleSections.forEach(section => {
-resultsDiv.appendChild(section);
-});
-}
-
-
-function toggleCollapse(sectionId) {
-const header = document.getElementById(sectionId).querySelector('.schedule-header');
-const content = document.getElementById(`${sectionId}-content`);
-
-// Toggle the class that controls display
-content.classList.toggle('hidden-content');
-header.classList.toggle('hidden-content'); // To rotate the icon
-}
-
-function removeTaskAssignment(button) {
-// Find the parent agent-block and remove it
-const agentBlock = button.parentElement;
-agentBlock.remove();
-
-// Optional: If the last agent-block is removed from a schedule-content,
-// you might want to remove the entire schedule-section.
-// This logic can be added here if desired.
-}
-
-function saveBreakSchedule() { // Renamed from addBreakSchedule
-const breakType = document.getElementById("breakType").value;
-const agentNames = document.getElementById("breakAgent").value.trim();
-const breakTime = document.getElementById("breakTime").value;
-const editingBreakId = document.getElementById("editingBreakId").value;
-const breakScheduleDiv = document.getElementById("breakSchedule");
-const saveBreakButton = document.getElementById("saveBreakButton");
-
-if (!agentNames || !breakTime) {
-alert("Please enter both agent name(s) and break time.");
-return;
-}
-
-const agents = agentNames.split(',').map(name => name.trim());
-
-if (editingBreakId) {
-// EDITING EXISTING BREAK
-const existingBlock = document.getElementById(editingBreakId);
-if (existingBlock) {
-// Update the content and data attributes of the existing block
-const agentName = agents[0]; // Assuming single agent for edit, or first if multiple were entered
-existingBlock.innerHTML = `<strong>${agentName}</strong> <span>- ${breakType} at ${breakTime}</span>
-<button class="edit-button" onclick="editBreakSchedule('${existingBlock.id}')"><i class="fas fa-edit"></i></button>
-<button class="delete-button" onclick="deleteBreakSchedule(this)"><i class="fas fa-trash-alt"></i></button>`;
-existingBlock.setAttribute('data-break-time', breakTime);
-existingBlock.setAttribute('data-agent-name', agentName);
-existingBlock.setAttribute('data-break-type', breakType);
-// Re-set alarm if time changed or if it's a future time
-setBreakAlarm(agentName, breakType, breakTime, existingBlock.id);
-}
-} else {
-// ADDING NEW BREAK
-agents.forEach(agentName => {
-const newId = `break-${breakCounter++}`; // Generate unique ID
-const div = document.createElement("div");
-div.className = "agent-block";
-div.id = newId; // Assign unique ID
-div.setAttribute('data-break-time', breakTime);
-div.setAttribute('data-agent-name', agentName);
-div.setAttribute('data-break-type', breakType);
-div.innerHTML = `<strong>${agentName}</strong> <span>- ${breakType} at ${breakTime}</span>
-<button class="edit-button" onclick="editBreakSchedule('${newId}')"><i class="fas fa-edit"></i></button>
-<button class="delete-button" onclick="deleteBreakSchedule(this)"><i class="fas fa-trash-alt"></i></button>`;
-breakScheduleDiv.appendChild(div);
-
-setBreakAlarm(agentName, breakType, breakTime, newId);
-});
-}
-
-// Clear input fields and reset button
-document.getElementById("breakAgent").value = '';
-document.getElementById("breakTime").value = '';
-document.getElementById("editingBreakId").value = ''; // Clear editing ID
-document.getElementById("saveBreakButton").textContent = 'Add Break Schedule'; // Reset button text
-document.getElementById("breakType").value = 'Break'; // Reset break type to default
-updateBreakType(); // Update placeholder based on default break type
-}
-
-function setBreakAlarm(agentName, breakType, breakTime, blockId) {
-// Clear any existing alarms for this block if it's being edited
-// (This is a simplification; a more robust solution would store and clear timeouts)
-// For this example, we'll just set a new one. If the time is the same, it's redundant but harmless.
-
-const now = new Date();
-const breakDate = new Date();
-const [hours, minutes] = breakTime.split(':');
-breakDate.setHours(hours, minutes, 0, 0);
-
-const timeUntilBreak = breakDate - now;
-if (timeUntilBreak > 0) {
-setTimeout(() => {
-const breakSound = document.getElementById("breakSound");
-breakSound.play().catch(e => console.error("Error playing sound:", e));
-alert(`${agentName} is on ${breakType.toLowerCase()} now!`);
-// Optionally remove the block after the alarm, or change its style
-const block = document.getElementById(blockId);
-if (block) {
-// block.remove(); // Uncomment to remove after alarm
-// Or change its style to indicate it's passed
-block.style.opacity = '0.5';
-block.style.borderLeftColor = '#607d8b'; /* Grey out */
-}
-}, timeUntilBreak);
-} else {
-// If the break time is in the past, alert the user but still add it to the list
-// This allows for manual entry of past breaks if needed for reporting,
-// but the alarm won't fire.
-// console.warn(`Break time for ${agentName} is in the past. Alarm will not fire.`);
-}
-}
-
-
-function editBreakSchedule(blockId) { // Now takes the block's ID
-const blockToEdit = document.getElementById(blockId);
-if (!blockToEdit) return;
-
-const agentName = blockToEdit.getAttribute('data-agent-name');
-const breakType = blockToEdit.getAttribute('data-break-type');
-const breakTime = blockToEdit.getAttribute('data-break-time');
-
-// Populate the form fields
-document.getElementById("breakAgent").value = agentName;
-document.getElementById("breakTime").value = breakTime;
-document.getElementById("breakType").value = breakType;
-updateBreakType(); // Update placeholder based on selected break type
-
-// Store the ID of the block being edited in the hidden input
-document.getElementById("editingBreakId").value = blockId;
-
-// Change the button text to "Save Break Schedule"
-document.getElementById("saveBreakButton").textContent = 'Save Break Schedule';
-}
-
-function deleteBreakSchedule(button) {
-const breakScheduleDiv = document.getElementById("breakSchedule");
-breakScheduleDiv.removeChild(button.parentElement);
-// If the deleted item was currently being edited, reset the form
-if (document.getElementById("editingBreakId").value === button.parentElement.id) {
-document.getElementById("breakAgent").value = '';
-document.getElementById("breakTime").value = '';
-document.getElementById("editingBreakId").value = '';
-document.getElementById("saveBreakButton").textContent = 'Add Break Schedule';
-document.getElementById("breakType").value = 'Break';
-updateBreakType();
-}
-}
-
-function generateReport() {
-const imQueueWaiting = parseInt(document.getElementById("imQueueTasks").value); // Changed variable name
-const imAgentsWorking = parseInt(document.getElementById("imAgentsWorking").value);
-const ticketQueueWaiting = parseInt(document.getElementById("ticketQueueTasks").value); // Changed variable name
-const ticketAgentsWorking = parseInt(document.getElementById("ticketAgentsWorking").value);
-
-// Get values from new input fields
-const agentsOnBreak = parseInt(document.getElementById("agentsOnBreak").value);
-const agentsOnLunch = parseInt(document.getElementById("agentsOnLunch").value);
-const agentsOnCoaching = parseInt(document.getElementById("agentsOnCoaching").value);
-const agentsOnMeeting = parseInt(document.getElementById("agentsOnMeeting").value);
-const agentsOnTraining = parseInt(document.getElementById("agentsOnTraining").value);
-
-const reportOutputDiv = document.getElementById("reportOutput");
-
-// Get current date and time
-const now = new Date();
-
-// Calculate PH Time (UST / UTC+8)
-const phOffsetMinutes = 8 * 60; // +8 hours in minutes
-const localOffsetMinutes = now.getTimezoneOffset(); // Difference between UTC and local time in minutes
-const phTimeDate = new Date(now.getTime() + (phOffsetMinutes + localOffsetMinutes) * 60 * 1000);
-
-// Calculate US Time based on PH Time (PH Time - 15 hours)
-const usTimeDate = new Date(phTimeDate.getTime() - (15 * 60 * 60 * 1000)); // Subtract 15 hours
-
-// Format US Time to the nearest hour (e.g., "05:00")
-const usHours = String(usTimeDate.getHours()).padStart(2, '0');
-const formattedUsTime = `${usHours}:00`; // Always :00 for minutes
-
-// Adjust date to be one day less than current PH Time date
-const adjustedDate = new Date(phTimeDate);
-adjustedDate.setDate(phTimeDate.getDate() - 1); // Subtract 1 day
-
-// Format adjusted date (Month Day Year)
-const options = { month: 'long', day: 'numeric', year: 'numeric' };
-const formattedDate = adjustedDate.toLocaleDateString('en-US', options);
-
-// Construct the header line
-// Example: "As of 05:00 (US Time) August 29 2025."
-let reportHeader = `As of ${formattedUsTime} (US Time) ${formattedDate}.\nUS-BDEE-SPS\n\n`;
-
-// Corrected grammar for "agent/agents"
-const imAgentText = imAgentsWorking === 1 ? "agent" : "agents";
-const ticketAgentText = ticketAgentsWorking === 1 ? "agent" : "agents";
-
-// Use "waiting" instead of "tasks"
-let report = reportHeader;
-report += `IM Queue: ${imQueueWaiting} waiting with ${imAgentsWorking} ${imAgentText} working.\n`;
-report += `TK Queue: ${ticketQueueWaiting} waiting with ${ticketAgentsWorking} ${ticketAgentText} working.\n\n`;
-
-// Use the values from the new input fields for the report
-report += "Agents on Activities:\n";
-report += `- Break: ${agentsOnBreak} agent(s)\n`;
-report += `- Lunch: ${agentsOnLunch} agent(s)\n`;
-report += `- Coaching: ${agentsOnCoaching} agent(s)\n`;
-report += `- Meeting: ${agentsOnMeeting} agent(s)\n`;
-report += `- Training: ${agentsOnTraining} agent(s)\n`;
-report += "\n"; // Add an extra newline for spacing
-
-reportOutputDiv.textContent = report;
-}
-</script>
+    <h1>WF Helper <span style="font-size: 0.6em; vertical-align: super; font-weight: normal;">PRO</span></h1>
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('tasks')">IM Tasks</div>
+        <div class="tab" onclick="showTab('breaks')">Break Schedule</div>
+        <div class="tab" onclick="showTab('report')">Report Generator</div>
+    </div>
+
+    <div class="container" id="tasks">
+        <label for="agents">Enter Agent Names with Break Times (one per line, format: Name, Break Time):</label>
+        <textarea id="agents" rows="6" placeholder="e.g. John Doe, 10:00&#10;Jane Smith, 10:15&#10;Alex Johnson, 09:45"></textarea>
+
+        <label for="taskCount">Enter Total IM Task Volume:</label>
+        <input type="number" id="taskCount" min="1" placeholder="e.g. 12" />
+
+        <label for="shiftSchedule">Select Shift Schedule:</label>
+        <select id="shiftSchedule">
+            <option value="8PM">8:00 PM</option>
+            <option value="10PM">10:00 PM</option>
+            <option value="10:30PM">10:30 PM</option>
+            <option value="3AM">3:00 AM</option>
+            <option value="5AM">5:00 AM</option>
+        </select>
+
+        <button onclick="generateSkills()">Generate IM Assignment</button>
+
+        <div class="results" id="results"></div>
+    </div>
+
+    <div class="container" id="breaks" style="display: none;">
+        <label for="breakType">Break Type:</label>
+        <select id="breakType" onchange="updateBreakType()">
+            <option value="Break">Break</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Training">Training</option>
+            <option value="Meeting">Meeting</option>
+            <option value="Coaching">Coaching</option>
+        </select>
+
+        <label for="breakAgent">Agent Name(s):</label>
+        <input type="text" id="breakAgent" placeholder="Enter agent name(s), separated by commas for Training, Meeting, Coaching" />
+
+        <label for="breakTime">Break Time:</label>
+        <input type="time" id="breakTime" />
+
+        <!-- Hidden input to store the ID of the break being edited -->
+        <input type="hidden" id="editingBreakId" value="" />
+
+        <button id="saveBreakButton" onclick="saveBreakSchedule()">Add Break Schedule</button>
+
+        <div class="break-schedule" id="breakSchedule"></div>
+    </div>
+
+    <div class="container" id="report" style="display: none;">
+        <div class="report-input-grid">
+            <div class="form-group-inline">
+                <label for="imQueueTasks">IM Queue Waiting:</label>
+                <input type="number" id="imQueueTasks" min="0" value="0" />
+            </div>
+
+            <div class="form-group-inline">
+                <label for="imAgentsWorking">IM Agents Working:</label>
+                <input type="number" id="imAgentsWorking" min="0" value="0" />
+            </div>
+
+            <div class="form-group-inline">
+                <label for="ticketQueueTasks">Ticket Queue Waiting:</label>
+                <input type="number" id="ticketQueueTasks" min="0" value="0" />
+            </div>
+
+            <div class="form-group-inline">
+                <label for="ticketAgentsWorking">Ticket Agents Working:</label>
+                <input type="number" id="ticketAgentsWorking" min="0" value="0" />
+            </div>
+
+            <div class="form-group-inline">
+                <label for="agentsOnBreak">Agents on Break:</label>
+                <input type="number" id="agentsOnBreak" min="0" value="0" />
+            </div>
+
+            <div class="form-group-inline">
+                <label for="agentsOnLunch">Agents on Lunch:</label>
+                <input type="number" id="agentsOnLunch" min="0" value="0" />
+            </div>
+
+            <div class="form-group-inline">
+                <label for="agentsOnCoaching">Agents on Coaching:</label>
+                <input type="number" id="agentsOnCoaching" min="0" value="0" />
+            </div>
+
+            <div class="form-group-inline">
+                <label for="agentsOnMeeting">Agents on Meeting:</label>
+                <input type="number" id="agentsOnMeeting" min="0" value="0" />
+            </div>
+
+            <div class="form-group-inline">
+                <label for="agentsOnTraining">Agents on Training:</label>
+                <input type="number" id="agentsOnTraining" min="0" value="0" />
+            </div>
+        </div>
+
+        <button onclick="generateReport()">Generate Report</button>
+
+        <div class="report-output" id="reportOutput"></div>
+    </div>
+
+    <audio id="breakSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        let breakCounter = 0;
+        let generatedScheduleSections = [];
+        const shiftOrder = {
+            "8PM": 1, "10PM": 2, "10:30PM": 3, "3AM": 4, "5AM": 5
+        };
+
+        // --- Toast Notification System ---
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            let icon = '';
+            if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
+            else if (type === 'error') icon = '<i class="fas fa-times-circle"></i>';
+            else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
+
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            toastContainer.appendChild(toast);
+
+            // Trigger reflow to restart animation
+            void toast.offsetWidth;
+
+            toast.style.opacity = 1;
+            toast.style.transform = 'translateY(0)';
+
+            setTimeout(() => {
+                toast.style.opacity = 0;
+                toast.style.transform = 'translateY(20px)';
+                toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+            }, 3000); // Toast disappears after 3 seconds
+        }
+
+        // --- Tab Switching with Animation ---
+        function showTab(tabId) {
+            const containers = ['tasks', 'breaks', 'report'];
+            containers.forEach(id => {
+                const container = document.getElementById(id);
+                if (id === tabId) {
+                    container.style.display = 'block';
+                    setTimeout(() => {
+                        container.style.opacity = 1;
+                        container.style.transform = 'translateY(0)';
+                    }, 50); // Small delay for animation to kick in
+                } else {
+                    container.style.opacity = 0;
+                    container.style.transform = 'translateY(20px)';
+                    container.addEventListener('transitionend', function handler() {
+                        if (container.style.opacity === '0') {
+                            container.style.display = 'none';
+                        }
+                        container.removeEventListener('transitionend', handler);
+                    }, { once: true });
+                }
+            });
+
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            Array.from(tabs).find(t => t.textContent.toLowerCase().includes(tabId === 'tasks' ? 'im tasks' : tabId === 'breaks' ? 'break schedule' : 'report generator')).classList.add('active');
+        }
+
+        // Initialize first tab with animation
+        document.addEventListener('DOMContentLoaded', () => {
+            showTab('tasks'); // Ensure initial tab is shown with animation
+        });
+
+        function updateBreakType() {
+            const breakType = document.getElementById("breakType").value;
+            const breakAgentInput = document.getElementById("breakAgent");
+            if (breakType === "Training" || breakType === "Meeting" || breakType === "Coaching") {
+                breakAgentInput.placeholder = `Enter agent name(s) for ${breakType}, separated by commas`;
+            } else {
+                breakAgentInput.placeholder = "Enter agent name(s)";
+            }
+        }
+
+        function generateSkills() {
+            const agentsInput = document.getElementById("agents").value.trim();
+            const taskCount = parseInt(document.getElementById("taskCount").value);
+            const shiftSchedule = document.getElementById("shiftSchedule").value;
+            const resultsDiv = document.getElementById("results");
+
+            if (!agentsInput || isNaN(taskCount) || taskCount < 1) {
+                showToast("Please enter valid agent names and task count.", 'error');
+                return;
+            }
+
+            let agents = agentsInput.split("\n").map(line => {
+                const [name, breakTime] = line.split(",").map(item => item.trim());
+                return { name, breakTime };
+            }).filter(agent => agent.name && agent.breakTime);
+
+            const maxTasksPerAgent = 3;
+            const minAgentsRequired = Math.ceil(taskCount / maxTasksPerAgent);
+
+            if (agents.length < minAgentsRequired) {
+                showToast(`You need at least ${minAgentsRequired} agents for ${taskCount} tasks.`, 'error');
+                return;
+            }
+
+            agents.sort((a, b) => b.breakTime.localeCompare(a.breakTime));
+
+            const selectedAgents = agents.slice(0, minAgentsRequired);
+            const taskDistribution = {};
+            const agentsForExpectations = [];
+
+            for (let i = 0; i < selectedAgents.length; i++) {
+                const agent = selectedAgents[i].name;
+                taskDistribution[agent] = "will make transfer to IM Queue";
+                agentsForExpectations.push(agent);
+            }
+
+            const scheduleSection = document.createElement("div");
+            scheduleSection.className = "schedule-section";
+            const sectionId = `schedule-${Date.now()}`;
+            scheduleSection.id = sectionId;
+            scheduleSection.setAttribute('data-shift-schedule', shiftSchedule);
+
+            const scheduleHeader = document.createElement("div");
+            scheduleHeader.className = "schedule-header";
+            scheduleHeader.innerHTML = `
+                <span>${shiftSchedule} Shift - IM Assignment & Expectations</span>
+                <i class="fas fa-chevron-down"></i>
+            `;
+            scheduleHeader.onclick = () => toggleCollapse(sectionId);
+
+            const scheduleContent = document.createElement("div");
+            scheduleContent.className = "schedule-content";
+            scheduleContent.id = `${sectionId}-content`;
+
+            if (agentsForExpectations.length > 0) {
+                const expectationsMessageDiv = document.createElement("div");
+                expectationsMessageDiv.className = "expectations-message";
+                const agentsList = agentsForExpectations.map(agent => `<li>${agent}</li>`).join('');
+                expectationsMessageDiv.innerHTML = `<strong>Setting Expectations for ${shiftSchedule} Shift:</strong> The agents listed below will handle IM tasks in sequence if a transfer to the IM queue is needed, with the order arranged according to their break schedules: <ul>${agentsList}</ul>`;
+                scheduleContent.appendChild(expectationsMessageDiv);
+            }
+
+            const imAssignmentHeader = document.createElement("h3");
+            imAssignmentHeader.textContent = "IM Task Assignment";
+            imAssignmentHeader.style.color = 'var(--primary-color)';
+            imAssignmentHeader.style.marginTop = '20px';
+            imAssignmentHeader.style.marginBottom = '15px';
+            scheduleContent.appendChild(imAssignmentHeader);
+
+            for (const [agent, message] of Object.entries(taskDistribution)) {
+                const div = document.createElement("div");
+                div.className = "agent-block";
+                div.innerHTML = `<strong>${agent}</strong> <span>- ${message}</span>
+                    <button class="done-button" onclick="removeTaskAssignment(this)"><i class="fas fa-check"></i></button>`;
+                scheduleContent.appendChild(div);
+            }
+
+            scheduleSection.appendChild(scheduleHeader);
+            scheduleSection.appendChild(scheduleContent);
+
+            generatedScheduleSections.push(scheduleSection);
+            sortAndRenderSchedules();
+            showToast("IM Assignment generated successfully!", 'success');
+        }
+
+        function sortAndRenderSchedules() {
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "";
+
+            generatedScheduleSections.sort((a, b) => {
+                const shiftA = a.getAttribute('data-shift-schedule');
+                const shiftB = b.getAttribute('data-shift-schedule');
+                return (shiftOrder[shiftA] || Infinity) - (shiftOrder[shiftB] || Infinity);
+            });
+
+            generatedScheduleSections.forEach(section => {
+                resultsDiv.appendChild(section);
+            });
+        }
+
+        function toggleCollapse(sectionId) {
+            const header = document.getElementById(sectionId).querySelector('.schedule-header');
+            const content = document.getElementById(`${sectionId}-content`);
+
+            header.classList.toggle('hidden-content');
+            content.classList.toggle('expanded'); // Use 'expanded' class for max-height transition
+        }
+
+        function removeTaskAssignment(button) {
+            const agentBlock = button.parentElement;
+            agentBlock.style.opacity = 0;
+            agentBlock.style.transform = 'translateX(-100%)';
+            agentBlock.addEventListener('transitionend', () => agentBlock.remove(), { once: true });
+            showToast("Task assignment removed.", 'info');
+        }
+
+        function saveBreakSchedule() {
+            const breakType = document.getElementById("breakType").value;
+            const agentNames = document.getElementById("breakAgent").value.trim();
+            const breakTime = document.getElementById("breakTime").value;
+            const editingBreakId = document.getElementById("editingBreakId").value;
+            const breakScheduleDiv = document.getElementById("breakSchedule");
+
+            if (!agentNames || !breakTime) {
+                showToast("Please enter both agent name(s) and break time.", 'error');
+                return;
+            }
+
+            const agents = agentNames.split(',').map(name => name.trim()).filter(name => name);
+
+            if (editingBreakId) {
+                const existingBlock = document.getElementById(editingBreakId);
+                if (existingBlock) {
+                    const agentName = agents[0];
+                    existingBlock.innerHTML = `<strong>${agentName}</strong> <span>- ${breakType} at ${breakTime}</span>
+                        <button class="edit-button" onclick="editBreakSchedule('${existingBlock.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="delete-button" onclick="deleteBreakSchedule(this)"><i class="fas fa-trash-alt"></i></button>`;
+                    existingBlock.setAttribute('data-break-time', breakTime);
+                    existingBlock.setAttribute('data-agent-name', agentName);
+                    existingBlock.setAttribute('data-break-type', breakType);
+                    setBreakAlarm(agentName, breakType, breakTime, existingBlock.id);
+                    showToast("Break schedule updated.", 'success');
+                }
+            } else {
+                agents.forEach(agentName => {
+                    const newId = `break-${breakCounter++}`;
+                    const div = document.createElement("div");
+                    div.className = "agent-block";
+                    div.id = newId;
+                    div.setAttribute('data-break-time', breakTime);
+                    div.setAttribute('data-agent-name', agentName);
+                    div.setAttribute('data-break-type', breakType);
+                    div.innerHTML = `<strong>${agentName}</strong> <span>- ${breakType} at ${breakTime}</span>
+                        <button class="edit-button" onclick="editBreakSchedule('${newId}')"><i class="fas fa-edit"></i></button>
+                        <button class="delete-button" onclick="deleteBreakSchedule(this)"><i class="fas fa-trash-alt"></i></button>`;
+                    breakScheduleDiv.appendChild(div);
+                    setBreakAlarm(agentName, breakType, breakTime, newId);
+                });
+                showToast("Break schedule added.", 'success');
+            }
+
+            document.getElementById("breakAgent").value = '';
+            document.getElementById("breakTime").value = '';
+            document.getElementById("editingBreakId").value = '';
+            document.getElementById("saveBreakButton").textContent = 'Add Break Schedule';
+            document.getElementById("breakType").value = 'Break';
+            updateBreakType();
+        }
+
+        function setBreakAlarm(agentName, breakType, breakTime, blockId) {
+            const now = new Date();
+            const breakDate = new Date();
+            const [hours, minutes] = breakTime.split(':');
+            breakDate.setHours(hours, minutes, 0, 0);
+
+            // If break time is for the next day (e.g., current time is 23:00, break is 01:00)
+            if (breakDate < now && (now.getHours() > breakDate.getHours() || (now.getHours() === breakDate.getHours() && now.getMinutes() > breakDate.getMinutes()))) {
+                breakDate.setDate(breakDate.getDate() + 1);
+            }
+
+            const timeUntilBreak = breakDate - now;
+
+            if (timeUntilBreak > 0) {
+                setTimeout(() => {
+                    const breakSound = document.getElementById("breakSound");
+                    breakSound.play().catch(e => console.error("Error playing sound:", e));
+                    showToast(`${agentName} is on ${breakType.toLowerCase()} now!`, 'info');
+                    const block = document.getElementById(blockId);
+                    if (block) {
+                        block.style.opacity = '0.6';
+                        block.style.borderLeftColor = '#607d8b';
+                        block.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+                        block.querySelector('.edit-button').style.display = 'none'; // Hide edit button
+                        block.querySelector('.delete-button').style.display = 'none'; // Hide delete button
+                    }
+                }, timeUntilBreak);
+            } else {
+                // For breaks in the past, visually mark them as done
+                const block = document.getElementById(blockId);
+                if (block) {
+                    block.style.opacity = '0.6';
+                    block.style.borderLeftColor = '#607d8b';
+                    block.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+                    block.querySelector('.edit-button').style.display = 'none';
+                    block.querySelector('.delete-button').style.display = 'none';
+                }
+            }
+        }
+
+        function editBreakSchedule(blockId) {
+            const blockToEdit = document.getElementById(blockId);
+            if (!blockToEdit) return;
+
+            const agentName = blockToEdit.getAttribute('data-agent-name');
+            const breakType = blockToEdit.getAttribute('data-break-type');
+            const breakTime = blockToEdit.getAttribute('data-break-time');
+
+            document.getElementById("breakAgent").value = agentName;
+            document.getElementById("breakTime").value = breakTime;
+            document.getElementById("breakType").value = breakType;
+            updateBreakType();
+
+            document.getElementById("editingBreakId").value = blockId;
+            document.getElementById("saveBreakButton").textContent = 'Save Break Schedule';
+            showToast(`Editing break for ${agentName}.`, 'info');
+        }
+
+        function deleteBreakSchedule(button) {
+            const breakScheduleDiv = document.getElementById("breakSchedule");
+            const agentBlock = button.parentElement;
+            agentBlock.style.opacity = 0;
+            agentBlock.style.transform = 'translateX(100%)';
+            agentBlock.addEventListener('transitionend', () => agentBlock.remove(), { once: true });
+
+            if (document.getElementById("editingBreakId").value === agentBlock.id) {
+                document.getElementById("breakAgent").value = '';
+                document.getElementById("breakTime").value = '';
+                document.getElementById("editingBreakId").value = '';
+                document.getElementById("saveBreakButton").textContent = 'Add Break Schedule';
+                document.getElementById("breakType").value = 'Break';
+                updateBreakType();
+            }
+            showToast("Break schedule deleted.", 'error');
+        }
+
+        function generateReport() {
+            const imQueueWaiting = parseInt(document.getElementById("imQueueTasks").value);
+            const imAgentsWorking = parseInt(document.getElementById("imAgentsWorking").value);
+            const ticketQueueWaiting = parseInt(document.getElementById("ticketQueueTasks").value);
+            const ticketAgentsWorking = parseInt(document.getElementById("ticketAgentsWorking").value);
+
+            const agentsOnBreak = parseInt(document.getElementById("agentsOnBreak").value);
+            const agentsOnLunch = parseInt(document.getElementById("agentsOnLunch").value);
+            const agentsOnCoaching = parseInt(document.getElementById("agentsOnCoaching").value);
+            const agentsOnMeeting = parseInt(document.getElementById("agentsOnMeeting").value);
+            const agentsOnTraining = parseInt(document.getElementById("agentsOnTraining").value);
+
+            const reportOutputDiv = document.getElementById("reportOutput");
+
+            const now = new Date();
+            const phOffsetMinutes = 8 * 60; // Philippines is UTC+8
+            const localOffsetMinutes = now.getTimezoneOffset(); // Local timezone offset in minutes
+            // Calculate PH time by adding PH offset and subtracting local offset
+            const phTimeDate = new Date(now.getTime() + (phOffsetMinutes * 60 * 1000) + (localOffsetMinutes * 60 * 1000));
+
+            // Calculate US Central Time (UST) which is UTC-6.
+            // PH is UTC+8, so UST is 14 hours behind PH (8 - (-6) = 14)
+            const usTimeDate = new Date(phTimeDate.getTime() - (14 * 60 * 60 * 1000));
+            const usHours = String(usTimeDate.getHours()).padStart(2, '0');
+            const formattedUsTime = `${usHours}:00`;
+
+            const options = { month: 'long', day: 'numeric', year: 'numeric' };
+            const formattedDate = usTimeDate.toLocaleDateString('en-US', options); // Date should be based on US time
+
+            let reportHeader = `As of ${formattedUsTime} (UST) ${formattedDate}.\nUS-BDEE-SPS\n\n`;
+
+            const imAgentText = imAgentsWorking === 1 ? "agent" : "agents";
+            const ticketAgentText = ticketAgentsWorking === 1 ? "agent" : "agents";
+
+            let report = reportHeader;
+            report += `IM Queue: ${imQueueWaiting} waiting with ${imAgentsWorking} ${imAgentText} working.\n`;
+            report += `TK Queue: ${ticketQueueWaiting} waiting with ${ticketAgentsWorking} ${ticketAgentText} working.\n\n`;
+
+            let activityPhrases = [];
+
+            if (agentsOnBreak > 0) {
+                activityPhrases.push(`${agentsOnBreak} ${agentsOnBreak === 1 ? 'agent' : 'agents'} on break`);
+            }
+            if (agentsOnLunch > 0) {
+                activityPhrases.push(`${agentsOnLunch} ${agentsOnLunch === 1 ? 'agent' : 'agents'} on lunch`);
+            }
+            if (agentsOnCoaching > 0) {
+                activityPhrases.push(`${agentsOnCoaching} ${agentsOnCoaching === 1 ? 'agent' : 'agents'} in coaching`);
+            }
+            if (agentsOnMeeting > 0) {
+                activityPhrases.push(`${agentsOnMeeting} ${agentsOnMeeting === 1 ? 'agent' : 'agents'} in a meeting`);
+            }
+            if (agentsOnTraining > 0) {
+                activityPhrases.push(`${agentsOnTraining} ${agentsOnTraining === 1 ? 'agent' : 'agents'} attending training`);
+            }
+
+            if (activityPhrases.length > 0) {
+                let activitySentence = "Right now, we have ";
+
+                if (activityPhrases.length === 1) {
+                    activitySentence += `${activityPhrases[0]}.`;
+                } else if (activityPhrases.length === 2) {
+                    activitySentence += `${activityPhrases[0]} and ${activityPhrases[1]}.`;
+                } else {
+                    const lastPhrase = activityPhrases.pop();
+                    activitySentence += `${activityPhrases.join(', ')}, and ${lastPhrase}.`;
+                }
+                report += `${activitySentence}\n`;
+            }
+
+            reportOutputDiv.textContent = report;
+            showToast("Report generated successfully!", 'success');
+        }
+    </script>
 </body>
 </html>
