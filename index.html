@@ -43,6 +43,7 @@
             align-items: center;
             overflow-x: hidden; /* Prevent horizontal scroll */
             position: relative; /* For toast notifications */
+            box-sizing: border-box; /* Ensure padding is included in element's total width and height */
         }
 
         /* Typography */
@@ -72,6 +73,7 @@
             width: 100%;
             max-width: 700px; /* Slightly wider tabs */
             gap: 10px; /* Space between tabs */
+            box-sizing: border-sizing;
         }
 
         .tab {
@@ -89,6 +91,7 @@
             box-shadow: 0 4px 15px var(--shadow-light);
             position: relative;
             overflow: hidden;
+            box-sizing: border-box;
         }
 
         .tab::before {
@@ -213,6 +216,7 @@
             display: flex; /* Use flexbox for icon and text alignment */
             align-items: center;
             justify-content: center;
+            box-sizing: border-box;
         }
 
         button i {
@@ -252,6 +256,7 @@
         .results {
             margin-top: 40px;
             width: 100%;
+            box-sizing: border-box;
         }
 
         .agent-block {
@@ -268,6 +273,7 @@
             align-items: center;
             justify-content: space-between;
             overflow: hidden; /* For subtle glow effect */
+            box-sizing: border-box;
         }
 
         .agent-block::before {
@@ -299,12 +305,14 @@
             flex-basis: 100%;
             margin-bottom: 8px;
             font-weight: 600;
+            box-sizing: border-box;
         }
 
         .agent-block span {
             flex-grow: 1;
             margin-right: 15px;
             font-size: 1.05em;
+            box-sizing: border-box;
         }
 
         /* Action Buttons within Agent Blocks */
@@ -328,6 +336,7 @@
             width: 40px; /* Larger square buttons */
             height: 40px;
             box-shadow: 0 2px 8px var(--shadow-light);
+            box-sizing: border-box;
         }
 
         .edit-button::before, .delete-button::before, .done-button::before {
@@ -391,6 +400,7 @@
             box-shadow: 0 5px 15px var(--shadow-light);
             line-height: 1.6;
             font-size: 1.05em;
+            box-sizing: border-box;
         }
 
         /* Expectations Message */
@@ -404,6 +414,7 @@
             font-size: 1.1em;
             line-height: 1.6;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
         }
 
         .expectations-message strong {
@@ -435,6 +446,7 @@
             box-shadow: 0 8px 25px var(--shadow-medium);
             background: var(--card-background);
             transition: all 0.3s ease;
+            box-sizing: border-box;
         }
 
         .schedule-section:hover {
@@ -454,6 +466,7 @@
             color: #e0f7fa;
             border-bottom: 1px solid rgba(0, 188, 212, 0.3);
             transition: background 0.3s ease;
+            box-sizing: border-box;
         }
 
         .schedule-header:hover {
@@ -475,6 +488,7 @@
             max-height: 0; /* Start collapsed */
             transition: max-height 0.5s ease-out, padding 0.5s ease-out;
             will-change: max-height; /* Optimize for animation */
+            box-sizing: border-box;
         }
 
         .schedule-content.expanded {
@@ -514,9 +528,21 @@
         .toast.error { border-left-color: var(--danger-color); }
         .toast.info { border-left-color: var(--primary-color); }
 
-        .toast i {
-            font-size: 1.5em;
+        /* New style for break alarm toast */
+        .toast.break-alarm {
+            background-color: rgba(255, 165, 0, 0.9); /* Orange background */
+            color: #1c1c1c; /* Dark text for contrast */
+            border-left-color: #ff4500; /* Red-orange border */
+            box-shadow: 0 8px 25px rgba(255, 165, 0, 0.7); /* Stronger shadow */
+            font-weight: bold;
+            animation: toastIn 0.5s forwards, toastOut 0.5s forwards 8s; /* Stay longer */
+            transform: scale(1.05); /* Slightly larger */
         }
+
+        .toast.break-alarm i {
+            color: #ff4500; /* Icon color matching border */
+        }
+
 
         @keyframes toastIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -536,6 +562,7 @@
             gap: 10px 20px; /* Row gap, column gap */
             align-items: center;
             margin-top: 20px;
+            box-sizing: border-box;
         }
 
         .report-input-grid .form-group-inline {
@@ -558,6 +585,70 @@
             padding: 8px 12px; /* Smaller padding for compactness */
             font-size: 1em;
             justify-self: end; /* Align input to the end of its grid cell (right) */
+        }
+
+        /* Attendance Status Specific Styles */
+        .attendance-entry {
+            background: var(--card-background);
+            padding: 15px; /* Slightly less padding than agent-block */
+            margin-bottom: 10px; /* Slightly less margin */
+            border-left: 5px solid var(--primary-color);
+            border-radius: var(--border-radius-medium);
+            box-shadow: 0 3px 10px var(--shadow-light); /* Lighter shadow */
+            transition: all 0.3s ease;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+
+        .attendance-entry strong {
+            color: var(--primary-color); /* Keep primary color for name */
+            font-size: 1.1em; /* Slightly smaller font for compactness */
+            flex-basis: auto; /* Allow name to take necessary space */
+            margin-right: 10px; /* Space between name and select */
+            flex-grow: 1; /* Allow name to grow */
+        }
+
+        .attendance-entry .actions {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0; /* Prevent actions from shrinking */
+        }
+
+        .attendance-entry .actions button {
+            margin-top: 0;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            max-width: unset;
+            width: auto;
+            box-shadow: none;
+        }
+
+        .attendance-entry select {
+            width: auto; /* Allow select to size based on content */
+            max-width: 180px; /* Limit width for better layout */
+            margin-right: 10px;
+            padding: 8px 12px;
+            font-size: 0.95em;
+            background-position: right 8px center; /* Adjust arrow position */
+            padding-right: 30px; /* Adjust padding for arrow */
+            flex-shrink: 0; /* Prevent select from shrinking */
+        }
+
+        /* New style for break separators */
+        .break-separator {
+            margin-top: 25px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--primary-color);
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* Media Queries for Responsiveness */
@@ -585,7 +676,7 @@
             .tab {
                 margin: 5px 0;
                 padding: 15px 20px;
-                min-width: unset;
+                min-width: unset; /* Allow tabs to shrink more */
             }
 
             button {
@@ -655,6 +746,25 @@
                 max-width: 100%; /* Allow full width on small screens */
                 justify-self: stretch; /* Stretch to fill width */
             }
+
+            /* Attendance Status specific responsiveness */
+            .attendance-entry {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .attendance-entry strong {
+                margin-bottom: 5px;
+            }
+            .attendance-entry .actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            .attendance-entry select {
+                width: 100%; /* Make select full width on small screens */
+                max-width: unset;
+                margin-right: 0;
+                margin-bottom: 10px; /* Add space below select */
+            }
         }
 
         @media (max-width: 480px) {
@@ -698,6 +808,44 @@
                 padding: 20px;
             }
         }
+
+        /* Additional responsiveness for form elements and buttons */
+        /* Ensure inputs and textareas take full width on smaller screens */
+        @media (max-width: 600px) {
+            textarea, input[type="text"], input[type="number"], input[type="time"], select {
+                width: 100%;
+                min-width: unset; /* Remove any min-width constraints */
+            }
+
+            /* Adjust button max-width to be more flexible */
+            button {
+                max-width: 100%;
+                padding: 15px 20px; /* Slightly reduce padding for smaller buttons */
+                font-size: 1.1em; /* Slightly reduce font size */
+            }
+
+            /* Adjust label margins for better spacing on small screens */
+            label {
+                margin-top: 15px;
+                margin-bottom: 5px;
+            }
+
+            /* Ensure the report input grid stacks properly */
+            .report-input-grid {
+                grid-template-columns: 1fr; /* Stack labels and inputs vertically */
+                gap: 10px; /* Increase gap for better readability */
+            }
+
+            .report-input-grid label {
+                text-align: left; /* Align labels to the left when stacked */
+                padding-right: 0; /* Remove padding */
+            }
+
+            .report-input-grid input[type="number"] {
+                max-width: 100%; /* Allow number inputs to take full width */
+                text-align: left; /* Align numbers to the left when stacked */
+            }
+        }
     </style>
 </head>
 <body>
@@ -707,6 +855,8 @@
         <div class="tab active" onclick="showTab('tasks')">IM Tasks</div>
         <div class="tab" onclick="showTab('breaks')">Break Schedule</div>
         <div class="tab" onclick="showTab('report')">Report Generator</div>
+        <div class="tab" onclick="showTab('attendance')">Attendance Status</div>
+        <div class="tab" onclick="showTab('outage')">Outage Report</div>
     </div>
 
     <div class="container" id="tasks">
@@ -733,11 +883,13 @@
     <div class="container" id="breaks" style="display: none;">
         <label for="breakType">Break Type:</label>
         <select id="breakType" onchange="updateBreakType()">
-            <option value="Break">Break</option>
             <option value="Lunch">Lunch</option>
+            <option value="1st Break">1st Break</option>
+            <option value="2nd Break">2nd Break</option>
             <option value="Training">Training</option>
             <option value="Meeting">Meeting</option>
             <option value="Coaching">Coaching</option>
+            <option value="Other">Other</option>
         </select>
 
         <label for="breakAgent">Agent Name(s):</label>
@@ -809,6 +961,75 @@
         <button onclick="copyReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Report</button>
     </div>
 
+    <div class="container" id="attendance" style="display: none;">
+        <label for="attendanceNames">Enter Agent Names (one per line):</label>
+        <textarea id="attendanceNames" rows="6" placeholder="e.g. John Doe&#10;Jane Smith&#10;Alex Johnson"></textarea>
+
+        <label for="attendanceShiftSchedule">Select Shift Schedule:</label>
+        <select id="attendanceShiftSchedule">
+            <option value="8PM">8:00 PM</option>
+            <option value="10PM">10:00 PM</option>
+            <option value="10:30PM">10:30 PM</option>
+            <option value="3AM">3:00 AM</option>
+            <option value="5AM">5:00 AM</option>
+        </select>
+
+        <button onclick="addAttendanceEntries()">Add Attendance Entries</button>
+
+        <div class="results" id="attendanceResults">
+            <!-- Attendance entries will be dynamically added here -->
+        </div>
+    </div>
+
+    <div class="container" id="outage" style="display: none;">
+        <label for="outageAccount">Account:</label>
+        <select id="outageAccount">
+            <option value="ByteDance - USDS">ByteDance - USDS</option>
+            <!-- Add more accounts here if needed -->
+        </select>
+
+        <label for="outageStartTime">Outage start date and time:</label>
+        <input type="datetime-local" id="outageStartTime" />
+
+        <label for="outageAffected">Affected:</label>
+        <textarea id="outageAffected" rows="4" placeholder="e.g. All agents, specific queues, specific regions"></textarea>
+
+        <label for="outageSide">Client side/CNX side:</label>
+        <select id="outageSide">
+            <option value="Client side">Client side</option>
+            <option value="CNX side">CNX side</option>
+        </select>
+
+        <label for="outageAssistCustomer">Can we still assist customer:</label>
+        <select id="outageAssistCustomer">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+
+        <label for="outageB2PAffecting">B2P affecting, yes or no:</label>
+        <select id="outageB2PAffecting">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+
+        <label for="outageDescription">Short description of the outage:</label>
+        <textarea id="outageDescription" rows="4" placeholder="e.g. IM queue is down, login issues"></textarea>
+
+        <label for="outageStatus">Status:</label>
+        <select id="outageStatus">
+            <option value="Ongoing">Ongoing</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Investigating">Investigating</option>
+            <option value="Monitoring">Monitoring</option>
+            <option value="Escalated">Escalated</option>
+        </select>
+
+        <button onclick="generateOutageReport()">Generate Outage Report</button>
+
+        <div class="report-output" id="outageReportOutput"></div>
+        <button onclick="copyOutageReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Outage Report</button>
+    </div>
+
     <audio id="breakSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
 
     <!-- Toast Notification Container -->
@@ -816,10 +1037,32 @@
 
     <script>
         let breakCounter = 0;
-        let generatedScheduleSections = [];
+        let generatedScheduleSections = []; // For IM Tasks
+        let allAttendanceEntries = []; 
+        // New object to store the collapse state of attendance sections
+        let attendanceSectionCollapseStates = {};
+
         const shiftOrder = {
             "8PM": 1, "10PM": 2, "10:30PM": 3, "3AM": 4, "5AM": 5
         };
+
+        // Define a custom order for break types for sorting and display
+        const breakTypeOrder = {
+            "Lunch": 1,
+            "1st Break": 2,
+            "2nd Break": 3,
+            "Training": 4,
+            "Meeting": 5,
+            "Coaching": 6,
+            "Other": 7 // Added "Other" to the order
+        };
+
+        const attendanceStatuses = [
+            "Weather/Calamity", "Health", "NCNS", "Personal reason", "For Attrition/AWOL",
+            "Running late / Advised halfday", "Unapproved Absence", "Family Event",
+            "Childcare/Kincare", "Bereavement", "Family Emergency", "For Validation",
+            "Sick leave", "Transportation", "Unauthorized absence"
+        ];
 
         // --- Toast Notification System ---
         function showToast(message, type = 'info') {
@@ -827,9 +1070,18 @@
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             let icon = '';
-            if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
-            else if (type === 'error') icon = '<i class="fas fa-times-circle"></i>';
-            else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
+            let displayDuration = 3000; // Default duration
+
+            if (type === 'success') {
+                icon = '<i class="fas fa-check-circle"></i>';
+            } else if (type === 'error') {
+                icon = '<i class="fas fa-times-circle"></i>';
+            } else if (type === 'info') {
+                icon = '<i class="fas fa-info-circle"></i>';
+            } else if (type === 'break-alarm') { // Specific handling for break alarms
+                icon = '<i class="fas fa-bell"></i>'; // Bell icon for alarms
+                displayDuration = 8000; // Longer display for alarms
+            }
 
             toast.innerHTML = `${icon} <span>${message}</span>`;
             toastContainer.appendChild(toast);
@@ -840,16 +1092,20 @@
             toast.style.opacity = 1;
             toast.style.transform = 'translateY(0)';
 
+            // Set animation duration dynamically
+            toast.style.animation = `toastIn 0.5s forwards, toastOut 0.5s forwards ${displayDuration / 1000}s`;
+
+
             setTimeout(() => {
                 toast.style.opacity = 0;
                 toast.style.transform = 'translateY(20px)';
                 toast.addEventListener('transitionend', () => toast.remove(), { once: true });
-            }, 3000); // Toast disappears after 3 seconds
+            }, displayDuration);
         }
 
         // --- Tab Switching with Animation ---
         function showTab(tabId) {
-            const containers = ['tasks', 'breaks', 'report'];
+            const containers = ['tasks', 'breaks', 'report', 'attendance', 'outage']; // Added 'outage'
             containers.forEach(id => {
                 const container = document.getElementById(id);
                 if (id === tabId) {
@@ -872,18 +1128,91 @@
 
             const tabs = document.querySelectorAll('.tab');
             tabs.forEach(t => t.classList.remove('active'));
-            Array.from(tabs).find(t => t.textContent.toLowerCase().includes(tabId === 'tasks' ? 'im tasks' : tabId === 'breaks' ? 'break schedule' : 'report generator')).classList.add('active');
+            Array.from(tabs).find(t => t.textContent.toLowerCase().includes(
+                tabId === 'tasks' ? 'im tasks' : 
+                tabId === 'breaks' ? 'break schedule' : 
+                tabId === 'report' ? 'report generator' : 
+                tabId === 'attendance' ? 'attendance status' :
+                'outage report' // For the new tab
+            )).classList.add('active');
         }
 
         // Initialize first tab with animation
         document.addEventListener('DOMContentLoaded', () => {
             showTab('tasks'); // Ensure initial tab is shown with animation
+
+            // --- Add Enter key functionality ---
+
+            // IM Tasks Tab
+            document.getElementById('taskCount').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Prevent default form submission
+                    generateSkills();
+                }
+            });
+            // Also for the textarea, but only if it's not a new line
+            document.getElementById('agents').addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' && !event.shiftKey) { // Allow Shift+Enter for new line
+                    event.preventDefault();
+                    generateSkills();
+                }
+            });
+
+
+            // Break Schedule Tab
+            document.getElementById('breakTime').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    saveBreakSchedule();
+                }
+            });
+            document.getElementById('breakAgent').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    saveBreakSchedule();
+                }
+            });
+
+            // Report Generator Tab
+            // Listen to the last input field in the grid
+            document.getElementById('agentsOnTraining').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    generateReport();
+                }
+            });
+            // Or, listen to any input in the report grid
+            document.querySelectorAll('#report .report-input-grid input[type="number"]').forEach(input => {
+                input.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        generateReport();
+                    }
+                });
+            });
+
+
+            // Attendance Status Tab
+            document.getElementById('attendanceNames').addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' && !event.shiftKey) { // Allow Shift+Enter for new line
+                    event.preventDefault();
+                    addAttendanceEntries();
+                }
+            });
+
+            // Outage Report Tab - Add Enter key functionality for the last input field
+            document.getElementById('outageStatus').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    generateOutageReport();
+                }
+            });
         });
 
         function updateBreakType() {
             const breakType = document.getElementById("breakType").value;
             const breakAgentInput = document.getElementById("breakAgent");
-            if (breakType === "Training" || breakType === "Meeting" || breakType === "Coaching") {
+            if (breakType === "Training" || breakType === "Meeting" || breakType === "Coaching" || breakType === "Other") {
                 breakAgentInput.placeholder = `Enter agent name(s) for ${breakType}, separated by commas`;
             } else {
                 breakAgentInput.placeholder = "Enter agent name(s)";
@@ -990,9 +1319,17 @@
             });
         }
 
+        // Re-using toggleCollapse for both IM Tasks and Attendance Status sections
         function toggleCollapse(sectionId) {
             const header = document.getElementById(sectionId).querySelector('.schedule-header');
             const content = document.getElementById(`${sectionId}-content`);
+
+            // For attendance sections, update the global state
+            if (sectionId.startsWith('attendance-schedule-')) {
+                const shift = sectionId.replace('attendance-schedule-', '');
+                // Toggle the state: if it's currently expanded, it will become collapsed (false), and vice-versa
+                attendanceSectionCollapseStates[shift] = !content.classList.contains('expanded');
+            }
 
             header.classList.toggle('hidden-content');
             content.classList.toggle('expanded'); // Use 'expanded' class for max-height transition
@@ -1008,7 +1345,8 @@
 
         function sortBreakBlocks() {
             const breakScheduleDiv = document.getElementById("breakSchedule");
-            const breakBlocks = Array.from(breakScheduleDiv.children); // Get all current break blocks
+            // Get all current break blocks and filter out separators
+            const breakBlocks = Array.from(breakScheduleDiv.children).filter(child => child.classList.contains('agent-block'));
 
             breakBlocks.sort((a, b) => {
                 const typeA = a.getAttribute('data-break-type');
@@ -1016,17 +1354,34 @@
                 const timeA = a.getAttribute('data-break-time');
                 const timeB = b.getAttribute('data-break-time');
 
-                // Primary sort by break type (alphabetical)
-                if (typeA < typeB) return -1;
-                if (typeA > typeB) return 1;
+                // Primary sort by custom break type order
+                const typeOrderA = breakTypeOrder[typeA] || Infinity;
+                const typeOrderB = breakTypeOrder[typeB] || Infinity;
+
+                if (typeOrderA < typeOrderB) return -1;
+                if (typeOrderA > typeOrderB) return 1;
 
                 // Secondary sort by break time (chronological)
                 return timeA.localeCompare(timeB);
             });
 
-            // Clear the container and re-append sorted blocks
+            // Clear the container and re-append sorted blocks with separators
             breakScheduleDiv.innerHTML = '';
-            breakBlocks.forEach(block => breakScheduleDiv.appendChild(block));
+            let currentBreakType = null;
+
+            breakBlocks.forEach(block => {
+                const blockType = block.getAttribute('data-break-type');
+
+                if (blockType !== currentBreakType) {
+                    // Add a separator if it's a new break type
+                    const separator = document.createElement('div');
+                    separator.className = 'break-separator';
+                    separator.textContent = blockType;
+                    breakScheduleDiv.appendChild(separator);
+                    currentBreakType = blockType;
+                }
+                breakScheduleDiv.appendChild(block);
+            });
         }
 
         function saveBreakSchedule() {
@@ -1081,7 +1436,7 @@
             document.getElementById("breakTime").value = '';
             document.getElementById("editingBreakId").value = '';
             document.getElementById("saveBreakButton").textContent = 'Add Break Schedule';
-            document.getElementById("breakType").value = 'Break';
+            document.getElementById("breakType").value = 'Lunch'; // Default to Lunch after adding
             updateBreakType();
         }
 
@@ -1102,7 +1457,8 @@
                 setTimeout(() => {
                     const breakSound = document.getElementById("breakSound");
                     breakSound.play().catch(e => console.error("Error playing sound:", e));
-                    showToast(`${agentName} is on ${breakType.toLowerCase()} now!`, 'info');
+                    // Use 'break-alarm' type for emphasized notification
+                    showToast(`${agentName} is on ${breakType.toLowerCase()} now!`, 'break-alarm');
                     const block = document.getElementById(blockId);
                     if (block) {
                         block.style.opacity = '0.6';
@@ -1158,7 +1514,7 @@
                 document.getElementById("breakTime").value = '';
                 document.getElementById("editingBreakId").value = '';
                 document.getElementById("saveBreakButton").textContent = 'Add Break Schedule';
-                document.getElementById("breakType").value = 'Break';
+                document.getElementById("breakType").value = 'Lunch'; // Default to Lunch after deletion
                 updateBreakType();
             }
             showToast("Break schedule deleted.", 'error');
@@ -1258,6 +1614,220 @@
                 .catch(err => {
                     console.error('Failed to copy report: ', err);
                     showToast("Failed to copy report. Please try again.", 'error');
+                });
+        }
+
+        // --- Attendance Status Functions ---
+        function addAttendanceEntries() {
+            const attendanceNamesInput = document.getElementById("attendanceNames").value.trim();
+            const shiftSchedule = document.getElementById("attendanceShiftSchedule").value;
+            
+            if (!attendanceNamesInput) {
+                showToast("Please enter agent name(s).", 'error');
+                return;
+            }
+
+            const names = attendanceNamesInput.split("\n").map(name => name.trim()).filter(name => name);
+
+            if (names.length === 0) {
+                showToast("No valid agent names entered.", 'error');
+                return;
+            }
+
+            names.forEach(agentName => {
+                const entryId = `attendance-entry-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                allAttendanceEntries.push({
+                    id: entryId,
+                    name: agentName,
+                    status: attendanceStatuses[0], // Default to first status
+                    shift: shiftSchedule
+                });
+            });
+
+            sortAndRenderAttendanceSections();
+            showToast("Attendance entries added.", 'success');
+            document.getElementById("attendanceNames").value = ''; // Clear textarea after adding
+        }
+
+        function updateAttendanceStatus(entryId, newStatus) {
+            const entryIndex = allAttendanceEntries.findIndex(entry => entry.id === entryId);
+            if (entryIndex !== -1) {
+                allAttendanceEntries[entryIndex].status = newStatus;
+                showToast(`Status for ${allAttendanceEntries[entryIndex].name} updated to ${newStatus}.`, 'info');
+                sortAndRenderAttendanceSections(); // Re-sort to reflect status change in order
+            }
+        }
+
+        function deleteAttendance(entryId) {
+            const entryIndex = allAttendanceEntries.findIndex(entry => entry.id === entryId);
+            if (entryIndex !== -1) {
+                const agentName = allAttendanceEntries[entryIndex].name;
+                allAttendanceEntries.splice(entryIndex, 1); // Remove from array
+                showToast(`Attendance entry for ${agentName} deleted.`, 'error');
+                sortAndRenderAttendanceSections(); // Re-render to ensure correct order
+            }
+        }
+
+        function sortAndRenderAttendanceSections() {
+            const attendanceResultsDiv = document.getElementById("attendanceResults");
+            
+            // 1. Capture current collapse states before clearing
+            const currentSections = attendanceResultsDiv.querySelectorAll('.schedule-section');
+            currentSections.forEach(section => {
+                const shift = section.getAttribute('data-shift-schedule');
+                const content = section.querySelector('.schedule-content');
+                attendanceSectionCollapseStates[shift] = content.classList.contains('expanded');
+            });
+
+            attendanceResultsDiv.innerHTML = ''; // Clear all existing entries
+
+            // Group entries by shift
+            const groupedByShift = allAttendanceEntries.reduce((acc, entry) => {
+                if (!acc[entry.shift]) {
+                    acc[entry.shift] = [];
+                }
+                acc[entry.shift].push(entry);
+                return acc;
+            }, {});
+
+            // Sort shifts based on predefined order
+            const sortedShifts = Object.keys(groupedByShift).sort((a, b) => {
+                return (shiftOrder[a] || Infinity) - (shiftOrder[b] || Infinity);
+            });
+
+            sortedShifts.forEach(shift => {
+                const shiftEntries = groupedByShift[shift];
+
+                // Sort entries within each shift by status and then by name
+                shiftEntries.sort((a, b) => {
+                    // Sort by status first
+                    const statusAIndex = attendanceStatuses.indexOf(a.status);
+                    const statusBIndex = attendanceStatuses.indexOf(b.status);
+                    if (statusAIndex < statusBIndex) return -1;
+                    if (statusAIndex > statusBIndex) return 1;
+                    
+                    // Then by name
+                    return a.name.localeCompare(b.name);
+                });
+
+                const sectionId = `attendance-schedule-${shift}`;
+                const scheduleSection = document.createElement("div");
+                scheduleSection.className = "schedule-section";
+                scheduleSection.id = sectionId;
+                scheduleSection.setAttribute('data-shift-schedule', shift);
+
+                const scheduleHeader = document.createElement("div");
+                scheduleHeader.className = "schedule-header";
+                scheduleHeader.innerHTML = `
+                    <span>${shift} Shift Attendance</span>
+                    <i class="fas fa-chevron-down"></i>
+                `;
+                scheduleHeader.onclick = () => toggleCollapse(sectionId);
+
+                const scheduleContent = document.createElement("div");
+                scheduleContent.className = "schedule-content";
+                scheduleContent.id = `${sectionId}-content`;
+
+                shiftEntries.forEach(entryData => {
+                    const div = document.createElement("div");
+                    div.className = "agent-block attendance-entry";
+                    div.id = entryData.id; // Ensure the ID is set for direct manipulation if needed
+                    div.setAttribute('data-agent-name', entryData.name);
+                    div.setAttribute('data-status', entryData.status);
+                    div.setAttribute('data-shift', entryData.shift);
+
+                    let statusOptionsHtml = attendanceStatuses.map(status =>
+                        `<option value="${status}" ${status === entryData.status ? 'selected' : ''}>${status}</option>`
+                    ).join('');
+
+                    div.innerHTML = `
+                        <strong>${entryData.name}</strong>
+                        <select onchange="updateAttendanceStatus('${entryData.id}', this.value)">
+                            ${statusOptionsHtml}
+                        </select>
+                        <div class="actions">
+                            <button class="delete-button" onclick="deleteAttendance('${entryData.id}')"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    `;
+                    scheduleContent.appendChild(div);
+                });
+
+                scheduleSection.appendChild(scheduleHeader);
+                scheduleSection.appendChild(scheduleContent);
+                attendanceResultsDiv.appendChild(scheduleSection);
+
+                // 2. Apply stored collapse states after rendering
+                // Check if the state was explicitly true (expanded)
+                if (attendanceSectionCollapseStates[shift] === true) {
+                    scheduleHeader.classList.add('hidden-content'); // Add class to header to rotate icon
+                    scheduleContent.classList.add('expanded'); // Expand content
+                } else if (attendanceSectionCollapseStates[shift] === false) {
+                    // If it was explicitly false (collapsed), ensure it stays collapsed
+                    scheduleHeader.classList.remove('hidden-content');
+                    scheduleContent.classList.remove('expanded');
+                }
+                // If state was undefined (first render), it remains collapsed by default CSS
+            });
+        }
+
+        // --- Outage Report Functions ---
+        function generateOutageReport() {
+            const account = document.getElementById('outageAccount').value;
+            const startTime = document.getElementById('outageStartTime').value;
+            const affected = document.getElementById('outageAffected').value.trim();
+            const side = document.getElementById('outageSide').value;
+            const assistCustomer = document.getElementById('outageAssistCustomer').value;
+            const b2pAffecting = document.getElementById('outageB2PAffecting').value;
+            const description = document.getElementById('outageDescription').value.trim();
+            const status = document.getElementById('outageStatus').value;
+
+            if (!account || !startTime || !affected || !side || !assistCustomer || !b2pAffecting || !description || !status) {
+                showToast("Please fill in all fields for the Outage Report.", 'error');
+                return;
+            }
+
+            // Format the start time for readability
+            let formattedStartTime = '';
+            try {
+                const dateObj = new Date(startTime);
+                formattedStartTime = dateObj.toLocaleString('en-US', { 
+                    year: 'numeric', month: 'long', day: 'numeric', 
+                    hour: '2-digit', minute: '2-digit', second: '2-digit', 
+                    hour12: true 
+                });
+            } catch (e) {
+                formattedStartTime = startTime; // Fallback if date parsing fails
+            }
+
+            const reportText = `
+Account: ${account}
+Outage start date and time: ${formattedStartTime}
+Affected: ${affected}
+Client side/CNX side: ${side}
+Can we still assist customer: ${assistCustomer}
+B2P affecting, yes or no: ${b2pAffecting}
+Short description of the outage: ${description}
+Status: ${status}
+            `.trim();
+
+            document.getElementById('outageReportOutput').innerText = reportText;
+            showToast("Outage Report generated successfully!", 'success');
+        }
+
+        function copyOutageReport() {
+            const reportText = document.getElementById("outageReportOutput").innerText;
+            if (reportText.trim() === "") {
+                showToast("No Outage Report to copy. Generate a report first.", 'info');
+                return;
+            }
+
+            navigator.clipboard.writeText(reportText)
+                .then(() => {
+                    showToast("Outage Report copied to clipboard!", 'success');
+                })
+                .catch(err => {
+                    console.error('Failed to copy outage report: ', err);
+                    showToast("Failed to copy outage report. Please try again.", 'error');
                 });
         }
     </script>
