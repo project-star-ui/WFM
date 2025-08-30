@@ -210,6 +210,13 @@
             overflow: hidden;
             z-index: 1;
             letter-spacing: 0.5px;
+            display: flex; /* Use flexbox for icon and text alignment */
+            align-items: center;
+            justify-content: center;
+        }
+
+        button i {
+            margin-right: 8px; /* Space between icon and text */
         }
 
         button::before {
@@ -798,6 +805,8 @@
         <button onclick="generateReport()">Generate Report</button>
 
         <div class="report-output" id="reportOutput"></div>
+        <!-- New Copy Button -->
+        <button onclick="copyReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Report</button>
     </div>
 
     <audio id="breakSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
@@ -1188,7 +1197,8 @@
             const options = { month: 'long', day: 'numeric', year: 'numeric' };
             const formattedDate = usTimeDate.toLocaleDateString('en-US', options); // Date should be based on US time
 
-            let reportHeader = `As of ${formattedUsTime} (UST) ${formattedDate}.\nUS-BDEE-SPS\n\n`;
+            // Make the header bold
+            let reportHeader = `<strong>As of ${formattedUsTime} (UST) ${formattedDate}.\nUS-BDEE-SPS</strong>\n\n`;
 
             const imAgentText = imAgentsWorking === 1 ? "agent" : "agents";
             const ticketAgentText = ticketAgentsWorking === 1 ? "agent" : "agents";
@@ -1229,8 +1239,26 @@
                 report += `${activitySentence}\n`;
             }
 
-            reportOutputDiv.textContent = report;
+            reportOutputDiv.innerHTML = report; // Use innerHTML to render bold tag
             showToast("Report generated successfully!", 'success');
+        }
+
+        // New function to copy the report
+        function copyReport() {
+            const reportText = document.getElementById("reportOutput").innerText; // Use innerText to get plain text
+            if (reportText.trim() === "") {
+                showToast("No report to copy. Generate a report first.", 'info');
+                return;
+            }
+
+            navigator.clipboard.writeText(reportText)
+                .then(() => {
+                    showToast("Report copied to clipboard!", 'success');
+                })
+                .catch(err => {
+                    console.error('Failed to copy report: ', err);
+                    showToast("Failed to copy report. Please try again.", 'error');
+                });
         }
     </script>
 </body>
