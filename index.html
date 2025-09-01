@@ -955,6 +955,10 @@
         </div>
 
         <button onclick="generateReport()">Generate Report</button>
+        <button onclick="generateUSTBacklog()">Generate UST Backlog</button>
+        <button onclick="generatePHBacklog()">Generate PH Backlog</button>
+        <button onclick="generateReminder()">Generate Reminder</button>
+
 
         <div class="report-output" id="reportOutput"></div>
         <!-- New Copy Button -->
@@ -1829,6 +1833,72 @@ Status: ${status}
                     console.error('Failed to copy outage report: ', err);
                     showToast("Failed to copy outage report. Please try again.", 'error');
                 });
+        }
+
+        // --- New Backlog Report Functions ---
+        function generateUSTBacklog() {
+            const reportOutputDiv = document.getElementById("reportOutput");
+            const now = new Date();
+
+            // Calculate US Central Time (UST) which is UTC-6.
+            // Get UTC time, then add/subtract offset for UST
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            let ustTimeDate = new Date(utc + (-6 * 3600000)); // UTC-6
+
+            // Subtract 1 hour from US Central Time
+            ustTimeDate.setHours(ustTimeDate.getHours() - 1);
+
+            const ustHours = String(ustTimeDate.getHours()).padStart(2, '0');
+            const formattedUstTime = `${ustHours}:00`; // Changed to formattedUstTime for consistency
+
+            const options = { month: 'long', day: 'numeric', year: 'numeric' };
+            const formattedDate = ustTimeDate.toLocaleDateString('en-US', options);
+
+            const report = `Backlogs as of ${formattedUstTime} (UST) | ${formattedDate}.
+
+We have already advised the agents to prioritize open, assigned, and reviewing pending and on-hold tickets that have been aging for more than five days.`;
+            
+            reportOutputDiv.innerText = report;
+            showToast("UST Backlog Report generated!", 'success');
+        }
+
+        function generatePHBacklog() {
+            const reportOutputDiv = document.getElementById("reportOutput");
+            const now = new Date();
+
+            // Calculate Philippine Time (PH) which is UTC+8.
+            // Get UTC time, then add/subtract offset for PH
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const phTimeDate = new Date(utc + (8 * 3600000)); // UTC+8
+
+            const phHours = phTimeDate.getHours();
+            const ampm = phHours >= 12 ? 'PM' : 'AM';
+            const displayHour = phHours % 12 === 0 ? 12 : phHours % 12; // Convert 0 to 12 for 12 AM/PM
+            const formattedPhHour = `${displayHour}${ampm}`;
+
+            const options = { month: 'long', day: 'numeric', year: 'numeric' };
+            const formattedDate = phTimeDate.toLocaleDateString('en-US', options);
+
+            const report = `Backlogs as of ${formattedPhHour} | ${formattedDate}.`;
+            
+            reportOutputDiv.innerText = report;
+            showToast("PH Backlog Report generated!", 'success');
+        }
+
+        function generateReminder() {
+            const reportOutputDiv = document.getElementById("reportOutput");
+            const reminderText = `Hi Team,
+
+Kindly check all Pending, Onhold, Assigned, and Open tickets. Please prioritize those that have been Pending for more than 5 days.
+
+OPEN
+
+ONHOLD
+
+ASSIGNED`;
+            
+            reportOutputDiv.innerText = reminderText;
+            showToast("Reminder generated!", 'success');
         }
     </script>
 </body>
