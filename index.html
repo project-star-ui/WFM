@@ -31,6 +31,10 @@
         }
 
         /* Global Styles */
+        *, *::before, *::after {
+            box-sizing: border-box; /* Ensure consistent box model */
+        }
+
         body {
             font-family: "Segoe UI", "Arial", sans-serif;
             background: linear-gradient(135deg, var(--background-gradient-start), var(--background-gradient-mid), var(--background-gradient-end));
@@ -43,7 +47,6 @@
             align-items: center;
             overflow-x: hidden; /* Prevent horizontal scroll */
             position: relative; /* For toast notifications */
-            box-sizing: border-box; /* Ensure padding is included in element's total width and height */
         }
 
         /* Typography */
@@ -73,7 +76,6 @@
             width: 100%;
             max-width: 700px; /* Slightly wider tabs */
             gap: 10px; /* Space between tabs */
-            box-sizing: border-sizing;
         }
 
         .tab {
@@ -91,7 +93,6 @@
             box-shadow: 0 4px 15px var(--shadow-light);
             position: relative;
             overflow: hidden;
-            box-sizing: border-box;
         }
 
         .tab::before {
@@ -135,7 +136,6 @@
             width: 100%;
             transition: transform 0.5s ease-out, opacity 0.5s ease-out;
             margin: 0 auto 30px auto; /* Add bottom margin */
-            box-sizing: border-box;
             border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
         }
 
@@ -158,7 +158,6 @@
             background: var(--input-background);
             color: var(--text-color);
             transition: all 0.3s ease;
-            box-sizing: border-box;
             box-shadow: inset 0 1px 5px var(--shadow-light);
         }
 
@@ -216,7 +215,6 @@
             display: flex; /* Use flexbox for icon and text alignment */
             align-items: center;
             justify-content: center;
-            box-sizing: border-box;
         }
 
         button i {
@@ -256,7 +254,6 @@
         .results {
             margin-top: 40px;
             width: 100%;
-            box-sizing: border-box;
         }
 
         .agent-block {
@@ -273,7 +270,6 @@
             align-items: center;
             justify-content: space-between;
             overflow: hidden; /* For subtle glow effect */
-            box-sizing: border-box;
         }
 
         .agent-block::before {
@@ -305,14 +301,12 @@
             flex-basis: 100%;
             margin-bottom: 8px;
             font-weight: 600;
-            box-sizing: border-box;
         }
 
         .agent-block span {
             flex-grow: 1;
             margin-right: 15px;
             font-size: 1.05em;
-            box-sizing: border-box;
         }
 
         /* Action Buttons within Agent Blocks */
@@ -336,7 +330,6 @@
             width: 40px; /* Larger square buttons */
             height: 40px;
             box-shadow: 0 2px 8px var(--shadow-light);
-            box-sizing: border-box;
         }
 
         .edit-button::before, .delete-button::before, .done-button::before {
@@ -400,7 +393,6 @@
             box-shadow: 0 5px 15px var(--shadow-light);
             line-height: 1.6;
             font-size: 1.05em;
-            box-sizing: border-box;
         }
 
         /* Expectations Message */
@@ -414,7 +406,6 @@
             font-size: 1.1em;
             line-height: 1.6;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-            box-sizing: border-box;
         }
 
         .expectations-message strong {
@@ -446,7 +437,6 @@
             box-shadow: 0 8px 25px var(--shadow-medium);
             background: var(--card-background);
             transition: all 0.3s ease;
-            box-sizing: border-box;
         }
 
         .schedule-section:hover {
@@ -466,7 +456,6 @@
             color: #e0f7fa;
             border-bottom: 1px solid rgba(0, 188, 212, 0.3);
             transition: background 0.3s ease;
-            box-sizing: border-box;
         }
 
         .schedule-header:hover {
@@ -488,7 +477,6 @@
             max-height: 0; /* Start collapsed */
             transition: max-height 0.5s ease-out, padding 0.5s ease-out;
             will-change: max-height; /* Optimize for animation */
-            box-sizing: border-box;
         }
 
         .schedule-content.expanded {
@@ -562,7 +550,6 @@
             gap: 10px 20px; /* Row gap, column gap */
             align-items: center;
             margin-top: 20px;
-            box-sizing: border-box;
         }
 
         .report-input-grid .form-group-inline {
@@ -600,7 +587,6 @@
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            box-sizing: border-box;
         }
 
         .attendance-entry strong {
@@ -682,7 +668,7 @@
             button {
                 font-size: 1.2em;
                 padding: 15px 25px;
-                max-width: 100%;
+                max-width: 100%; /* Ensure buttons can take full width */
             }
 
             .agent-block {
@@ -857,6 +843,7 @@
         <div class="tab" onclick="showTab('report')">Report Generator</div>
         <div class="tab" onclick="showTab('attendance')">Attendance Status</div>
         <div class="tab" onclick="showTab('outage')">Outage Report</div>
+        <div class="tab" onclick="showTab('intradayTraffic')">Intraday Traffic</div>
     </div>
 
     <div class="container" id="tasks">
@@ -896,7 +883,8 @@
         <input type="text" id="breakAgent" placeholder="Enter agent name(s), separated by commas for Training, Meeting, Coaching" />
 
         <label for="breakTime">Break Time:</label>
-        <input type="time" id="breakTime" />
+        <!-- Changed type to text and added placeholder/pattern for 24-hour format -->
+        <input type="text" id="breakTime" placeholder="HH:MM (e.g., 14:30)" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" maxlength="5" oninput="formatBreakTime(this)" />
 
         <!-- Hidden input to store the ID of the break being edited -->
         <input type="hidden" id="editingBreakId" value="" />
@@ -958,6 +946,7 @@
         <button onclick="generateUSTBacklog()">Generate UST Backlog</button>
         <button onclick="generatePHBacklog()">Generate PH Backlog</button>
         <button onclick="generateReminder()">Generate Reminder</button>
+        <button onclick="generateHandlingCO()">Generate Handling CO</button>
 
 
         <div class="report-output" id="reportOutput"></div>
@@ -1034,6 +1023,25 @@
         <button onclick="copyOutageReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Outage Report</button>
     </div>
 
+    <div class="container" id="intradayTraffic" style="display: none;">
+        <label for="imInbound">IM Inbound:</label>
+        <input type="number" id="imInbound" min="0" value="0" />
+
+        <label for="imForecast">IM Forecast:</label>
+        <input type="number" id="imForecast" min="0" value="0" />
+
+        <label for="ticketInbound">Ticket Inbound:</label>
+        <input type="number" id="ticketInbound" min="0" value="0" />
+
+        <label for="ticketForecast">Ticket Forecast:</label>
+        <input type="number" id="ticketForecast" min="0" value="0" />
+
+        <button onclick="generateIntradayTrafficReport()">Generate Intraday Traffic Report</button>
+
+        <div class="report-output" id="intradayTrafficReportOutput"></div>
+        <button onclick="copyIntradayTrafficReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Intraday Traffic Report</button>
+    </div>
+
     <audio id="breakSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
 
     <!-- Toast Notification Container -->
@@ -1042,7 +1050,7 @@
     <script>
         let breakCounter = 0;
         let generatedScheduleSections = []; // For IM Tasks
-        let allAttendanceEntries = []; 
+        let allAttendanceEntries = [];
         // New object to store the collapse state of attendance sections
         let attendanceSectionCollapseStates = {};
 
@@ -1062,6 +1070,7 @@
         };
 
         const attendanceStatuses = [
+            "Present", // Added "Present" status
             "Weather/Calamity", "Health", "NCNS", "Personal reason", "For Attrition/AWOL",
             "Running late / Advised halfday", "Unapproved Absence", "Family Event",
             "Childcare/Kincare", "Bereavement", "Family Emergency", "For Validation",
@@ -1109,7 +1118,7 @@
 
         // --- Tab Switching with Animation ---
         function showTab(tabId) {
-            const containers = ['tasks', 'breaks', 'report', 'attendance', 'outage']; // Added 'outage'
+            const containers = ['tasks', 'breaks', 'report', 'attendance', 'outage', 'intradayTraffic']; // Added 'intradayTraffic'
             containers.forEach(id => {
                 const container = document.getElementById(id);
                 if (id === tabId) {
@@ -1133,11 +1142,12 @@
             const tabs = document.querySelectorAll('.tab');
             tabs.forEach(t => t.classList.remove('active'));
             Array.from(tabs).find(t => t.textContent.toLowerCase().includes(
-                tabId === 'tasks' ? 'im tasks' : 
-                tabId === 'breaks' ? 'break schedule' : 
-                tabId === 'report' ? 'report generator' : 
+                tabId === 'tasks' ? 'im tasks' :
+                tabId === 'breaks' ? 'break schedule' :
+                tabId === 'report' ? 'report generator' :
                 tabId === 'attendance' ? 'attendance status' :
-                'outage report' // For the new tab
+                tabId === 'outage' ? 'outage report' :
+                'intraday traffic' // For the new tab
             )).classList.add('active');
         }
 
@@ -1211,7 +1221,24 @@
                     generateOutageReport();
                 }
             });
+
+            // Intraday Traffic Tab - Add Enter key functionality for the last input field
+            document.getElementById('ticketForecast').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    generateIntradayTrafficReport();
+                }
+            });
         });
+
+        // Function to automatically format break time input
+        function formatBreakTime(input) {
+            let value = input.value.replace(/\D/g, ''); // Remove non-digits
+            if (value.length > 2) {
+                value = value.substring(0, 2) + ':' + value.substring(2, 4);
+            }
+            input.value = value;
+        }
 
         function updateBreakType() {
             const breakType = document.getElementById("breakType").value;
@@ -1355,8 +1382,8 @@
             breakBlocks.sort((a, b) => {
                 const typeA = a.getAttribute('data-break-type');
                 const typeB = b.getAttribute('data-break-type');
-                const timeA = a.getAttribute('data-break-time');
-                const timeB = b.getAttribute('data-break-time');
+                const timeA = a.getAttribute('data-break-time-raw'); // Use raw time for sorting
+                const timeB = b.getAttribute('data-break-time-raw'); // Use raw time for sorting
 
                 // Primary sort by custom break type order
                 const typeOrderA = breakTypeOrder[typeA] || Infinity;
@@ -1388,31 +1415,59 @@
             });
         }
 
+        function formatTime(time24hr) {
+            // This function now explicitly formats to HH:MM (24-hour)
+            const [hours, minutes] = time24hr.split(':');
+            let formattedHours = parseInt(hours);
+            let ampm = '';
+
+            if (formattedHours >= 12) {
+                ampm = 'PM';
+                if (formattedHours > 12) {
+                    formattedHours -= 12;
+                }
+            } else {
+                ampm = 'AM';
+                if (formattedHours === 0) {
+                    formattedHours = 12;
+                }
+            }
+            return `${String(formattedHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')} ${ampm}`;
+        }
+
         function saveBreakSchedule() {
             const breakType = document.getElementById("breakType").value;
             const agentNames = document.getElementById("breakAgent").value.trim();
-            const breakTime = document.getElementById("breakTime").value;
+            const breakTimeRaw = document.getElementById("breakTime").value; // Raw 24hr time
             const editingBreakId = document.getElementById("editingBreakId").value;
             const breakScheduleDiv = document.getElementById("breakSchedule");
 
-            if (!agentNames || !breakTime) {
+            if (!agentNames || !breakTimeRaw) {
                 showToast("Please enter both agent name(s) and break time.", 'error');
                 return;
             }
 
+            // Validate 24-hour time format (HH:MM)
+            const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+            if (!timeRegex.test(breakTimeRaw)) {
+                showToast("Please enter break time in 24-hour format (HH:MM), e.g., 14:30.", 'error');
+                return;
+            }
+
             const agents = agentNames.split(',').map(name => name.trim()).filter(name => name);
+            const breakTimeFormatted = formatTime(breakTimeRaw); // Formatted for display (will be AM/PM)
 
             if (editingBreakId) {
                 const existingBlock = document.getElementById(editingBreakId);
                 if (existingBlock) {
                     const agentName = agents[0]; // Assuming only one agent for edit, or first if multiple
-                    existingBlock.innerHTML = `<strong>${agentName}</strong> <span>- ${breakType} at ${breakTime}</span>
+                    existingBlock.innerHTML = `<strong>${agentName}</strong> <span>- ${breakType} at ${breakTimeFormatted}</span>
                         <button class="edit-button" onclick="editBreakSchedule('${existingBlock.id}')"><i class="fas fa-edit"></i></button>
                         <button class="delete-button" onclick="deleteBreakSchedule(this)"><i class="fas fa-trash-alt"></i></button>`;
-                    existingBlock.setAttribute('data-break-time', breakTime);
+                    existingBlock.setAttribute('data-break-time-raw', breakTimeRaw); // Store raw time for sorting
                     existingBlock.setAttribute('data-agent-name', agentName);
                     existingBlock.setAttribute('data-break-type', breakType);
-                    setBreakAlarm(agentName, breakType, breakTime, existingBlock.id);
+                    setBreakAlarm(agentName, breakType, breakTimeRaw, existingBlock.id);
                     showToast("Break schedule updated.", 'success');
                 }
             } else {
@@ -1421,14 +1476,14 @@
                     const div = document.createElement("div");
                     div.className = "agent-block";
                     div.id = newId;
-                    div.setAttribute('data-break-time', breakTime);
+                    div.setAttribute('data-break-time-raw', breakTimeRaw); // Store raw time for sorting
                     div.setAttribute('data-agent-name', agentName);
                     div.setAttribute('data-break-type', breakType);
-                    div.innerHTML = `<strong>${agentName}</strong> <span>- ${breakType} at ${breakTime}</span>
+                    div.innerHTML = `<strong>${agentName}</strong> <span>- ${breakType} at ${breakTimeFormatted}</span>
                         <button class="edit-button" onclick="editBreakSchedule('${newId}')"><i class="fas fa-edit"></i></button>
                         <button class="delete-button" onclick="deleteBreakSchedule(this)"><i class="fas fa-trash-alt"></i></button>`;
                     breakScheduleDiv.appendChild(div);
-                    setBreakAlarm(agentName, breakType, breakTime, newId);
+                    setBreakAlarm(agentName, breakType, breakTimeRaw, newId);
                 });
                 showToast("Break schedule added.", 'success');
             }
@@ -1448,7 +1503,7 @@
             const now = new Date();
             const breakDate = new Date();
             const [hours, minutes] = breakTime.split(':');
-            breakDate.setHours(hours, minutes, 0, 0);
+            breakDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
             // If break time is for the next day (e.g., current time is 23:00, break is 01:00)
             if (breakDate < now && (now.getHours() > breakDate.getHours() || (now.getHours() === breakDate.getHours() && now.getMinutes() > breakDate.getMinutes()))) {
@@ -1491,10 +1546,10 @@
 
             const agentName = blockToEdit.getAttribute('data-agent-name');
             const breakType = blockToEdit.getAttribute('data-break-type');
-            const breakTime = blockToEdit.getAttribute('data-break-time');
+            const breakTimeRaw = blockToEdit.getAttribute('data-break-time-raw'); // Get raw time for input field
 
             document.getElementById("breakAgent").value = agentName;
-            document.getElementById("breakTime").value = breakTime;
+            document.getElementById("breakTime").value = breakTimeRaw; // Populate with 24-hour raw time
             document.getElementById("breakType").value = breakType;
             updateBreakType();
 
@@ -1625,7 +1680,7 @@
         function addAttendanceEntries() {
             const attendanceNamesInput = document.getElementById("attendanceNames").value.trim();
             const shiftSchedule = document.getElementById("attendanceShiftSchedule").value;
-            
+
             if (!attendanceNamesInput) {
                 showToast("Please enter agent name(s).", 'error');
                 return;
@@ -1643,7 +1698,7 @@
                 allAttendanceEntries.push({
                     id: entryId,
                     name: agentName,
-                    status: attendanceStatuses[0], // Default to first status
+                    status: attendanceStatuses[0], // Default to first status ("Present")
                     shift: shiftSchedule
                 });
             });
@@ -1674,7 +1729,7 @@
 
         function sortAndRenderAttendanceSections() {
             const attendanceResultsDiv = document.getElementById("attendanceResults");
-            
+
             // 1. Capture current collapse states before clearing
             const currentSections = attendanceResultsDiv.querySelectorAll('.schedule-section');
             currentSections.forEach(section => {
@@ -1709,7 +1764,7 @@
                     const statusBIndex = attendanceStatuses.indexOf(b.status);
                     if (statusAIndex < statusBIndex) return -1;
                     if (statusAIndex > statusBIndex) return 1;
-                    
+
                     // Then by name
                     return a.name.localeCompare(b.name);
                 });
@@ -1794,10 +1849,10 @@
             let formattedStartTime = '';
             try {
                 const dateObj = new Date(startTime);
-                formattedStartTime = dateObj.toLocaleString('en-US', { 
-                    year: 'numeric', month: 'long', day: 'numeric', 
-                    hour: '2-digit', minute: '2-digit', second: '2-digit', 
-                    hour12: true 
+                formattedStartTime = dateObj.toLocaleString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit',
+                    hour12: true
                 });
             } catch (e) {
                 formattedStartTime = startTime; // Fallback if date parsing fails
@@ -1857,7 +1912,7 @@ Status: ${status}
             const report = `Backlogs as of ${formattedUstTime} (UST) | ${formattedDate}.
 
 We have already advised the agents to prioritize open, assigned, and reviewing pending and on-hold tickets that have been aging for more than five days.`;
-            
+
             reportOutputDiv.innerText = report;
             showToast("UST Backlog Report generated!", 'success');
         }
@@ -1880,7 +1935,7 @@ We have already advised the agents to prioritize open, assigned, and reviewing p
             const formattedDate = phTimeDate.toLocaleDateString('en-US', options);
 
             const report = `Backlogs as of ${formattedPhHour} | ${formattedDate}.`;
-            
+
             reportOutputDiv.innerText = report;
             showToast("PH Backlog Report generated!", 'success');
         }
@@ -1891,14 +1946,116 @@ We have already advised the agents to prioritize open, assigned, and reviewing p
 
 Kindly check all Pending, Onhold, Assigned, and Open tickets. Please prioritize those that have been Pending for more than 5 days.
 
+PENDING
+
 OPEN
 
 ONHOLD
 
 ASSIGNED`;
-            
+
             reportOutputDiv.innerText = reminderText;
             showToast("Reminder generated!", 'success');
+        }
+
+        // New function for Handling CO
+        function generateHandlingCO() {
+            const reportOutputDiv = document.getElementById("reportOutput");
+            const handlingCOText = `Please check your current handling and prioritize your tasks if you’re on the list below. Focus especially on those with higher handling times or pending tasks.`;
+
+            reportOutputDiv.innerText = handlingCOText;
+            showToast("Handling CO message generated!", 'success');
+        }
+
+        // --- Intraday Traffic Report Functions ---
+        function generateIntradayTrafficReport() {
+            const imInbound = parseInt(document.getElementById("imInbound").value);
+            const imForecast = parseInt(document.getElementById("imForecast").value);
+            const ticketInbound = parseInt(document.getElementById("ticketInbound").value);
+            const ticketForecast = parseInt(document.getElementById("ticketForecast").value);
+            const reportOutputDiv = document.getElementById("intradayTrafficReportOutput");
+
+            if (isNaN(imInbound) || isNaN(imForecast) || isNaN(ticketInbound) || isNaN(ticketForecast)) {
+                showToast("Please enter valid numbers for all fields.", 'error');
+                return;
+            }
+
+            const now = new Date();
+            // Subtract one day from the current date
+            now.setDate(now.getDate() - 1);
+            const options = { month: 'long', day: 'numeric', year: 'numeric' };
+            const formattedDate = now.toLocaleDateString('en-US', options);
+
+            let imPercentage = 0;
+            let imComparisonText = "";
+            if (imForecast > 0) {
+                imPercentage = ((imInbound / imForecast) * 100).toFixed(0);
+                if (imInbound > imForecast) {
+                    imComparisonText = `- Today, we've seen ${imInbound} inbound IMs, which is well over ${Math.round(imInbound / imForecast)} times our forecast of ${imForecast}.
+ - This ${imPercentage}% over-delivery is putting significant strain on our IM team, causing agents to operate at full capacity and potentially leading to longer wait times for our customers.`;
+                } else if (imInbound < imForecast) {
+                    imComparisonText = `- Today, we've seen ${imInbound} inbound IMs, which is below our forecast of ${imForecast}.
+ - This ${imPercentage}% delivery means we currently have capacity to handle more volume.`;
+                } else {
+                    imComparisonText = `- Today, we've seen ${imInbound} inbound IMs, which is exactly our forecast of ${imForecast}.
+ - This ${imPercentage}% delivery indicates stable volume.`;
+                }
+            } else {
+                imComparisonText = `- Today, we've seen ${imInbound} inbound IMs, with no forecast provided.`;
+            }
+
+            let ticketPercentage = 0;
+            let ticketComparisonText = "";
+            if (ticketForecast > 0) {
+                ticketPercentage = ((ticketInbound / ticketForecast) * 100).toFixed(0);
+                if (ticketInbound > ticketForecast) {
+                    ticketComparisonText = `- Ticket volume is also up, with ${ticketInbound} inbound tickets, compared to a forecast of ${ticketForecast}.
+ - That's a ${ticketPercentage}% increase, leading to the backlog we're currently addressing.
+ - Because ticket handling takes more time per case, even this relatively smaller volume spike has a significant impact on the overall workload.`;
+                } else if (ticketInbound < ticketForecast) {
+                    ticketComparisonText = `- Ticket volume is also down, with ${ticketInbound} inbound tickets, compared to a forecast of ${ticketForecast}.
+ - That's a ${ticketPercentage}% delivery, indicating lower than expected volume.`;
+                } else {
+                    ticketComparisonText = `- Ticket volume is stable, with ${ticketInbound} inbound tickets, exactly matching our forecast of ${ticketForecast}.
+ - That's a ${ticketPercentage}% delivery, indicating stable volume.`;
+                }
+            } else {
+                ticketComparisonText = `- Ticket volume is ${ticketInbound} inbound tickets, with no forecast provided.`;
+            }
+
+            const report = `Hi @All!
+
+Here’s a quick update on our intraday traffic as of ${formattedDate}:
+
+IM Queue
+${imComparisonText}
+
+Ticket Queue
+${ticketComparisonText}
+
+What We’re Doing
+ - Our priority remains keeping the IM queue as responsive as possible. We’re monitoring closely and adjusting coverage in real time.
+ - For tickets, we are prioritizing tickets assigned for over 5 days and focusing on clearing those to reduce backlog impact.`;
+
+            reportOutputDiv.innerText = report;
+            showToast("Intraday Traffic Report generated!", 'success');
+        }
+
+        function copyIntradayTrafficReport() {
+            const reportText = document.getElementById("intradayTrafficReportOutput").innerText;
+            if (reportText.trim() === "") {
+                showToast("No Intraday Traffic Report to copy. Generate a report first.", 'info');
+                return;
+            }
+
+            navigator.clipboard.writeText(reportText)
+                .then(() => {
+                    showToast("Intraday Traffic Report copied to clipboard!", 'success');
+                })
+                .catch(err => {
+                    console.error('Failed to copy intraday traffic report: ', err);
+                    showToast("Failed to copy intraday traffic report. Please try again.", 'error');
+                });
         }
     </script>
 </body>
