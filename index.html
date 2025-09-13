@@ -1048,11 +1048,14 @@
         .attendance-report-output-container ul ul {
             list-style: circle;
             margin-left: 20px;
+            padding: 0; /* Remove default padding from nested ul */
             margin-top: 5px;
         }
 
         .attendance-report-output-container li {
             margin-bottom: 5px;
+            word-wrap: break-word; /* Ensure names wrap within list items */
+            white-space: normal; /* Override any nowrap from parent */
         }
     </style>
 </head>
@@ -1682,7 +1685,7 @@
             const formattedDate = usTimeDate.toLocaleDateString('en-US', options); // Date should be based on US time
 
             // Make the header bold
-            let reportHeader = `<strong>As of ${formattedUsTime} (UST) ${formattedDate}.\nUS-BDEE-SPS</strong>\n\n`;
+            let reportHeader = `As of ${formattedUsTime} (UST) ${formattedDate}.\nUS-BDEE-SPS\n\n`;
 
             const imAgentText = imAgentsWorking === 1 ? "agent" : "agents";
             const ticketAgentText = ticketAgentsWorking === 1 ? "agent" : "agents";
@@ -1723,7 +1726,7 @@
                 report += `${activitySentence}\n`;
             }
 
-            reportOutputDiv.innerHTML = report; // Use innerHTML to render bold tag
+            reportOutputDiv.innerText = report; // Changed to innerText to avoid bold tag, and reduce spacing
             showToast("Report generated successfully!", 'success');
         }
 
@@ -1974,7 +1977,26 @@
             // Create a temporary textarea to hold the text content
             const tempTextArea = document.createElement('textarea');
             // Convert the HTML content to plain text for copying
-            tempTextArea.innerHTML = reportOutputDiv.innerHTML;
+            // Use a more controlled way to get text content to avoid extra newlines
+            let reportText = '';
+            reportOutputDiv.querySelectorAll('h3, h4, li').forEach(element => {
+                if (element.tagName === 'H3') {
+                    reportText += element.textContent.trim() + '\n\n';
+                } else if (element.tagName === 'H4') {
+                    reportText += element.textContent.trim() + '\n';
+                } else if (element.tagName === 'LI') {
+                    // Indent sub-list items
+                    if (element.parentElement.tagName === 'UL' && element.parentElement.parentElement.tagName === 'LI') {
+                        reportText += '      - ' + element.textContent.trim() + '\n';
+                    } else if (element.parentElement.tagName === 'UL' && element.parentElement.parentElement.tagName === 'UL') {
+                        reportText += '    - ' + element.textContent.trim() + '\n';
+                    } else {
+                        reportText += '  - ' + element.textContent.trim() + '\n';
+                    }
+                }
+            });
+            tempTextArea.value = reportText.trim(); // Trim any leading/trailing whitespace
+
             document.body.appendChild(tempTextArea);
             tempTextArea.select();
             document.execCommand('copy');
