@@ -595,6 +595,7 @@
             flex-basis: auto; /* Allow name to take necessary space */
             margin-right: 10px; /* Space between name and select */
             flex-grow: 1; /* Allow name to grow */
+            word-wrap: break-word; /* Allow long names to wrap */
         }
 
         .attendance-entry .actions {
@@ -746,10 +747,10 @@
                 justify-content: flex-end;
             }
             .attendance-entry select {
-                width: 100%; /* Make select full width on small screens */
+                width: 100%;
                 max-width: unset;
                 margin-right: 0;
-                margin-bottom: 10px; /* Add space below select */
+                margin-bottom: 10px;
             }
         }
 
@@ -966,6 +967,93 @@
         .template-buttons button i {
             margin-right: 8px;
         }
+
+        /* Styles for Backlog Template */
+        .backlog-output {
+            background: var(--card-background);
+            padding: 25px;
+            border-radius: var(--border-radius-medium);
+            margin-top: 30px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px var(--shadow-light);
+            line-height: 1.6;
+            font-size: 1.05em;
+        }
+
+        .backlog-output h3 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .backlog-output p {
+            margin-bottom: 10px;
+        }
+
+        .backlog-time-input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .backlog-time-input-group label {
+            margin: 0;
+            min-width: 80px; /* Adjust as needed */
+            font-size: 1em;
+            color: var(--text-color);
+        }
+
+        .backlog-time-input-group input[type="number"] {
+            width: 70px; /* Fixed width for hour input */
+            padding: 8px 12px;
+            font-size: 1em;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .backlog-time-input-group span {
+            font-size: 1em;
+            color: var(--text-color);
+        }
+
+        /* New styles for attendance report output */
+        .attendance-report-output-container {
+            background: var(--card-background);
+            padding: 25px;
+            border-radius: var(--border-radius-medium);
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px var(--shadow-light);
+            line-height: 1.6;
+            font-size: 1.05em;
+        }
+
+        .attendance-report-output-container h4 {
+            color: var(--primary-color);
+            margin-top: 15px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 5px;
+        }
+
+        .attendance-report-output-container ul {
+            list-style: disc;
+            margin-left: 20px;
+            padding: 0;
+        }
+
+        .attendance-report-output-container ul ul {
+            list-style: circle;
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+
+        .attendance-report-output-container li {
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -974,11 +1062,12 @@
     <div class="tabs">
         <div class="tab active" onclick="showTab('tasks')">IM Tasks</div>
         <div class="tab" onclick="showTab('report')">Report Generator</div>
-        <div class="tab" onclick="showTab('attendance')">Attendance Status</div>
+        <div class="tab" onclick="showTab('attendance')">Attendance Report</div>
         <div class="tab" onclick="showTab('outage')">Outage Report</div>
         <div class="tab" onclick="showTab('intradayTraffic')">Intraday Traffic</div>
         <div class="tab" onclick="showTab('switchTemplate')">Switch Template</div>
         <div class="tab" onclick="showTab('agentConfig')">Break Schedule</div>
+        <div class="tab" onclick="showTab('backlogTemplate')">Backlog Template</div> <!-- New Tab -->
     </div>
 
     <div class="container" id="tasks">
@@ -1080,6 +1169,10 @@
         <div class="results" id="attendanceResults">
             <!-- Attendance entries will be dynamically added here -->
         </div>
+
+        <button onclick="generateAttendanceReport()">Generate Attendance Report</button>
+        <div class="report-output attendance-report-output-container" id="attendanceReportOutput"></div>
+        <button onclick="copyAttendanceReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Attendance Report</button>
     </div>
 
     <div class="container" id="outage" style="display: none;">
@@ -1170,6 +1263,37 @@
         <div class="results" id="agentConfigResults">
             <!-- Agent configuration entries will be dynamically added here -->
         </div>
+    </div>
+
+    <!-- New Backlog Template Tab -->
+    <div class="container" id="backlogTemplate" style="display: none;">
+        <label for="backlogType">SPS Backlog Update:</label>
+        <select id="backlogType" onchange="generateBacklogTemplate()">
+            <option value="startDay">Start Day</option>
+            <option value="intraday" selected>Intraday</option> <!-- Set Intraday as default selected -->
+        </select>
+
+        <div class="backlog-output" id="backlogTemplateOutput">
+            <p id="backlogTitle" style="font-weight: bold;"></p> <!-- New element for the dynamic title -->
+
+            <div class="backlog-time-input-group">
+                <label for="mnlHourInput">MNL Time:</label>
+                <input type="number" id="mnlHourInput" min="0" max="23" value="0" onchange="updateBacklogTimes()">
+                <span>:00</span>
+                <span id="mnlDateDisplay"></span>
+            </div>
+
+            <div class="backlog-time-input-group">
+                <label for="usHourInput">US Time:</label>
+                <input type="number" id="usHourInput" min="0" max="23" value="0" onchange="updateBacklogTimes()">
+                <span>:00</span>
+            </div>
+
+            <p id="nextReporting"></p>
+            <h3 style="text-align: center;">BACKLOGS MONITORING</h3>
+            <p id="backlogAdditionalText" style="margin-top: 20px;"></p> <!-- New element for additional text -->
+        </div>
+        <button onclick="copyBacklogTemplate()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Backlog Template</button>
     </div>
 
     <audio id="breakSound" src="audio/notif.mp3" preload="auto"></audio>
@@ -1279,7 +1403,7 @@
 
         // --- Tab Switching with Animation ---
         function showTab(tabId) {
-            const containers = ['tasks', 'report', 'attendance', 'outage', 'intradayTraffic', 'switchTemplate', 'agentConfig']; // Updated
+            const containers = ['tasks', 'report', 'attendance', 'outage', 'intradayTraffic', 'switchTemplate', 'agentConfig', 'backlogTemplate']; // Updated
             containers.forEach(id => {
                 const container = document.getElementById(id);
                 if (id === tabId) {
@@ -1305,12 +1429,18 @@
             Array.from(tabs).find(t => t.textContent.toLowerCase().includes(
                 tabId === 'tasks' ? 'im tasks' :
                 tabId === 'report' ? 'report generator' :
-                tabId === 'attendance' ? 'attendance status' :
+                tabId === 'attendance' ? 'attendance report' : // Updated tab name
                 tabId === 'outage' ? 'outage report' :
                 tabId === 'intradayTraffic' ? 'intraday traffic' :
                 tabId === 'switchTemplate' ? 'switch template' :
-                'break schedule' // For the new tab name
+                tabId === 'agentConfig' ? 'break schedule' :
+                'backlog template' // For the new tab name
             )).classList.add('active');
+
+            // If the new tab is selected, generate its content immediately
+            if (tabId === 'backlogTemplate') {
+                generateBacklogTemplate();
+            }
         }
 
         // Initialize first tab with animation
@@ -1486,7 +1616,7 @@
             generatedScheduleSections.sort((a, b) => {
                 const shiftA = a.getAttribute('data-shift-schedule');
                 const shiftB = b.getAttribute('data-shift-schedule');
-                return (shiftOrder[shiftA] || Infinity) - (shiftOrder[shiftB] || Infinity);
+                return (shiftOrder[shiftA] || Infinity) - (shiftOrder[b] || Infinity);
             });
 
             generatedScheduleSections.forEach(section => {
@@ -1768,6 +1898,90 @@
             });
         }
 
+        function generateAttendanceReport() {
+            if (allAttendanceEntries.length === 0) {
+                showToast("No attendance entries to report.", 'info');
+                document.getElementById('attendanceReportOutput').innerHTML = "";
+                return;
+            }
+
+            const reportHtmlParts = [];
+            const shiftHeadcounts = {};
+            const absentAgents = {};
+            const presentAgents = {}; // To store present agents for the report
+
+            // Group by shift and count headcounts, identify absents and presents
+            allAttendanceEntries.forEach(entry => {
+                shiftHeadcounts[entry.shift] = (shiftHeadcounts[entry.shift] || 0) + 1;
+                if (entry.status !== "Present") {
+                    if (!absentAgents[entry.shift]) {
+                        absentAgents[entry.shift] = [];
+                    }
+                    absentAgents[entry.shift].push({ name: entry.name, reason: entry.status });
+                } else {
+                    if (!presentAgents[entry.shift]) {
+                        presentAgents[entry.shift] = [];
+                    }
+                    presentAgents[entry.shift].push(entry.name);
+                }
+            });
+
+            // Sort shifts for consistent reporting
+            const sortedShifts = Object.keys(shiftHeadcounts).sort((a, b) => {
+                return (shiftOrder[a] || Infinity) - (shiftOrder[b] || Infinity);
+            });
+
+            reportHtmlParts.push("<h3>Attendance Report:</h3>");
+            reportHtmlParts.push("<ul>"); // Start main unordered list for shifts
+
+            sortedShifts.forEach(shift => {
+                const totalHeadcount = shiftHeadcounts[shift];
+                const presentCount = presentAgents[shift] ? presentAgents[shift].length : 0;
+                const absentCount = absentAgents[shift] ? absentAgents[shift].length : 0;
+
+                reportHtmlParts.push(`<li><h4>${shift} Shift:</h4>`);
+                reportHtmlParts.push(`  <ul>`); // Sub-list for present/absent counts
+                reportHtmlParts.push(`    <li><strong>Present:</strong> ${presentCount} out of ${totalHeadcount} headcount.</li>`);
+
+                if (presentAgents[shift] && presentAgents[shift].length > 0) {
+                    reportHtmlParts.push(`    <ul>`); // Sub-sub-list for present agents
+                    presentAgents[shift].sort().forEach(agentName => {
+                        reportHtmlParts.push(`      <li>${agentName}</li>`);
+                    });
+                    reportHtmlParts.push(`    </ul>`);
+                }
+
+                if (absentAgents[shift] && absentAgents[shift].length > 0) {
+                    reportHtmlParts.push(`    <li><strong>Absent:</strong> ${absentCount} agent(s).</li>`);
+                    reportHtmlParts.push(`    <ul>`); // Sub-sub-list for absent agents
+                    absentAgents[shift].sort((a, b) => a.name.localeCompare(b.name)).forEach(agent => {
+                        reportHtmlParts.push(`      <li>${agent.name} (${agent.reason})</li>`);
+                    });
+                    reportHtmlParts.push(`    </ul>`);
+                }
+                reportHtmlParts.push(`  </ul>`); // End sub-list for present/absent counts
+                reportHtmlParts.push(`</li>`); // End main list item for the shift
+            });
+
+            reportHtmlParts.push("</ul>"); // End main unordered list
+
+            document.getElementById('attendanceReportOutput').innerHTML = reportHtmlParts.join('\n');
+            showToast("Attendance Report generated!", 'success');
+        }
+
+        function copyAttendanceReport() {
+            const reportOutputDiv = document.getElementById("attendanceReportOutput");
+            // Create a temporary textarea to hold the text content
+            const tempTextArea = document.createElement('textarea');
+            // Convert the HTML content to plain text for copying
+            tempTextArea.innerHTML = reportOutputDiv.innerHTML;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+            showToast("Attendance Report copied to clipboard!", 'success');
+        }
+
         // --- Outage Report Functions ---
         function generateOutageReport() {
             const account = document.getElementById('outageAccount').value;
@@ -1842,8 +2056,8 @@ Status: ${status}
             // Subtract 1 hour from US Central Time
             ustTimeDate.setHours(ustTimeDate.getHours() - 1);
 
-            const ustHours = String(ustTimeDate.getHours()).padStart(2, '0');
-            const formattedUstTime = `${ustHours}:00`; // Changed to formattedUstTime for consistency
+            const usHours = String(ustTimeDate.getHours()).padStart(2, '0');
+            const formattedUstTime = `${usHours}:00`; // Changed to formattedUstTime for consistency
 
             const options = { month: 'long', day: 'numeric', year: 'numeric' };
             const formattedDate = ustTimeDate.toLocaleDateString('en-US', options);
@@ -2283,6 +2497,122 @@ What We’re Doing
                 }
             }
         }
+
+        // --- Backlog Template Functions ---
+        function generateBacklogTemplate() {
+            const backlogType = document.getElementById('backlogType').value;
+            const backlogTitleElem = document.getElementById('backlogTitle');
+            const mnlHourInput = document.getElementById('mnlHourInput');
+            const mnlDateDisplay = document.getElementById('mnlDateDisplay');
+            const usHourInput = document.getElementById('usHourInput');
+            const nextReportingElem = document.getElementById('nextReporting');
+            const backlogAdditionalTextElem = document.getElementById('backlogAdditionalText'); // New element
+
+            // Set the dynamic title based on selection
+            if (backlogType === 'startDay') {
+                backlogTitleElem.textContent = "SPS Backlog update (Start Day)";
+                backlogAdditionalTextElem.textContent = ""; // Clear additional text for Start Day
+            } else {
+                backlogTitleElem.textContent = "SPS Backlog update (Intraday)";
+                backlogAdditionalTextElem.textContent = `
+Could you please help me report this image in a polite and natural tone? I want to explain that there’s a high volume of messages in IM, so we’re still balancing the distribution to make sure both queues work efficiently. Also, that the 3-5 day unassigned and assigned tickets are still being prioritized. Thank you!
+                `; // Set additional text for Intraday
+            }
+
+            const now = new Date();
+
+            // MNL Time (UTC+8)
+            const mnlOptions = {
+                hour: '2-digit',
+                hour12: false,
+                timeZone: 'Asia/Manila',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            };
+            const mnlFormatter = new Intl.DateTimeFormat('en-US', mnlOptions);
+            const mnlParts = mnlFormatter.formatToParts(now);
+            const mnlHour = parseInt(mnlParts.find(p => p.type === 'hour').value);
+            const mnlMonth = mnlParts.find(p => p.type === 'month').value;
+            const mnlDay = mnlParts.find(p => p.type === 'day').value;
+            const mnlYear = mnlParts.find(p => p.type === 'year').value;
+
+            mnlHourInput.value = mnlHour;
+            mnlDateDisplay.textContent = `- ${mnlMonth} ${mnlDay}, ${mnlYear}`;
+
+            // US Time (Central Time - UTC-6), less 2 hours (updated from 1 hour)
+            const usOptions = {
+                hour: '2-digit',
+                hour12: false,
+                timeZone: 'America/Chicago' // Central Time
+            };
+            const usFormatter = new Intl.DateTimeFormat('en-US', usOptions);
+            const usParts = usFormatter.formatToParts(now);
+            let usHour = parseInt(usParts.find(p => p.type === 'hour').value);
+
+            usHour = (usHour - 2 + 24) % 24; // Subtract 2 hours, handle wrap-around for 00 to 23
+
+            usHourInput.value = usHour;
+
+            // Next Reporting Time (hourly, on the hour)
+            let nextReportingHour = (parseInt(usHourInput.value) + 1) % 24;
+            const nextReportingFormatted = String(nextReportingHour).padStart(2, '0');
+            nextReportingElem.textContent = `Next reporting: ${nextReportingFormatted}:00 UST`;
+
+            showToast(`Backlog template for ${backlogType === 'startDay' ? 'Start Day' : 'Intraday'} generated!`, 'success');
+        }
+
+        function updateBacklogTimes() {
+            const usHourInput = document.getElementById('usHourInput');
+            const nextReportingElem = document.getElementById('nextReporting');
+
+            // Ensure inputs are valid numbers
+            let currentUsHour = parseInt(usHourInput.value);
+            if (isNaN(currentUsHour) || currentUsHour < 0 || currentUsHour > 23) {
+                currentUsHour = 0; // Default to 0 if invalid
+                usHourInput.value = 0;
+            }
+
+            // Update Next Reporting Time based on edited US hour
+            let nextReportingHour = (currentUsHour + 1) % 24;
+            const nextReportingFormatted = String(nextReportingHour).padStart(2, '0');
+            nextReportingElem.textContent = `Next reporting: ${nextReportingFormatted}:00 UST`;
+        }
+
+
+        function copyBacklogTemplate() {
+            const backlogOutputDiv = document.getElementById('backlogTemplateOutput');
+            // Create a temporary textarea to hold the text content
+            const tempTextArea = document.createElement('textarea');
+
+            const mnlHour = document.getElementById('mnlHourInput').value;
+            const mnlDate = document.getElementById('mnlDateDisplay').textContent.trim().substring(2); // Remove "- "
+            const usHour = document.getElementById('usHourInput').value;
+            const nextReporting = document.getElementById('nextReporting').textContent;
+            const backlogAdditionalText = document.getElementById('backlogAdditionalText').textContent.trim();
+
+            tempTextArea.value = `${document.getElementById('backlogTitle').textContent}\n` +
+                                 `MNL Time: ${String(mnlHour).padStart(2, '0')}:00 ${mnlDate}\n` +
+                                 `US Time: ${String(usHour).padStart(2, '0')}:00\n` +
+                                 `${nextReporting}\n\n` +
+                                 `BACKLOGS MONITORING\n` +
+                                 `${backlogAdditionalText}`; // Directly add the static title and new text
+
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+            showToast("Backlog template copied to clipboard!", 'success');
+        }
+
+        // Initial generation when the page loads if the tab is active
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... existing DOMContentLoaded code ...
+            if (document.getElementById('backlogTemplate').style.display !== 'none') {
+                generateBacklogTemplate();
+            }
+        });
+
     </script>
 </body>
 </html>
