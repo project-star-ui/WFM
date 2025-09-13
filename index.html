@@ -832,6 +832,140 @@
                 text-align: left; /* Align numbers to the left when stacked */
             }
         }
+        /* Styles for the new Switch Template tab */
+        .template-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .template-buttons button {
+            margin-top: 0; /* Override default button margin */
+            padding: 15px 20px;
+            font-size: 1.1em;
+            max-width: unset; /* Allow buttons to fill grid space */
+        }
+
+        /* Styles for Agent Configuration Tab */
+        .agent-config-entry {
+            background: var(--card-background);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 5px solid var(--secondary-color); /* Different color for config */
+            border-radius: var(--border-radius-medium);
+            box-shadow: 0 3px 10px var(--shadow-light);
+            display: flex;
+            flex-direction: column; /* Stack name and slots vertically */
+            gap: 10px; /* Space between elements */
+        }
+
+        .agent-config-entry strong {
+            color: var(--secondary-color);
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            word-break: break-word; /* Allow long names to wrap */
+            flex-grow: 1; /* Allow name to take available space */
+        }
+
+        .agent-config-entry .break-slot-container {
+            display: flex;
+            flex-wrap: wrap; /* Allow items to wrap */
+            gap: 10px;
+            align-items: center;
+            padding: 5px 0;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .agent-config-entry .break-slot-container:first-of-type {
+            border-top: none; /* No border for the first slot */
+        }
+
+        .agent-config-entry .break-slot-container select,
+        .agent-config-entry .break-slot-container input[type="text"] {
+            flex-grow: 1; /* Allow selects and inputs to grow */
+            min-width: 100px; /* Minimum width for selects/inputs */
+            max-width: 180px; /* Max width for selects/inputs */
+            padding: 8px 12px;
+            font-size: 0.95em;
+            margin-top: 0; /* Remove default margin */
+        }
+
+        .agent-config-entry .break-slot-container .remove-slot-button {
+            margin-top: 0;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            max-width: unset;
+            width: auto;
+            box-shadow: none;
+            background-color: var(--danger-color); /* Red for remove button */
+            color: #fff;
+        }
+
+        .agent-config-entry .add-slot-button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            font-size: 0.95em;
+            max-width: 200px; /* Smaller add slot button */
+            background-color: var(--primary-color);
+            color: #1c1c1c;
+            box-shadow: none;
+        }
+
+        .agent-config-entry .actions {
+            display: flex;
+            justify-content: flex-end; /* Align delete button to the right */
+            margin-top: 10px;
+        }
+
+        .agent-config-entry .actions button {
+            margin-top: 0;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            max-width: unset;
+            width: auto;
+            box-shadow: none;
+        }
+
+        /* Responsive adjustments for agent config */
+        @media (max-width: 768px) {
+            .agent-config-entry {
+                padding: 10px;
+            }
+            .agent-config-entry .break-slot-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .agent-config-entry .break-slot-container select,
+            .agent-config-entry .break-slot-container input[type="text"] {
+                width: 100%;
+                max-width: unset;
+            }
+            .agent-config-entry .add-slot-button {
+                width: 100%;
+                max-width: unset;
+            }
+            .agent-config-entry .actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        /* Specific styles for Switch Template buttons to ensure consistent sizing */
+        .template-buttons button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            white-space: nowrap; /* Prevent text from wrapping */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Add ellipsis for overflow */
+            min-height: 50px; /* Ensure a minimum height for consistency */
+        }
+
+        .template-buttons button i {
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -839,11 +973,12 @@
     <h1>WF Helper <span style="font-size: 0.6em; vertical-align: super; font-weight: normal;">PRO</span></h1>
     <div class="tabs">
         <div class="tab active" onclick="showTab('tasks')">IM Tasks</div>
-        <div class="tab" onclick="showTab('breaks')">Break Schedule</div>
         <div class="tab" onclick="showTab('report')">Report Generator</div>
         <div class="tab" onclick="showTab('attendance')">Attendance Status</div>
         <div class="tab" onclick="showTab('outage')">Outage Report</div>
         <div class="tab" onclick="showTab('intradayTraffic')">Intraday Traffic</div>
+        <div class="tab" onclick="showTab('switchTemplate')">Switch Template</div>
+        <div class="tab" onclick="showTab('agentConfig')">Break Schedule</div>
     </div>
 
     <div class="container" id="tasks">
@@ -865,33 +1000,6 @@
         <button onclick="generateSkills()">Generate IM Assignment</button>
 
         <div class="results" id="results"></div>
-    </div>
-
-    <div class="container" id="breaks" style="display: none;">
-        <label for="breakType">Break Type:</label>
-        <select id="breakType" onchange="updateBreakType()">
-            <option value="Lunch">Lunch</option>
-            <option value="1st Break">1st Break</option>
-            <option value="2nd Break">2nd Break</option>
-            <option value="Training">Training</option>
-            <option value="Meeting">Meeting</option>
-            <option value="Coaching">Coaching</option>
-            <option value="Other">Other</option>
-        </select>
-
-        <label for="breakAgent">Agent Name(s):</label>
-        <input type="text" id="breakAgent" placeholder="Enter agent name(s), separated by commas for Training, Meeting, Coaching" />
-
-        <label for="breakTime">Break Time:</label>
-        <!-- Changed type to text and added placeholder/pattern for 24-hour format -->
-        <input type="text" id="breakTime" placeholder="HH:MM (e.g., 14:30)" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" maxlength="5" oninput="formatBreakTime(this)" />
-
-        <!-- Hidden input to store the ID of the break being edited -->
-        <input type="hidden" id="editingBreakId" value="" />
-
-        <button id="saveBreakButton" onclick="saveBreakSchedule()">Add Break Schedule</button>
-
-        <div class="break-schedule" id="breakSchedule"></div>
     </div>
 
     <div class="container" id="report" style="display: none;">
@@ -1042,31 +1150,42 @@
         <button onclick="copyIntradayTrafficReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Intraday Traffic Report</button>
     </div>
 
+    <div class="container" id="switchTemplate" style="display: none;">
+        <label>Select a template to generate:</label>
+        <div class="template-buttons">
+            <button onclick="generateSwitchTemplate('IM')"><i class="fas fa-comment-dots"></i> IM</button>
+            <button onclick="generateSwitchTemplate('Ticket')"><i class="fas fa-ticket-alt"></i> Ticket</button>
+            <button onclick="generateSwitchTemplate('Break')"><i class="fas fa-coffee"></i> Break</button>
+            <button onclick="generateSwitchTemplate('Lunch')"><i class="fas fa-utensils"></i> Lunch</button>
+        </div>
+        <div class="report-output" id="switchTemplateOutput"></div>
+        <button onclick="copySwitchTemplate()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Template</button>
+    </div>
+
+    <div class="container" id="agentConfig" style="display: none;">
+        <label for="agentConfigNames">Enter Agent Name(s) (one per line):</label>
+        <textarea id="agentConfigNames" rows="6" placeholder="e.g. John Doe&#10;Jane Smith&#10;Alex Johnson"></textarea>
+        <button onclick="addAgentConfigEntries()">Add Agent(s)</button>
+
+        <div class="results" id="agentConfigResults">
+            <!-- Agent configuration entries will be dynamically added here -->
+        </div>
+    </div>
+
     <audio id="breakSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
 
     <!-- Toast Notification Container -->
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        let breakCounter = 0;
         let generatedScheduleSections = []; // For IM Tasks
         let allAttendanceEntries = [];
         // New object to store the collapse state of attendance sections
         let attendanceSectionCollapseStates = {};
+        let allAgentConfigs = []; // New array to store agent configurations
 
         const shiftOrder = {
             "8PM": 1, "10PM": 2, "10:30PM": 3, "3AM": 4, "5AM": 5
-        };
-
-        // Define a custom order for break types for sorting and display
-        const breakTypeOrder = {
-            "Lunch": 1,
-            "1st Break": 2,
-            "2nd Break": 3,
-            "Training": 4,
-            "Meeting": 5,
-            "Coaching": 6,
-            "Other": 7 // Added "Other" to the order
         };
 
         const attendanceStatuses = [
@@ -1076,6 +1195,48 @@
             "Childcare/Kincare", "Bereavement", "Family Emergency", "For Validation",
             "Sick leave", "Transportation", "Unauthorized absence"
         ];
+
+        // Options for the new dropdowns in Agent Configuration
+        const breakActivityOptions = [
+            "First break",
+            "Second break",
+            "Lunch",
+            "Meeting",
+            "Coaching",
+            "Other"
+        ];
+
+        // Templates for the new "Switch Template" tab
+        const switchTemplates = {
+            "IM": [
+                "Transferring you back to IM. Thanks!",
+                "Routing you back to IM. Thanks!",
+                "Moving you back to IM. Thanks!",
+                "Sending you back over to IM. Thanks!",
+                "Switching you over to IM. Thanks!"
+            ],
+            "Ticket": [
+                "Transferring you back to ticket. Thanks!",
+                "Routing you back to ticket. Thanks!",
+                "Moving you back to ticket. Thanks!",
+                "Sending you back over to ticket. Thanks!",
+                "Switching you over to ticket. Thanks!"
+            ],
+            "Break": [
+                "Transfering you back to IM after break. Thanks!",
+                "Switching you to IM after break. Thanks!",
+                "Sending you back to IM after break. Thanks!",
+                "Routing you back to IM after break. Thanks!",
+                "Moving you to IM after break. Thanks!"
+            ],
+            "Lunch": [
+                "Transfering you back to IM after lunch. Thanks!",
+                "Switching you to IM after lunch. Thanks!",
+                "Sending you back to IM after lunch. Thanks!",
+                "Routing you back to IM after lunch. Thanks!",
+                "Moving you to IM after lunch. Thanks!"
+            ]
+        };
 
         // --- Toast Notification System ---
         function showToast(message, type = 'info') {
@@ -1118,7 +1279,7 @@
 
         // --- Tab Switching with Animation ---
         function showTab(tabId) {
-            const containers = ['tasks', 'breaks', 'report', 'attendance', 'outage', 'intradayTraffic']; // Added 'intradayTraffic'
+            const containers = ['tasks', 'report', 'attendance', 'outage', 'intradayTraffic', 'switchTemplate', 'agentConfig']; // Updated
             containers.forEach(id => {
                 const container = document.getElementById(id);
                 if (id === tabId) {
@@ -1143,11 +1304,12 @@
             tabs.forEach(t => t.classList.remove('active'));
             Array.from(tabs).find(t => t.textContent.toLowerCase().includes(
                 tabId === 'tasks' ? 'im tasks' :
-                tabId === 'breaks' ? 'break schedule' :
                 tabId === 'report' ? 'report generator' :
                 tabId === 'attendance' ? 'attendance status' :
                 tabId === 'outage' ? 'outage report' :
-                'intraday traffic' // For the new tab
+                tabId === 'intradayTraffic' ? 'intraday traffic' :
+                tabId === 'switchTemplate' ? 'switch template' :
+                'break schedule' // For the new tab name
             )).classList.add('active');
         }
 
@@ -1172,21 +1334,6 @@
                 }
             });
 
-
-            // Break Schedule Tab
-            document.getElementById('breakTime').addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    saveBreakSchedule();
-                }
-            });
-            document.getElementById('breakAgent').addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    saveBreakSchedule();
-                }
-            });
-
             // Report Generator Tab
             // Listen to the last input field in the grid
             document.getElementById('agentsOnTraining').addEventListener('keypress', function(event) {
@@ -1204,7 +1351,6 @@
                     }
                 });
             });
-
 
             // Attendance Status Tab
             document.getElementById('attendanceNames').addEventListener('keydown', function(event) {
@@ -1229,6 +1375,14 @@
                     generateIntradayTrafficReport();
                 }
             });
+
+            // Agent Configuration Tab (now Break Schedule)
+            document.getElementById('agentConfigNames').addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' && !event.shiftKey) { // Allow Shift+Enter for new line
+                    event.preventDefault();
+                    addAgentConfigEntries();
+                }
+            });
         });
 
         // Function to automatically format break time input
@@ -1238,16 +1392,6 @@
                 value = value.substring(0, 2) + ':' + value.substring(2, 4);
             }
             input.value = value;
-        }
-
-        function updateBreakType() {
-            const breakType = document.getElementById("breakType").value;
-            const breakAgentInput = document.getElementById("breakAgent");
-            if (breakType === "Training" || breakType === "Meeting" || breakType === "Coaching" || breakType === "Other") {
-                breakAgentInput.placeholder = `Enter agent name(s) for ${breakType}, separated by commas`;
-            } else {
-                breakAgentInput.placeholder = "Enter agent name(s)";
-            }
         }
 
         function generateSkills() {
@@ -1372,211 +1516,6 @@
             agentBlock.style.transform = 'translateX(-100%)';
             agentBlock.addEventListener('transitionend', () => agentBlock.remove(), { once: true });
             showToast("Task assignment removed.", 'info');
-        }
-
-        function sortBreakBlocks() {
-            const breakScheduleDiv = document.getElementById("breakSchedule");
-            // Get all current break blocks and filter out separators
-            const breakBlocks = Array.from(breakScheduleDiv.children).filter(child => child.classList.contains('agent-block'));
-
-            breakBlocks.sort((a, b) => {
-                const typeA = a.getAttribute('data-break-type');
-                const typeB = b.getAttribute('data-break-type');
-                const timeA = a.getAttribute('data-break-time-raw'); // Use raw time for sorting
-                const timeB = b.getAttribute('data-break-time-raw'); // Use raw time for sorting
-
-                // Primary sort by custom break type order
-                const typeOrderA = breakTypeOrder[typeA] || Infinity;
-                const typeOrderB = breakTypeOrder[typeB] || Infinity;
-
-                if (typeOrderA < typeOrderB) return -1;
-                if (typeOrderA > typeOrderB) return 1;
-
-                // Secondary sort by break time (chronological)
-                return timeA.localeCompare(timeB);
-            });
-
-            // Clear the container and re-append sorted blocks with separators
-            breakScheduleDiv.innerHTML = '';
-            let currentBreakType = null;
-
-            breakBlocks.forEach(block => {
-                const blockType = block.getAttribute('data-break-type');
-
-                if (blockType !== currentBreakType) {
-                    // Add a separator if it's a new break type
-                    const separator = document.createElement('div');
-                    separator.className = 'break-separator';
-                    separator.textContent = blockType;
-                    breakScheduleDiv.appendChild(separator);
-                    currentBreakType = blockType;
-                }
-                breakScheduleDiv.appendChild(block);
-            });
-        }
-
-        function formatTime(time24hr) {
-            // This function now explicitly formats to HH:MM (24-hour)
-            const [hours, minutes] = time24hr.split(':');
-            let formattedHours = parseInt(hours);
-            let ampm = '';
-
-            if (formattedHours >= 12) {
-                ampm = 'PM';
-                if (formattedHours > 12) {
-                    formattedHours -= 12;
-                }
-            } else {
-                ampm = 'AM';
-                if (formattedHours === 0) {
-                    formattedHours = 12;
-                }
-            }
-            return `${String(formattedHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')} ${ampm}`;
-        }
-
-        function saveBreakSchedule() {
-            const breakType = document.getElementById("breakType").value;
-            const agentNames = document.getElementById("breakAgent").value.trim();
-            const breakTimeRaw = document.getElementById("breakTime").value; // Raw 24hr time
-            const editingBreakId = document.getElementById("editingBreakId").value;
-            const breakScheduleDiv = document.getElementById("breakSchedule");
-
-            if (!agentNames || !breakTimeRaw) {
-                showToast("Please enter both agent name(s) and break time.", 'error');
-                return;
-            }
-
-            // Validate 24-hour time format (HH:MM)
-            const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-            if (!timeRegex.test(breakTimeRaw)) {
-                showToast("Please enter break time in 24-hour format (HH:MM), e.g., 14:30.", 'error');
-                return;
-            }
-
-            const agents = agentNames.split(',').map(name => name.trim()).filter(name => name);
-            const breakTimeFormatted = formatTime(breakTimeRaw); // Formatted for display (will be AM/PM)
-
-            if (editingBreakId) {
-                const existingBlock = document.getElementById(editingBreakId);
-                if (existingBlock) {
-                    const agentName = agents[0]; // Assuming only one agent for edit, or first if multiple
-                    existingBlock.innerHTML = `<strong>${agentName}</strong> <span>- ${breakType} at ${breakTimeFormatted}</span>
-                        <button class="edit-button" onclick="editBreakSchedule('${existingBlock.id}')"><i class="fas fa-edit"></i></button>
-                        <button class="delete-button" onclick="deleteBreakSchedule(this)"><i class="fas fa-trash-alt"></i></button>`;
-                    existingBlock.setAttribute('data-break-time-raw', breakTimeRaw); // Store raw time for sorting
-                    existingBlock.setAttribute('data-agent-name', agentName);
-                    existingBlock.setAttribute('data-break-type', breakType);
-                    setBreakAlarm(agentName, breakType, breakTimeRaw, existingBlock.id);
-                    showToast("Break schedule updated.", 'success');
-                }
-            } else {
-                agents.forEach(agentName => {
-                    const newId = `break-${breakCounter++}`;
-                    const div = document.createElement("div");
-                    div.className = "agent-block";
-                    div.id = newId;
-                    div.setAttribute('data-break-time-raw', breakTimeRaw); // Store raw time for sorting
-                    div.setAttribute('data-agent-name', agentName);
-                    div.setAttribute('data-break-type', breakType);
-                    div.innerHTML = `<strong>${agentName}</strong> <span>- ${breakType} at ${breakTimeFormatted}</span>
-                        <button class="edit-button" onclick="editBreakSchedule('${newId}')"><i class="fas fa-edit"></i></button>
-                        <button class="delete-button" onclick="deleteBreakSchedule(this)"><i class="fas fa-trash-alt"></i></button>`;
-                    breakScheduleDiv.appendChild(div);
-                    setBreakAlarm(agentName, breakType, breakTimeRaw, newId);
-                });
-                showToast("Break schedule added.", 'success');
-            }
-
-            // Sort the break blocks after adding/updating
-            sortBreakBlocks();
-
-            document.getElementById("breakAgent").value = '';
-            document.getElementById("breakTime").value = '';
-            document.getElementById("editingBreakId").value = '';
-            document.getElementById("saveBreakButton").textContent = 'Add Break Schedule';
-            document.getElementById("breakType").value = 'Lunch'; // Default to Lunch after adding
-            updateBreakType();
-        }
-
-        function setBreakAlarm(agentName, breakType, breakTime, blockId) {
-            const now = new Date();
-            const breakDate = new Date();
-            const [hours, minutes] = breakTime.split(':');
-            breakDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-
-            // If break time is for the next day (e.g., current time is 23:00, break is 01:00)
-            if (breakDate < now && (now.getHours() > breakDate.getHours() || (now.getHours() === breakDate.getHours() && now.getMinutes() > breakDate.getMinutes()))) {
-                breakDate.setDate(breakDate.getDate() + 1);
-            }
-
-            const timeUntilBreak = breakDate - now;
-
-            if (timeUntilBreak > 0) {
-                setTimeout(() => {
-                    const breakSound = document.getElementById("breakSound");
-                    breakSound.play().catch(e => console.error("Error playing sound:", e));
-                    // Use 'break-alarm' type for emphasized notification
-                    showToast(`${agentName} is on ${breakType.toLowerCase()} now!`, 'break-alarm');
-                    const block = document.getElementById(blockId);
-                    if (block) {
-                        block.style.opacity = '0.6';
-                        block.style.borderLeftColor = '#607d8b';
-                        block.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
-                        block.querySelector('.edit-button').style.display = 'none'; // Hide edit button
-                        block.querySelector('.delete-button').style.display = 'none'; // Hide delete button
-                    }
-                }, timeUntilBreak);
-            } else {
-                // For breaks in the past, visually mark them as done
-                const block = document.getElementById(blockId);
-                if (block) {
-                    block.style.opacity = '0.6';
-                    block.style.borderLeftColor = '#607d8b';
-                    block.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
-                    block.querySelector('.edit-button').style.display = 'none';
-                    block.querySelector('.delete-button').style.display = 'none';
-                }
-            }
-        }
-
-        function editBreakSchedule(blockId) {
-            const blockToEdit = document.getElementById(blockId);
-            if (!blockToEdit) return;
-
-            const agentName = blockToEdit.getAttribute('data-agent-name');
-            const breakType = blockToEdit.getAttribute('data-break-type');
-            const breakTimeRaw = blockToEdit.getAttribute('data-break-time-raw'); // Get raw time for input field
-
-            document.getElementById("breakAgent").value = agentName;
-            document.getElementById("breakTime").value = breakTimeRaw; // Populate with 24-hour raw time
-            document.getElementById("breakType").value = breakType;
-            updateBreakType();
-
-            document.getElementById("editingBreakId").value = blockId;
-            document.getElementById("saveBreakButton").textContent = 'Save Break Schedule';
-            showToast(`Editing break for ${agentName}.`, 'info');
-        }
-
-        function deleteBreakSchedule(button) {
-            const breakScheduleDiv = document.getElementById("breakSchedule");
-            const agentBlock = button.parentElement;
-            agentBlock.style.opacity = 0;
-            agentBlock.style.transform = 'translateX(100%)';
-            agentBlock.addEventListener('transitionend', () => {
-                agentBlock.remove();
-                sortBreakBlocks(); // Re-sort after deletion
-            }, { once: true });
-
-            if (document.getElementById("editingBreakId").value === agentBlock.id) {
-                document.getElementById("breakAgent").value = '';
-                document.getElementById("breakTime").value = '';
-                document.getElementById("editingBreakId").value = '';
-                document.getElementById("saveBreakButton").textContent = 'Add Break Schedule';
-                document.getElementById("breakType").value = 'Lunch'; // Default to Lunch after deletion
-                updateBreakType();
-            }
-            showToast("Break schedule deleted.", 'error');
         }
 
         function generateReport() {
@@ -2056,6 +1995,246 @@ What We’re Doing
                     console.error('Failed to copy intraday traffic report: ', err);
                     showToast("Failed to copy intraday traffic report. Please try again.", 'error');
                 });
+        }
+
+        // --- Switch Template Functions ---
+        function generateSwitchTemplate(templateType) {
+            const templates = switchTemplates[templateType];
+            if (!templates || templates.length === 0) {
+                document.getElementById('switchTemplateOutput').innerText = "No templates available for this type.";
+                showToast("No templates available.", 'info');
+                return;
+            }
+
+            // Select a random template from the array
+            const randomIndex = Math.floor(Math.random() * templates.length);
+            const selectedTemplate = templates[randomIndex];
+
+            document.getElementById('switchTemplateOutput').innerText = selectedTemplate;
+            showToast(`Generated ${templateType} template!`, 'success');
+        }
+
+        function copySwitchTemplate() {
+            const templateText = document.getElementById("switchTemplateOutput").innerText;
+            if (templateText.trim() === "") {
+                showToast("No template to copy. Generate a template first.", 'info');
+                return;
+            }
+
+            navigator.clipboard.writeText(templateText)
+                .then(() => {
+                    showToast("Template copied to clipboard!", 'success');
+                })
+                .catch(err => {
+                    console.error('Failed to copy template: ', err);
+                    showToast("Failed to copy template. Please try again.", 'error');
+                });
+        }
+
+        // --- Agent Configuration Functions ---
+        function addAgentConfigEntries() {
+            const agentNamesInput = document.getElementById('agentConfigNames').value.trim();
+            if (!agentNamesInput) {
+                showToast("Please enter agent name(s).", 'error');
+                return;
+            }
+
+            const names = agentNamesInput.split("\n").map(name => name.trim()).filter(name => name);
+
+            if (names.length === 0) {
+                showToast("No valid agent names entered.", 'error');
+                return;
+            }
+
+            names.forEach(agentName => {
+                const existingAgent = allAgentConfigs.find(config => config.name === agentName);
+                if (existingAgent) {
+                    showToast(`Agent "${agentName}" already exists.`, 'info');
+                    return;
+                }
+
+                const entryId = `agent-config-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                allAgentConfigs.push({
+                    id: entryId,
+                    name: agentName,
+                    breakSlots: [] // Initialize with no break slots
+                });
+            });
+
+            renderAgentConfigs();
+            document.getElementById('agentConfigNames').value = ''; // Clear input
+            showToast("Agent(s) added to configuration.", 'success');
+        }
+
+        function addBreakSlot(agentId) {
+            const agentIndex = allAgentConfigs.findIndex(config => config.id === agentId);
+            if (agentIndex !== -1) {
+                if (allAgentConfigs[agentIndex].breakSlots.length < 6) {
+                    allAgentConfigs[agentIndex].breakSlots.push({
+                        type: breakActivityOptions[0], // Default to first option
+                        time: ''
+                    });
+                    renderAgentConfigs(); // Re-render to show new slot
+                    showToast("Break/Activity slot added.", 'info');
+                } else {
+                    showToast("Maximum 6 break/activity slots per agent.", 'info');
+                }
+            }
+        }
+
+        function updateBreakSlot(agentId, slotIndex, field, value) {
+            const agentIndex = allAgentConfigs.findIndex(config => config.id === agentId);
+            if (agentIndex !== -1 && allAgentConfigs[agentIndex].breakSlots[slotIndex]) {
+                allAgentConfigs[agentIndex].breakSlots[slotIndex][field] = value;
+                // Re-set alarm if time is updated
+                if (field === 'time') {
+                    const agentName = allAgentConfigs[agentIndex].name;
+                    const slot = allAgentConfigs[agentIndex].breakSlots[slotIndex];
+                    // Generate a unique ID for this specific slot for the alarm
+                    const slotAlarmId = `${agentId}-slot-container-${slotIndex}`; // Use the container ID
+                    setBreakAlarmAgentConfig(agentName, slot.type, slot.time, slotAlarmId);
+                }
+                showToast(`Break/Activity updated for ${allAgentConfigs[agentIndex].name}.`, 'info');
+            }
+        }
+
+        function removeBreakSlot(agentId, slotIndex) {
+            const agentIndex = allAgentConfigs.findIndex(config => config.id === agentId);
+            if (agentIndex !== -1 && allAgentConfigs[agentIndex].breakSlots[slotIndex]) {
+                allAgentConfigs[agentIndex].breakSlots.splice(slotIndex, 1);
+                renderAgentConfigs(); // Re-render to remove slot
+                showToast("Break/Activity slot removed.", 'info');
+            }
+        }
+
+        function deleteAgentConfig(entryId) {
+            const entryIndex = allAgentConfigs.findIndex(entry => entry.id === entryId);
+            if (entryIndex !== -1) {
+                const agentName = allAgentConfigs[entryIndex].name;
+                allAgentConfigs.splice(entryIndex, 1);
+                renderAgentConfigs();
+                showToast(`Agent "${agentName}" removed from configuration.`, 'error');
+            }
+        }
+
+        function renderAgentConfigs() {
+            const agentConfigResultsDiv = document.getElementById('agentConfigResults');
+            agentConfigResultsDiv.innerHTML = ''; // Clear existing entries
+
+            allAgentConfigs.sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically by name
+
+            allAgentConfigs.forEach(config => {
+                const div = document.createElement('div');
+                div.className = 'agent-config-entry';
+                div.id = config.id;
+
+                let breakSlotsHtml = config.breakSlots.map((slot, index) => {
+                    let optionsHtml = breakActivityOptions.map(option =>
+                        `<option value="${option}" ${option === slot.type ? 'selected' : ''}>${option}</option>`
+                    ).join('');
+                    // Generate a unique ID for this specific slot for the alarm
+                    const slotContainerId = `${config.id}-slot-container-${index}`;
+                    // Set alarm for each slot when rendered
+                    if (slot.time) { // Only set alarm if time is provided
+                        setBreakAlarmAgentConfig(config.name, slot.type, slot.time, slotContainerId);
+                    }
+                    return `
+                        <div class="break-slot-container" id="${slotContainerId}">
+                            <select onchange="updateBreakSlot('${config.id}', ${index}, 'type', this.value)">
+                                ${optionsHtml}
+                            </select>
+                            <input type="text" placeholder="HH:MM" value="${slot.time}"
+                                oninput="formatBreakTime(this); updateBreakSlot('${config.id}', ${index}, 'time', this.value)"
+                                pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" maxlength="5" />
+                            <button class="remove-slot-button" onclick="removeBreakSlot('${config.id}', ${index})"><i class="fas fa-minus-circle"></i></button>
+                        </div>
+                    `;
+                }).join('');
+
+                div.innerHTML = `
+                    <strong>${config.name}</strong>
+                    ${breakSlotsHtml}
+                    <button class="add-slot-button" onclick="addBreakSlot('${config.id}')"><i class="fas fa-plus-circle"></i> Add Break/Activity Slot</button>
+                    <div class="actions">
+                        <button class="delete-button" onclick="deleteAgentConfig('${config.id}')"><i class="fas fa-trash-alt"></i> Delete Agent</button>
+                    </div>
+                `;
+                agentConfigResultsDiv.appendChild(div);
+            });
+        }
+
+        // New function for Agent Configuration break alarms
+        function setBreakAlarmAgentConfig(agentName, breakType, breakTime, slotContainerId) {
+            const now = new Date();
+            const breakDate = new Date();
+            const [hours, minutes] = breakTime.split(':');
+
+            if (!hours || !minutes) { // If time is not valid, don't set alarm
+                return;
+            }
+
+            breakDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+            // If break time is for the next day (e.g., current time is 23:00, break is 01:00)
+            if (breakDate < now && (now.getHours() > breakDate.getHours() || (now.getHours() === breakDate.getHours() && now.getMinutes() > breakDate.getMinutes()))) {
+                breakDate.setDate(breakDate.getDate() + 1);
+            }
+
+            const timeUntilBreak = breakDate - now;
+
+            // Function to format time for display (e.g., 14:30 -> 02:30 PM)
+            const formatDisplayTime = (time24hr) => {
+                const [h, m] = time24hr.split(':');
+                let hours = parseInt(h);
+                const minutes = parseInt(m);
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // the hour '0' should be '12'
+                const strMinutes = minutes < 10 ? '0' + minutes : minutes;
+                return `${hours}:${strMinutes} ${ampm}`;
+            };
+
+            if (timeUntilBreak > 0) {
+                setTimeout(() => {
+                    const breakSound = document.getElementById("breakSound");
+                    breakSound.play().catch(e => console.error("Error playing sound:", e));
+                    // Use 'break-alarm' type for emphasized notification
+                    showToast(`${agentName}'s ${breakType.toLowerCase()} is now!`, 'break-alarm');
+
+                    const slotContainer = document.getElementById(slotContainerId);
+                    if (slotContainer) {
+                        slotContainer.style.opacity = '0.6';
+                        slotContainer.style.borderLeftColor = '#607d8b'; // Dimmed color
+                        slotContainer.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+                        // Hide select and input, and remove button
+                        slotContainer.querySelectorAll('select, input, button').forEach(el => {
+                            el.style.display = 'none';
+                        });
+                        // Add a text element to show the completed break
+                        const completedText = document.createElement('span');
+                        completedText.textContent = `${breakType} at ${formatDisplayTime(breakTime)} - COMPLETED`;
+                        completedText.style.color = 'var(--text-color)';
+                        completedText.style.fontWeight = 'bold';
+                        slotContainer.prepend(completedText); // Add at the beginning
+                    }
+                }, timeUntilBreak);
+            } else {
+                // For breaks in the past, visually mark them as done immediately
+                const slotContainer = document.getElementById(slotContainerId);
+                if (slotContainer) {
+                    slotContainer.style.opacity = '0.6';
+                    slotContainer.style.borderLeftColor = '#607d8b';
+                    slotContainer.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+                    slotContainer.querySelectorAll('select, input, button').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                    const completedText = document.createElement('span');
+                    completedText.textContent = `${breakType} at ${formatDisplayTime(breakTime)} - COMPLETED`;
+                    completedText.style.color = 'var(--text-color)';
+                    completedText.style.fontWeight = 'bold';
+                    slotContainer.prepend(completedText);
+                }
+            }
         }
     </script>
 </body>
