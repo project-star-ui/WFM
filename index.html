@@ -1172,7 +1172,7 @@
         </div>
     </div>
 
-    <audio id="breakSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+    <audio id="breakSound" src="audio/notif.mp4" preload="auto"></audio>
 
     <!-- Toast Notification Container -->
     <div class="toast-container" id="toastContainer"></div>
@@ -2165,6 +2165,9 @@ What We’re Doing
 
         // New function for Agent Configuration break alarms
         function setBreakAlarmAgentConfig(agentName, breakType, breakTime, slotContainerId) {
+            // Clear any existing alarms for this slot to prevent duplicates
+            clearTimeout(window[`alarmTimeout_${slotContainerId}`]);
+
             const now = new Date();
             const breakDate = new Date();
             const [hours, minutes] = breakTime.split(':');
@@ -2175,12 +2178,18 @@ What We’re Doing
 
             breakDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
-            // If break time is for the next day (e.g., current time is 23:00, break is 01:00)
-            if (breakDate < now && (now.getHours() > breakDate.getHours() || (now.getHours() === breakDate.getHours() && now.getMinutes() > breakDate.getMinutes()))) {
+            // Adjust breakDate to be 20 minutes *before* the actual break time
+            breakDate.setMinutes(breakDate.getMinutes() - 20);
+
+            // If the adjusted break time is in the past, assume it's for the next day
+            // This logic needs to be careful: if current time is 10:00 and break is 10:15 (alarm 09:55),
+            // and we set it for next day, it will be 09:55 next day.
+            // We only want to set for next day if the *adjusted* time is already past *today*.
+            if (breakDate < now) {
                 breakDate.setDate(breakDate.getDate() + 1);
             }
 
-            const timeUntilBreak = breakDate - now;
+            const timeUntilAlarm = breakDate - now;
 
             // Function to format time for display (e.g., 14:30 -> 02:30 PM)
             const formatDisplayTime = (time24hr) => {
@@ -2194,32 +2203,70 @@ What We’re Doing
                 return `${hours}:${strMinutes} ${ampm}`;
             };
 
-            if (timeUntilBreak > 0) {
-                setTimeout(() => {
+            if (timeUntilAlarm > 0) {
+                window[`alarmTimeout_${slotContainerId}`] = setTimeout(() => {
                     const breakSound = document.getElementById("breakSound");
-                    breakSound.play().catch(e => console.error("Error playing sound:", e));
+                    if (breakSound) {
+                        breakSound.play().catch(e => console.error("Error playing sound:", e));
+                    }
                     // Use 'break-alarm' type for emphasized notification
-                    showToast(`${agentName}'s ${breakType.toLowerCase()} is now!`, 'break-alarm');
+                    showToast(`${agentName}'s ${breakType.toLowerCase()} is in 20 minutes! (${formatDisplayTime(breakTime)})`, 'break-alarm');
 
+                    // Visually mark the slot as "upcoming" or "alerted"
                     const slotContainer = document.getElementById(slotContainerId);
                     if (slotContainer) {
-                        slotContainer.style.opacity = '0.6';
-                        slotContainer.style.borderLeftColor = '#607d8b'; // Dimmed color
-                        slotContainer.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
-                        // Hide select and input, and remove button
-                        slotContainer.querySelectorAll('select, input, button').forEach(el => {
-                            el.style.display = 'none';
-                        });
-                        // Add a text element to show the completed break
-                        const completedText = document.createElement('span');
-                        completedText.textContent = `${breakType} at ${formatDisplayTime(breakTime)} - COMPLETED`;
-                        completedText.style.color = 'var(--text-color)';
-                        completedText.style.fontWeight = 'bold';
-                        slotContainer.prepend(completedText); // Add at the beginning
+                        slotContainer.style.borderLeftColor = 'orange'; // Highlight with orange
+                        slotContainer.style.boxShadow = '0 5px 15px rgba(255, 165, 0, 0.5)';
                     }
-                }, timeUntilBreak);
+
+                    // Set another timeout for the actual break time to mark it as completed
+                    const actualBreakTime = new Date();
+                    actualBreakTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                    if (actualBreakTime < now) { // If actual break time is already past today
+                        actualBreakTime.setDate(actualBreakTime.getDate() + 1);
+                    }
+                    const timeUntilActualBreak = actualBreakTime - new Date(); // Recalculate from current time
+
+                    if (timeUntilActualBreak > 0) {
+                        setTimeout(() => {
+                            const slotContainer = document.getElementById(slotContainerId);
+                            if (slotContainer) {
+                                slotContainer.style.opacity = '0.6';
+                                slotContainer.style.borderLeftColor = '#607d8b'; // Dimmed color
+                                slotContainer.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+                                // Hide select and input, and remove button
+                                slotContainer.querySelectorAll('select, input, button').forEach(el => {
+                                    el.style.display = 'none';
+                                });
+                                // Add a text element to show the completed break
+                                const completedText = document.createElement('span');
+                                completedText.textContent = `${breakType} at ${formatDisplayTime(breakTime)} - COMPLETED`;
+                                completedText.style.color = 'var(--text-color)';
+                                completedText.style.fontWeight = 'bold';
+                                slotContainer.prepend(completedText); // Add at the beginning
+                            }
+                        }, timeUntilActualBreak);
+                    } else {
+                         // If actual break time is already past, mark as completed immediately
+                        const slotContainer = document.getElementById(slotContainerId);
+                        if (slotContainer) {
+                            slotContainer.style.opacity = '0.6';
+                            slotContainer.style.borderLeftColor = '#607d8b';
+                            slotContainer.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+                            slotContainer.querySelectorAll('select, input, button').forEach(el => {
+                                el.style.display = 'none';
+                            });
+                            const completedText = document.createElement('span');
+                            completedText.textContent = `${breakType} at ${formatDisplayTime(breakTime)} - COMPLETED`;
+                            completedText.style.color = 'var(--text-color)';
+                            completedText.style.fontWeight = 'bold';
+                            slotContainer.prepend(completedText);
+                        }
+                    }
+
+                }, timeUntilAlarm);
             } else {
-                // For breaks in the past, visually mark them as done immediately
+                // If the 20-min-before alarm time is already past, mark as completed immediately
                 const slotContainer = document.getElementById(slotContainerId);
                 if (slotContainer) {
                     slotContainer.style.opacity = '0.6';
