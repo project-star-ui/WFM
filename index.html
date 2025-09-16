@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1057,252 +1058,333 @@
             word-wrap: break-word; /* Ensure names wrap within list items */
             white-space: normal; /* Override any nowrap from parent */
         }
+
+        /* Clear All Data Button */
+        .clear-all-button {
+            background-color: var(--danger-color);
+            box-shadow: 0 8px 25px var(--danger-color);
+            margin-top: 50px; /* More space from other elements */
+            margin-bottom: 20px;
+        }
+
+        .clear-all-button:hover {
+            background-color: #d32f2f; /* Darker red on hover */
+            box-shadow: 0 12px 35px #d32f2f;
+        }
+
+        /* New styles for nested tabs */
+        .nested-tabs {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 600px; /* Slightly narrower for nested tabs */
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle separator */
+            padding-bottom: 10px;
+        }
+
+        .nested-tab {
+            padding: 8px 15px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 188, 212, 0.5);
+            border-radius: var(--border-radius-small);
+            transition: all 0.2s ease-in-out;
+            font-size: 0.95em;
+            font-weight: 500;
+            color: var(--text-color);
+            flex-grow: 1;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .nested-tab:hover {
+            background: rgba(0, 188, 212, 0.15);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px var(--shadow-light);
+        }
+
+        .nested-tab.active {
+            background: var(--primary-color);
+            color: #1c1c1c;
+            border-color: var(--primary-color);
+            box-shadow: 0 3px 10px var(--primary-color);
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
 
     <h1>WF Helper <span style="font-size: 0.6em; vertical-align: super; font-weight: normal;">PRO</span></h1>
     <div class="tabs">
-        <div class="tab active" onclick="showTab('tasks')">IM Tasks</div>
-        <div class="tab" onclick="showTab('report')">Report Generator</div>
-        <div class="tab" onclick="showTab('attendance')">Attendance Report</div>
-        <div class="tab" onclick="showTab('outage')">Outage Report</div>
-        <div class="tab" onclick="showTab('intradayTraffic')">Intraday Traffic</div>
-        <div class="tab" onclick="showTab('switchTemplate')">Switch Template</div>
-        <div class="tab" onclick="showTab('agentConfig')">Break Schedule</div>
-        <div class="tab" onclick="showTab('backlogTemplate')">Backlog Template</div> <!-- New Tab -->
+        <div class="tab active" onclick="showMainTab('activities')">Activities</div>
+        <div class="tab" onclick="showMainTab('reporting')">Reporting</div>
     </div>
 
-    <div class="container" id="tasks">
-        <label for="agents">Enter Agent Names with Break Times (one per line, format: Name, Break Time):</label>
-        <textarea id="agents" rows="6" placeholder="e.g. John Doe, 10:00&#10;Jane Smith, 10:15&#10;Alex Johnson, 09:45"></textarea>
+    <!-- Main Activities Container -->
+    <div class="container" id="activities" style="display: block;">
+        <div class="nested-tabs">
+            <div class="nested-tab active" onclick="showNestedTab('tasks')">IM Tasks</div>
+            <div class="nested-tab" onclick="showNestedTab('agentConfig')">Break Schedule</div>
+            <div class="nested-tab" onclick="showNestedTab('switchTemplate')">Switch Template</div>
+        </div>
 
-        <label for="taskCount">Enter Total IM Task Volume:</label>
-        <input type="number" id="taskCount" min="1" placeholder="e.g. 12" />
+        <!-- IM Tasks Content -->
+        <div id="tasks-content">
+            <label for="agents">Enter Agent Names with Break Times (one per line, format: Name, Break Time):</label>
+            <textarea id="agents" rows="6" placeholder="e.g. John Doe, 10:00&#10;Jane Smith, 10:15&#10;Alex Johnson, 09:45"></textarea>
 
-        <label for="shiftSchedule">Select Shift Schedule:</label>
-        <select id="shiftSchedule">
-            <option value="8PM">8:00 PM</option>
-            <option value="10PM">10:00 PM</option>
-            <option value="10:30PM">10:30 PM</option>
-            <option value="3AM">3:00 AM</option>
-            <option value="5AM">5:00 AM</option>
-        </select>
+            <label for="taskCount">Enter Total IM Task Volume:</label>
+            <input type="number" id="taskCount" min="1" placeholder="e.g. 12" />
 
-        <button onclick="generateSkills()">Generate IM Assignment</button>
+            <label for="shiftSchedule">Select Shift Schedule:</label>
+            <select id="shiftSchedule">
+                <option value="8PM">8:00 PM</option>
+                <option value="10PM">10:00 PM</option>
+                <option value="10:30PM">10:30 PM</option>
+                <option value="3AM">3:00 AM</option>
+                <option value="5AM">5:00 AM</option>
+            </select>
 
-        <div class="results" id="results"></div>
-    </div>
+            <button onclick="generateSkills()">Generate IM Assignment</button>
 
-    <div class="container" id="report" style="display: none;">
-        <div class="report-input-grid">
-            <div class="form-group-inline">
-                <label for="imQueueTasks">IM Queue Waiting:</label>
-                <input type="number" id="imQueueTasks" min="0" value="0" />
-            </div>
+            <div class="results" id="results"></div>
+        </div>
 
-            <div class="form-group-inline">
-                <label for="imAgentsWorking">IM Agents Working:</label>
-                <input type="number" id="imAgentsWorking" min="0" value="0" />
-            </div>
+        <!-- Break Schedule Content -->
+        <div id="agentConfig-content" style="display: none;">
+            <label for="agentConfigNames">Enter Agent Name(s) (one per line):</label>
+            <textarea id="agentConfigNames" rows="6" placeholder="e.g. John Doe&#10;Jane Smith&#10;Alex Johnson"></textarea>
+            <button onclick="addAgentConfigEntries()">Add Agent(s)</button>
 
-            <div class="form-group-inline">
-                <label for="ticketQueueTasks">Ticket Queue Waiting:</label>
-                <input type="number" id="ticketQueueTasks" min="0" value="0" />
-            </div>
-
-            <div class="form-group-inline">
-                <label for="ticketAgentsWorking">Ticket Agents Working:</label>
-                <input type="number" id="ticketAgentsWorking" min="0" value="0" />
-            </div>
-
-            <div class="form-group-inline">
-                <label for="agentsOnBreak">Agents on Break:</label>
-                <input type="number" id="agentsOnBreak" min="0" value="0" />
-            </div>
-
-            <div class="form-group-inline">
-                <label for="agentsOnLunch">Agents on Lunch:</label>
-                <input type="number" id="agentsOnLunch" min="0" value="0" />
-            </div>
-
-            <div class="form-group-inline">
-                <label for="agentsOnCoaching">Agents on Coaching:</label>
-                <input type="number" id="agentsOnCoaching" min="0" value="0" />
-            </div>
-
-            <div class="form-group-inline">
-                <label for="agentsOnMeeting">Agents on Meeting:</label>
-                <input type="number" id="agentsOnMeeting" min="0" value="0" />
-            </div>
-
-            <div class="form-group-inline">
-                <label for="agentsOnTraining">Agents on Training:</label>
-                <input type="number" id="agentsOnTraining" min="0" value="0" />
+            <div class="results" id="agentConfigResults">
+                <!-- Agent configuration entries will be dynamically added here -->
             </div>
         </div>
 
-        <button onclick="generateReport()">Generate Report</button>
-        <button onclick="generateUSTBacklog()">Generate UST Backlog</button>
-        <button onclick="generatePHBacklog()">Generate PH Backlog</button>
-        <button onclick="generateReminder()">Generate Reminder</button>
-        <button onclick="generateHandlingCO()">Generate Handling CO</button>
-
-
-        <div class="report-output" id="reportOutput"></div>
-        <!-- New Copy Button -->
-        <button onclick="copyReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Report</button>
-    </div>
-
-    <div class="container" id="attendance" style="display: none;">
-        <label for="attendanceNames">Enter Agent Names (one per line):</label>
-        <textarea id="attendanceNames" rows="6" placeholder="e.g. John Doe&#10;Jane Smith&#10;Alex Johnson"></textarea>
-
-        <label for="attendanceShiftSchedule">Select Shift Schedule:</label>
-        <select id="attendanceShiftSchedule">
-            <option value="8PM">8:00 PM</option>
-            <option value="10PM">10:00 PM</option>
-            <option value="10:30PM">10:30 PM</option>
-            <option value="3AM">3:00 AM</option>
-            <option value="5AM">5:00 AM</option>
-        </select>
-
-        <button onclick="addAttendanceEntries()">Add Attendance Entries</button>
-
-        <div class="results" id="attendanceResults">
-            <!-- Attendance entries will be dynamically added here -->
-        </div>
-
-        <button onclick="generateAttendanceReport()">Generate Attendance Report</button>
-        <div class="report-output attendance-report-output-container" id="attendanceReportOutput"></div>
-        <button onclick="copyAttendanceReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Attendance Report</button>
-    </div>
-
-    <div class="container" id="outage" style="display: none;">
-        <label for="outageAccount">Account:</label>
-        <select id="outageAccount">
-            <option value="ByteDance - USDS">ByteDance - USDS</option>
-            <!-- Add more accounts here if needed -->
-        </select>
-
-        <label for="outageStartTime">Outage start date and time:</label>
-        <input type="datetime-local" id="outageStartTime" />
-
-        <label for="outageAffected">Affected:</label>
-        <textarea id="outageAffected" rows="4" placeholder="e.g. All agents, specific queues, specific regions"></textarea>
-
-        <label for="outageSide">Client side/CNX side:</label>
-        <select id="outageSide">
-            <option value="Client side">Client side</option>
-            <option value="CNX side">CNX side</option>
-        </select>
-
-        <label for="outageAssistCustomer">Can we still assist customer:</label>
-        <select id="outageAssistCustomer">
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-        </select>
-
-        <label for="outageB2PAffecting">B2P affecting, yes or no:</label>
-        <select id="outageB2PAffecting">
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-        </select>
-
-        <label for="outageDescription">Short description of the outage:</label>
-        <textarea id="outageDescription" rows="4" placeholder="e.g. IM queue is down, login issues"></textarea>
-
-        <label for="outageStatus">Status:</label>
-        <select id="outageStatus">
-            <option value="Ongoing">Ongoing</option>
-            <option value="Resolved">Resolved</option>
-            <option value="Investigating">Investigating</option>
-            <option value="Monitoring">Monitoring</option>
-            <option value="Escalated">Escalated</option>
-        </select>
-
-        <button onclick="generateOutageReport()">Generate Outage Report</button>
-
-        <div class="report-output" id="outageReportOutput"></div>
-        <button onclick="copyOutageReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Outage Report</button>
-    </div>
-
-    <div class="container" id="intradayTraffic" style="display: none;">
-        <label for="imInbound">IM Inbound:</label>
-        <input type="number" id="imInbound" min="0" value="0" />
-
-        <label for="imForecast">IM Forecast:</label>
-        <input type="number" id="imForecast" min="0" value="0" />
-
-        <label for="ticketInbound">Ticket Inbound:</label>
-        <input type="number" id="ticketInbound" min="0" value="0" />
-
-        <label for="ticketForecast">Ticket Forecast:</label>
-        <input type="number" id="ticketForecast" min="0" value="0" />
-
-        <button onclick="generateIntradayTrafficReport()">Generate Intraday Traffic Report</button>
-
-        <div class="report-output" id="intradayTrafficReportOutput"></div>
-        <button onclick="copyIntradayTrafficReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Intraday Traffic Report</button>
-    </div>
-
-    <div class="container" id="switchTemplate" style="display: none;">
-        <label>Select a template to generate:</label>
-        <div class="template-buttons">
-            <button onclick="generateSwitchTemplate('IM')"><i class="fas fa-comment-dots"></i> IM</button>
-            <button onclick="generateSwitchTemplate('Ticket')"><i class="fas fa-ticket-alt"></i> Ticket</button>
-            <button onclick="generateSwitchTemplate('Break')"><i class="fas fa-coffee"></i> Break</button>
-            <button onclick="generateSwitchTemplate('Lunch')"><i class="fas fa-utensils"></i> Lunch</button>
-        </div>
-        <div class="report-output" id="switchTemplateOutput"></div>
-        <button onclick="copySwitchTemplate()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Template</button>
-    </div>
-
-    <div class="container" id="agentConfig" style="display: none;">
-        <label for="agentConfigNames">Enter Agent Name(s) (one per line):</label>
-        <textarea id="agentConfigNames" rows="6" placeholder="e.g. John Doe&#10;Jane Smith&#10;Alex Johnson"></textarea>
-        <button onclick="addAgentConfigEntries()">Add Agent(s)</button>
-
-        <div class="results" id="agentConfigResults">
-            <!-- Agent configuration entries will be dynamically added here -->
+        <!-- Switch Template Content -->
+        <div id="switchTemplate-content" style="display: none;">
+            <label>Select a template to generate:</label>
+            <div class="template-buttons">
+                <button onclick="generateSwitchTemplate('IM')"><i class="fas fa-comment-dots"></i> IM</button>
+                <button onclick="generateSwitchTemplate('Ticket')"><i class="fas fa-ticket-alt"></i> Ticket</button>
+                <button onclick="generateSwitchTemplate('Break')"><i class="fas fa-coffee"></i> Break</button>
+                <button onclick="generateSwitchTemplate('Lunch')"><i class="fas fa-utensils"></i> Lunch</button>
+            </div>
+            <div class="report-output" id="switchTemplateOutput"></div>
+            <button onclick="copySwitchTemplate()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Template</button>
         </div>
     </div>
 
-    <!-- New Backlog Template Tab -->
-    <div class="container" id="backlogTemplate" style="display: none;">
-        <label for="backlogType">SPS Backlog Update:</label>
-        <select id="backlogType" onchange="generateBacklogTemplate()">
-            <option value="startDay">Start Day</option>
-            <option value="intraday" selected>Intraday</option> <!-- Set Intraday as default selected -->
-        </select>
+    <!-- Main Reporting Container -->
+    <div class="container" id="reporting" style="display: none;">
+        <div class="nested-tabs">
+            <div class="nested-tab active" onclick="showNestedTab('attendance')">Attendance Report</div>
+            <div class="nested-tab" onclick="showNestedTab('report')">Report Generator</div>
+            <div class="nested-tab" onclick="showNestedTab('intradayTraffic')">Intraday Traffic</div>
+            <div class="nested-tab" onclick="showNestedTab('outage')">Outage Report</div>
+            <div class="nested-tab" onclick="showNestedTab('backlog')">Backlog Template</div> <!-- New nested tab -->
+        </div>
 
-        <div class="backlog-output" id="backlogTemplateOutput">
-            <p id="backlogTitle" style="font-weight: bold;"></p> <!-- New element for the dynamic title -->
+        <!-- Attendance Report Content -->
+        <div id="attendance-content">
+            <label for="attendanceNames">Enter Agent Names (one per line):</label>
+            <textarea id="attendanceNames" rows="6" placeholder="e.g. John Doe&#10;Jane Smith&#10;Alex Johnson"></textarea>
 
-            <div class="backlog-time-input-group">
-                <label for="mnlHourInput">MNL Time:</label>
-                <input type="number" id="mnlHourInput" min="0" max="23" value="0" onchange="updateBacklogTimes()">
-                <span>:00</span>
-                <span id="mnlDateDisplay"></span>
+            <label for="attendanceShiftSchedule">Select Shift Schedule:</label>
+            <select id="attendanceShiftSchedule">
+                <option value="8PM">8:00 PM</option>
+                <option value="10PM">10:00 PM</option>
+                <option value="10:30PM">10:30 PM</option>
+                <option value="3AM">3:00 AM</option>
+                <option value="5AM">5:00 AM</option>
+            </select>
+
+            <button onclick="addAttendanceEntries()">Add Attendance Entries</button>
+
+            <div class="results" id="attendanceResults">
+                <!-- Attendance entries will be dynamically added here -->
             </div>
 
-            <div class="backlog-time-input-group">
-                <label for="usHourInput">US Time:</label>
-                <input type="number" id="usHourInput" min="0" max="23" value="0" onchange="updateBacklogTimes()">
-                <span>:00</span>
+            <button onclick="generateAttendanceReport()">Generate Attendance Report</button>
+            <div class="report-output attendance-report-output-container" id="attendanceReportOutput"></div>
+            <button onclick="copyAttendanceReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Attendance Report</button>
+        </div>
+
+        <!-- Report Generator Content -->
+        <div id="report-content" style="display: none;">
+            <div class="report-input-grid">
+                <div class="form-group-inline">
+                    <label for="imQueueTasks">IM Queue Waiting:</label>
+                    <input type="number" id="imQueueTasks" min="0" value="0" />
+                </div>
+
+                <div class="form-group-inline">
+                    <label for="imAgentsWorking">IM Agents Working:</label>
+                    <input type="number" id="imAgentsWorking" min="0" value="0" />
+                </div>
+
+                <div class="form-group-inline">
+                    <label for="ticketQueueTasks">Ticket Queue Waiting:</label>
+                    <input type="number" id="ticketQueueTasks" min="0" value="0" />
+                </div>
+
+                <div class="form-group-inline">
+                    <label for="ticketAgentsWorking">Ticket Agents Working:</label>
+                    <input type="number" id="ticketAgentsWorking" min="0" value="0" />
+                </div>
+
+                <div class="form-group-inline">
+                    <label for="agentsOnBreak">Agents on Break:</label>
+                    <input type="number" id="agentsOnBreak" min="0" value="0" />
+                </div>
+
+                <div class="form-group-inline">
+                    <label for="agentsOnLunch">Agents on Lunch:</label>
+                    <input type="number" id="agentsOnLunch" min="0" value="0" />
+                </div>
+
+                <div class="form-group-inline">
+                    <label for="agentsOnCoaching">Agents on Coaching:</label>
+                    <input type="number" id="agentsOnCoaching" min="0" value="0" />
+                </div>
+
+                <div class="form-group-inline">
+                    <label for="agentsOnMeeting">Agents on Meeting:</label>
+                    <input type="number" id="agentsOnMeeting" min="0" value="0" />
+                </div>
+
+                <div class="form-group-inline">
+                    <label for="agentsOnTraining">Agents on Training:</label>
+                    <input type="number" id="agentsOnTraining" min="0" value="0" />
+                </div>
             </div>
 
-            <p id="nextReporting"></p>
-            <h3 style="text-align: center;">BACKLOGS MONITORING</h3>
-            <p id="backlogAdditionalText" style="margin-top: 20px;"></p> <!-- New element for additional text -->
+            <button onclick="generateReport()">Generate Report</button>
+            <button onclick="generateUSTBacklog()">Generate UST Backlog</button>
+            <button onclick="generatePHBacklog()">Generate PH Backlog</button>
+            <button onclick="generateReminder()">Generate Reminder</button>
+            <button onclick="generateHandlingCO()">Generate Handling CO</button>
+
+
+            <div class="report-output" id="reportOutput"></div>
+            <!-- New Copy Button -->
+            <button onclick="copyReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Report</button>
         </div>
-        <button onclick="copyBacklogTemplate()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Backlog Template</button>
+
+        <!-- Intraday Traffic Content -->
+        <div id="intradayTraffic-content" style="display: none;">
+            <label for="imInbound">IM Inbound:</label>
+            <input type="number" id="imInbound" min="0" value="0" />
+
+            <label for="imForecast">IM Forecast:</label>
+            <input type="number" id="imForecast" min="0" value="0" />
+
+            <label for="ticketInbound">Ticket Inbound:</label>
+            <input type="number" id="ticketInbound" min="0" value="0" />
+
+            <label for="ticketForecast">Ticket Forecast:</label>
+            <input type="number" id="ticketForecast" min="0" value="0" />
+
+            <button onclick="generateIntradayTrafficReport()">Generate Intraday Traffic Report</button>
+
+            <div class="report-output" id="intradayTrafficReportOutput"></div>
+            <button onclick="copyIntradayTrafficReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Intraday Traffic Report</button>
+        </div>
+
+        <!-- Outage Report Content -->
+        <div id="outage-content" style="display: none;">
+            <label for="outageAccount">Account:</label>
+            <select id="outageAccount">
+                <option value="ByteDance - USDS">ByteDance - USDS</option>
+                <!-- Add more accounts here if needed -->
+            </select>
+
+            <label for="outageStartTime">Outage start date and time:</label>
+            <input type="datetime-local" id="outageStartTime" />
+
+            <label for="outageAffected">Affected:</label>
+            <textarea id="outageAffected" rows="4" placeholder="e.g. All agents, specific queues, specific regions"></textarea>
+
+            <label for="outageSide">Client side/CNX side:</label>
+            <select id="outageSide">
+                <option value="Client side">Client side</option>
+                <option value="CNX side">CNX side</option>
+            </select>
+
+            <label for="outageAssistCustomer">Can we still assist customer:</label>
+            <select id="outageAssistCustomer">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <label for="outageB2PAffecting">B2P affecting, yes or no:</label>
+            <select id="outageB2PAffecting">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <label for="outageDescription">Short description of the outage:</label>
+            <textarea id="outageDescription" rows="4" placeholder="e.g. IM queue is down, login issues"></textarea>
+
+            <label for="outageStatus">Status:</label>
+            <select id="outageStatus">
+                <option value="Ongoing">Ongoing</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Investigating">Investigating</option>
+                <option value="Monitoring">Monitoring</option>
+                <option value="Escalated">Escalated</option>
+            </select>
+
+            <button onclick="generateOutageReport()">Generate Outage Report</button>
+
+            <div class="report-output" id="outageReportOutput"></div>
+            <button onclick="copyOutageReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Outage Report</button>
+        </div>
+
+        <!-- Backlog Template Content (Moved from top-level tab) -->
+        <div id="backlog-content" style="display: none;">
+            <label for="backlogType">SPS Backlog Update:</label>
+            <select id="backlogType" onchange="generateBacklogTemplate()">
+                <option value="startDay">Start Day</option>
+                <option value="intraday" selected>Intraday</option> <!-- Set Intraday as default selected -->
+            </select>
+
+            <div class="backlog-output" id="backlogTemplateOutput">
+                <p id="backlogTitle" style="font-weight: bold;"></p> <!-- New element for the dynamic title -->
+
+                <div class="backlog-time-input-group">
+                    <label for="mnlHourInput">MNL Time:</label>
+                    <input type="number" id="mnlHourInput" min="0" max="23" value="0" onchange="updateBacklogTimes()">
+                    <span>:00</span>
+                    <span id="mnlDateDisplay"></span>
+                </div>
+
+                <div class="backlog-time-input-group">
+                    <label for="usHourInput">US Time:</label>
+                    <input type="number" id="usHourInput" min="0" max="23" value="0" onchange="updateBacklogTimes()">
+                    <span>:00</span>
+                </div>
+
+                <p id="nextReporting"></p>
+                <h3 style="text-align: center;">BACKLOGS MONITORING</h3>
+                <p id="backlogAdditionalText" style="margin-top: 20px;"></p> <!-- New element for additional text -->
+            </div>
+            <button onclick="copyBacklogTemplate()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Backlog Template</button>
+        </div>
     </div>
 
     <audio id="breakSound" src="audio/notif.mp3" preload="auto"></audio>
 
     <!-- Toast Notification Container -->
     <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Clear All Data Button -->
+    <button class="clear-all-button" onclick="clearAllData()"><i class="fas fa-eraser"></i> Clear All Saved Data</button>
 
     <script>
         let generatedScheduleSections = []; // For IM Tasks
@@ -1365,6 +1447,25 @@
             ]
         };
 
+        // --- Local Storage Keys ---
+        const LS_KEYS = {
+            IM_AGENTS: 'imAgents',
+            IM_TASK_COUNT: 'imTaskCount',
+            IM_SHIFT_SCHEDULE: 'imShiftSchedule',
+            IM_GENERATED_SECTIONS: 'imGeneratedSections',
+            REPORT_INPUTS: 'reportInputs',
+            ATTENDANCE_NAMES: 'attendanceNames',
+            ATTENDANCE_SHIFT_SCHEDULE: 'attendanceShiftSchedule',
+            ATTENDANCE_ENTRIES: 'attendanceEntries',
+            ATTENDANCE_COLLAPSE_STATES: 'attendanceCollapseStates',
+            OUTAGE_INPUTS: 'outageInputs',
+            INTRADAY_TRAFFIC_INPUTS: 'intradayTrafficInputs',
+            AGENT_CONFIGS: 'agentConfigs',
+            BACKLOG_TYPE: 'backlogType',
+            BACKLOG_MNL_HOUR: 'backlogMnlHour',
+            BACKLOG_US_HOUR: 'backlogUsHour'
+        };
+
         // --- Toast Notification System ---
         function showToast(message, type = 'info') {
             const toastContainer = document.getElementById('toastContainer');
@@ -1404,17 +1505,174 @@
             }, displayDuration);
         }
 
-        // --- Tab Switching with Animation ---
-        function showTab(tabId) {
-            const containers = ['tasks', 'report', 'attendance', 'outage', 'intradayTraffic', 'switchTemplate', 'agentConfig', 'backlogTemplate']; // Updated
-            containers.forEach(id => {
+        // --- Local Storage Functions ---
+        function saveToLocalStorage(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+            } catch (e) {
+                console.error(`Error saving to local storage for key "${key}":`, e);
+                showToast("Failed to save data. Local storage might be full or unavailable.", 'error');
+            }
+        }
+
+        function loadFromLocalStorage(key) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : null;
+            } catch (e) {
+                console.error(`Error loading from local storage for key "${key}":`, e);
+                showToast("Failed to load saved data. Local storage might be corrupted.", 'error');
+                return null;
+            }
+        }
+
+        function clearLocalStorage(key) {
+            try {
+                localStorage.removeItem(key);
+            } catch (e) {
+                console.error(`Error clearing local storage for key "${key}":`, e);
+                showToast("Failed to clear data. Local storage might be unavailable.", 'error');
+            }
+        }
+
+        // --- Data Persistence Logic ---
+
+        // Save input fields on change
+        function setupInputPersistence() {
+            // IM Tasks
+            document.getElementById('agents').addEventListener('input', () => saveToLocalStorage(LS_KEYS.IM_AGENTS, document.getElementById('agents').value));
+            document.getElementById('taskCount').addEventListener('input', () => saveToLocalStorage(LS_KEYS.IM_TASK_COUNT, document.getElementById('taskCount').value));
+            document.getElementById('shiftSchedule').addEventListener('change', () => saveToLocalStorage(LS_KEYS.IM_SHIFT_SCHEDULE, document.getElementById('shiftSchedule').value));
+
+            // Report Generator
+            const reportInputs = document.querySelectorAll('#report-content .report-input-grid input[type="number"]');
+            reportInputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    const values = {};
+                    reportInputs.forEach(i => values[i.id] = i.value);
+                    saveToLocalStorage(LS_KEYS.REPORT_INPUTS, values);
+                });
+            });
+
+            // Attendance Report
+            document.getElementById('attendanceNames').addEventListener('input', () => saveToLocalStorage(LS_KEYS.ATTENDANCE_NAMES, document.getElementById('attendanceNames').value));
+            document.getElementById('attendanceShiftSchedule').addEventListener('change', () => saveToLocalStorage(LS_KEYS.ATTENDANCE_SHIFT_SCHEDULE, document.getElementById('attendanceShiftSchedule').value));
+            // attendanceEntries and attendanceCollapseStates are saved/loaded in their respective functions
+
+            // Outage Report
+            const outageInputs = document.querySelectorAll('#outage-content select, #outage-content input, #outage-content textarea');
+            outageInputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    const values = {};
+                    outageInputs.forEach(i => values[i.id] = i.value);
+                    saveToLocalStorage(LS_KEYS.OUTAGE_INPUTS, values);
+                });
+                input.addEventListener('change', () => { // For select elements
+                    const values = {};
+                    outageInputs.forEach(i => values[i.id] = i.value);
+                    saveToLocalStorage(LS_KEYS.OUTAGE_INPUTS, values);
+                });
+            });
+
+            // Intraday Traffic
+            const intradayTrafficInputs = document.querySelectorAll('#intradayTraffic-content input[type="number"]');
+            intradayTrafficInputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    const values = {};
+                    intradayTrafficInputs.forEach(i => values[i.id] = i.value);
+                    saveToLocalStorage(LS_KEYS.INTRADAY_TRAFFIC_INPUTS, values);
+                });
+            });
+
+            // Agent Configuration (Break Schedule)
+            // allAgentConfigs is saved/loaded in its respective functions
+
+            // Backlog Template
+            document.getElementById('backlogType').addEventListener('change', () => {
+                saveToLocalStorage(LS_KEYS.BACKLOG_TYPE, document.getElementById('backlogType').value);
+                generateBacklogTemplate(); // Regenerate to update times based on new type
+            });
+            document.getElementById('mnlHourInput').addEventListener('input', () => saveToLocalStorage(LS_KEYS.BACKLOG_MNL_HOUR, document.getElementById('mnlHourInput').value));
+            document.getElementById('usHourInput').addEventListener('input', () => saveToLocalStorage(LS_KEYS.BACKLOG_US_HOUR, document.getElementById('usHourInput').value));
+        }
+
+        // Load input fields on page load
+        function loadInputPersistence() {
+            // IM Tasks
+            document.getElementById('agents').value = loadFromLocalStorage(LS_KEYS.IM_AGENTS) || '';
+            document.getElementById('taskCount').value = loadFromLocalStorage(LS_KEYS.IM_TASK_COUNT) || '';
+            document.getElementById('shiftSchedule').value = loadFromLocalStorage(LS_KEYS.IM_SHIFT_SCHEDULE) || '8PM';
+            generatedScheduleSections = loadFromLocalStorage(LS_KEYS.IM_GENERATED_SECTIONS) || [];
+            if (generatedScheduleSections.length > 0) {
+                // Re-render IM tasks from saved data
+                sortAndRenderSchedules();
+            }
+
+            // Report Generator
+            const savedReportInputs = loadFromLocalStorage(LS_KEYS.REPORT_INPUTS);
+            if (savedReportInputs) {
+                for (const id in savedReportInputs) {
+                    const input = document.getElementById(id);
+                    if (input) input.value = savedReportInputs[id];
+                }
+            }
+
+            // Attendance Report
+            document.getElementById('attendanceNames').value = loadFromLocalStorage(LS_KEYS.ATTENDANCE_NAMES) || '';
+            document.getElementById('attendanceShiftSchedule').value = loadFromLocalStorage(LS_KEYS.ATTENDANCE_SHIFT_SCHEDULE) || '8PM';
+            allAttendanceEntries = loadFromLocalStorage(LS_KEYS.ATTENDANCE_ENTRIES) || [];
+            attendanceSectionCollapseStates = loadFromLocalStorage(LS_KEYS.ATTENDANCE_COLLAPSE_STATES) || {};
+            if (allAttendanceEntries.length > 0) {
+                sortAndRenderAttendanceSections(); // Re-render attendance entries
+            }
+
+            // Outage Report
+            const savedOutageInputs = loadFromLocalStorage(LS_KEYS.OUTAGE_INPUTS);
+            if (savedOutageInputs) {
+                for (const id in savedOutageInputs) {
+                    const input = document.getElementById(id);
+                    if (input) input.value = savedOutageInputs[id];
+                }
+            }
+
+            // Intraday Traffic
+            const savedIntradayTrafficInputs = loadFromLocalStorage(LS_KEYS.INTRADAY_TRAFFIC_INPUTS);
+            if (savedIntradayTrafficInputs) {
+                for (const id in savedIntradayTrafficInputs) {
+                    const input = document.getElementById(id);
+                    if (input) input.value = savedIntradayTrafficInputs[id];
+                }
+            }
+
+            // Agent Configuration (Break Schedule)
+            allAgentConfigs = loadFromLocalStorage(LS_KEYS.AGENT_CONFIGS) || [];
+            if (allAgentConfigs.length > 0) {
+                renderAgentConfigs(); // Re-render agent configurations
+            }
+
+            // Backlog Template
+            document.getElementById('backlogType').value = loadFromLocalStorage(LS_KEYS.BACKLOG_TYPE) || 'intraday';
+            // The generateBacklogTemplate() call in DOMContentLoaded will handle initial display and time updates
+            // We load the values here, but generateBacklogTemplate will overwrite them with current times
+            // unless we specifically want to persist the *last entered* hour, which is less useful for a dynamic time report.
+            // For now, let's let generateBacklogTemplate set current times.
+            // If specific hour persistence is desired, this logic would need adjustment.
+            // document.getElementById('mnlHourInput').value = loadFromLocalStorage(LS_KEYS.BACKLOG_MNL_HOUR) || document.getElementById('mnlHourInput').value;
+            // document.getElementById('usHourInput').value = loadFromLocalStorage(LS_KEYS.BACKLOG_US_HOUR) || document.getElementById('usHourInput').value;
+        }
+
+
+        // --- Main Tab Switching with Animation ---
+        function showMainTab(tabId) {
+            const mainContainers = ['activities', 'reporting']; // Removed 'backlog'
+            mainContainers.forEach(id => {
                 const container = document.getElementById(id);
                 if (id === tabId) {
                     container.style.display = 'block';
                     setTimeout(() => {
                         container.style.opacity = 1;
                         container.style.transform = 'translateY(0)';
-                    }, 50); // Small delay for animation to kick in
+                    }, 50);
                 } else {
                     container.style.opacity = 0;
                     container.style.transform = 'translateY(20px)';
@@ -1427,28 +1685,80 @@
                 }
             });
 
-            const tabs = document.querySelectorAll('.tab');
+            const tabs = document.querySelectorAll('.tabs .tab');
             tabs.forEach(t => t.classList.remove('active'));
-            Array.from(tabs).find(t => t.textContent.toLowerCase().includes(
+            Array.from(tabs).find(t => t.textContent.toLowerCase().includes(tabId)).classList.add('active');
+
+            // For Activities and Reporting, show the first nested tab by default
+            if (tabId === 'activities') {
+                showNestedTab('tasks');
+            } else if (tabId === 'reporting') {
+                showNestedTab('attendance');
+            }
+        }
+
+        // --- Nested Tab Switching with Animation ---
+        function showNestedTab(tabId) {
+            const activitiesContent = ['tasks-content', 'agentConfig-content', 'switchTemplate-content'];
+            const reportingContent = ['attendance-content', 'report-content', 'intradayTraffic-content', 'outage-content', 'backlog-content']; // Added 'backlog-content'
+
+            let currentContentGroup = [];
+            if (activitiesContent.includes(`${tabId}-content`)) {
+                currentContentGroup = activitiesContent;
+            } else if (reportingContent.includes(`${tabId}-content`)) {
+                currentContentGroup = reportingContent;
+            }
+
+            currentContentGroup.forEach(id => {
+                const contentDiv = document.getElementById(id);
+                if (contentDiv) {
+                    if (id === `${tabId}-content`) {
+                        contentDiv.style.display = 'block';
+                        setTimeout(() => {
+                            contentDiv.style.opacity = 1;
+                            contentDiv.style.transform = 'translateY(0)';
+                        }, 50);
+                    } else {
+                        contentDiv.style.opacity = 0;
+                        contentDiv.style.transform = 'translateY(20px)';
+                        contentDiv.addEventListener('transitionend', function handler() {
+                            if (contentDiv.style.opacity === '0') {
+                                contentDiv.style.display = 'none';
+                            }
+                            contentDiv.removeEventListener('transitionend', handler);
+                        }, { once: true });
+                    }
+                }
+            });
+
+            // Update active class for nested tabs
+            const nestedTabs = document.querySelectorAll('.nested-tabs .nested-tab');
+            nestedTabs.forEach(t => t.classList.remove('active'));
+            Array.from(nestedTabs).find(t => t.textContent.toLowerCase().includes(
                 tabId === 'tasks' ? 'im tasks' :
-                tabId === 'report' ? 'report generator' :
-                tabId === 'attendance' ? 'attendance report' : // Updated tab name
-                tabId === 'outage' ? 'outage report' :
-                tabId === 'intradayTraffic' ? 'intraday traffic' :
-                tabId === 'switchTemplate' ? 'switch template' :
                 tabId === 'agentConfig' ? 'break schedule' :
-                'backlog template' // For the new tab name
+                tabId === 'switchTemplate' ? 'switch template' :
+                tabId === 'attendance' ? 'attendance report' :
+                tabId === 'report' ? 'report generator' :
+                tabId === 'intradayTraffic' ? 'intraday traffic' :
+                tabId === 'outage' ? 'outage report' :
+                'backlog template' // Added for backlog
             )).classList.add('active');
 
-            // If the new tab is selected, generate its content immediately
-            if (tabId === 'backlogTemplate') {
+            // Specific actions for certain tabs when shown
+            if (tabId === 'backlog') { // Now handled as a nested tab
                 generateBacklogTemplate();
             }
         }
 
+
         // Initialize first tab with animation
         document.addEventListener('DOMContentLoaded', () => {
-            showTab('tasks'); // Ensure initial tab is shown with animation
+            loadInputPersistence(); // Load saved data first
+            setupInputPersistence(); // Set up listeners for saving data
+
+            showMainTab('activities'); // Ensure initial main tab is shown with animation
+            showNestedTab('tasks'); // Show the first nested tab under Activities
 
             // --- Add Enter key functionality ---
 
@@ -1476,7 +1786,7 @@
                 }
             });
             // Or, listen to any input in the report grid
-            document.querySelectorAll('#report .report-input-grid input[type="number"]').forEach(input => {
+            document.querySelectorAll('#report-content .report-input-grid input[type="number"]').forEach(input => {
                 input.addEventListener('keypress', function(event) {
                     if (event.key === 'Enter') {
                         event.preventDefault();
@@ -1514,6 +1824,14 @@
                 if (event.key === 'Enter' && !event.shiftKey) { // Allow Shift+Enter for new line
                     event.preventDefault();
                     addAgentConfigEntries();
+                }
+            });
+
+            // Backlog Template Tab (now nested)
+            document.getElementById('usHourInput').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    updateBacklogTimes(); // Or generateBacklogTemplate() if you want to regenerate the whole thing
                 }
             });
         });
@@ -1607,7 +1925,14 @@
             scheduleSection.appendChild(scheduleHeader);
             scheduleSection.appendChild(scheduleContent);
 
-            generatedScheduleSections.push(scheduleSection);
+            generatedScheduleSections.push({
+                id: sectionId,
+                shift: shiftSchedule,
+                expectations: agentsForExpectations,
+                assignments: taskDistribution
+            });
+            saveToLocalStorage(LS_KEYS.IM_GENERATED_SECTIONS, generatedScheduleSections);
+
             sortAndRenderSchedules();
             showToast("IM Assignment generated successfully!", 'success');
         }
@@ -1617,13 +1942,55 @@
             resultsDiv.innerHTML = "";
 
             generatedScheduleSections.sort((a, b) => {
-                const shiftA = a.getAttribute('data-shift-schedule');
-                const shiftB = b.getAttribute('data-shift-schedule');
+                const shiftA = a.shift;
+                const shiftB = b.shift;
                 return (shiftOrder[shiftA] || Infinity) - (shiftOrder[b] || Infinity);
             });
 
-            generatedScheduleSections.forEach(section => {
-                resultsDiv.appendChild(section);
+            generatedScheduleSections.forEach(sectionData => {
+                const scheduleSection = document.createElement("div");
+                scheduleSection.className = "schedule-section";
+                scheduleSection.id = sectionData.id;
+                scheduleSection.setAttribute('data-shift-schedule', sectionData.shift);
+
+                const scheduleHeader = document.createElement("div");
+                scheduleHeader.className = "schedule-header";
+                scheduleHeader.innerHTML = `
+                    <span>${sectionData.shift} Shift - IM Assignment & Expectations</span>
+                    <i class="fas fa-chevron-down"></i>
+                `;
+                scheduleHeader.onclick = () => toggleCollapse(sectionData.id);
+
+                const scheduleContent = document.createElement("div");
+                scheduleContent.className = "schedule-content";
+                scheduleContent.id = `${sectionData.id}-content`;
+
+                if (sectionData.expectations && sectionData.expectations.length > 0) {
+                    const expectationsMessageDiv = document.createElement("div");
+                    expectationsMessageDiv.className = "expectations-message";
+                    const agentsList = sectionData.expectations.map(agent => `<li>${agent}</li>`).join('');
+                    expectationsMessageDiv.innerHTML = `<strong>Setting Expectations for ${sectionData.shift} Shift:</strong> The agents listed below will handle IM tasks in sequence if a transfer to the IM queue is needed, with the order arranged according to their break schedules: <ul>${agentsList}</ul>`;
+                    scheduleContent.appendChild(expectationsMessageDiv);
+                }
+
+                const imAssignmentHeader = document.createElement("h3");
+                imAssignmentHeader.textContent = "IM Task Assignment";
+                imAssignmentHeader.style.color = 'var(--primary-color)';
+                imAssignmentHeader.style.marginTop = '20px';
+                imAssignmentHeader.style.marginBottom = '15px';
+                scheduleContent.appendChild(imAssignmentHeader);
+
+                for (const [agent, message] of Object.entries(sectionData.assignments)) {
+                    const div = document.createElement("div");
+                    div.className = "agent-block";
+                    div.innerHTML = `<strong>${agent}</strong> <span>- ${message}</span>
+                        <button class="done-button" onclick="removeTaskAssignment(this, '${sectionData.id}', '${agent}')"><i class="fas fa-check"></i></button>`;
+                    scheduleContent.appendChild(div);
+                }
+
+                scheduleSection.appendChild(scheduleHeader);
+                scheduleSection.appendChild(scheduleContent);
+                resultsDiv.appendChild(scheduleSection);
             });
         }
 
@@ -1637,17 +2004,31 @@
                 const shift = sectionId.replace('attendance-schedule-', '');
                 // Toggle the state: if it's currently expanded, it will become collapsed (false), and vice-versa
                 attendanceSectionCollapseStates[shift] = !content.classList.contains('expanded');
+                saveToLocalStorage(LS_KEYS.ATTENDANCE_COLLAPSE_STATES, attendanceSectionCollapseStates);
             }
 
             header.classList.toggle('hidden-content');
             content.classList.toggle('expanded'); // Use 'expanded' class for max-height transition
         }
 
-        function removeTaskAssignment(button) {
+        function removeTaskAssignment(button, sectionId, agentName) {
             const agentBlock = button.parentElement;
             agentBlock.style.opacity = 0;
             agentBlock.style.transform = 'translateX(-100%)';
-            agentBlock.addEventListener('transitionend', () => agentBlock.remove(), { once: true });
+            agentBlock.addEventListener('transitionend', () => {
+                agentBlock.remove();
+                // Update the generatedScheduleSections array and local storage
+                const sectionIndex = generatedScheduleSections.findIndex(s => s.id === sectionId);
+                if (sectionIndex !== -1) {
+                    delete generatedScheduleSections[sectionIndex].assignments[agentName];
+                    // If no more assignments in this section, remove the section
+                    if (Object.keys(generatedScheduleSections[sectionIndex].assignments).length === 0) {
+                        generatedScheduleSections.splice(sectionIndex, 1);
+                    }
+                    saveToLocalStorage(LS_KEYS.IM_GENERATED_SECTIONS, generatedScheduleSections);
+                    sortAndRenderSchedules(); // Re-render to ensure UI is consistent
+                }
+            }, { once: true });
             showToast("Task assignment removed.", 'info');
         }
 
@@ -1775,6 +2156,7 @@
                 });
             });
 
+            saveToLocalStorage(LS_KEYS.ATTENDANCE_ENTRIES, allAttendanceEntries);
             sortAndRenderAttendanceSections();
             showToast("Attendance entries added.", 'success');
             document.getElementById("attendanceNames").value = ''; // Clear textarea after adding
@@ -1784,6 +2166,7 @@
             const entryIndex = allAttendanceEntries.findIndex(entry => entry.id === entryId);
             if (entryIndex !== -1) {
                 allAttendanceEntries[entryIndex].status = newStatus;
+                saveToLocalStorage(LS_KEYS.ATTENDANCE_ENTRIES, allAttendanceEntries);
                 showToast(`Status for ${allAttendanceEntries[entryIndex].name} updated to ${newStatus}.`, 'info');
                 sortAndRenderAttendanceSections(); // Re-sort to reflect status change in order
             }
@@ -1794,6 +2177,7 @@
             if (entryIndex !== -1) {
                 const agentName = allAttendanceEntries[entryIndex].name;
                 allAttendanceEntries.splice(entryIndex, 1); // Remove from array
+                saveToLocalStorage(LS_KEYS.ATTENDANCE_ENTRIES, allAttendanceEntries);
                 showToast(`Attendance entry for ${agentName} deleted.`, 'error');
                 sortAndRenderAttendanceSections(); // Re-render to ensure correct order
             }
@@ -1809,6 +2193,8 @@
                 const content = section.querySelector('.schedule-content');
                 attendanceSectionCollapseStates[shift] = content.classList.contains('expanded');
             });
+            saveToLocalStorage(LS_KEYS.ATTENDANCE_COLLAPSE_STATES, attendanceSectionCollapseStates);
+
 
             attendanceResultsDiv.innerHTML = ''; // Clear all existing entries
 
@@ -1922,10 +2308,10 @@
                     }
                     absentAgents[entry.shift].push({ name: entry.name, reason: entry.status });
                 } else {
-                    if (!presentAgents[entry.shift]) {
-                        presentAgents[entry.shift] = [];
+                    if (!presentAgents[shift]) {
+                        presentAgents[shift] = [];
                     }
-                    presentAgents[entry.shift].push(entry.name);
+                    presentAgents[shift].push(entry.name);
                 }
             });
 
@@ -2297,6 +2683,7 @@ What We’re Doing
                 });
             });
 
+            saveToLocalStorage(LS_KEYS.AGENT_CONFIGS, allAgentConfigs);
             renderAgentConfigs();
             document.getElementById('agentConfigNames').value = ''; // Clear input
             showToast("Agent(s) added to configuration.", 'success');
@@ -2310,6 +2697,7 @@ What We’re Doing
                         type: breakActivityOptions[0], // Default to first option
                         time: ''
                     });
+                    saveToLocalStorage(LS_KEYS.AGENT_CONFIGS, allAgentConfigs);
                     renderAgentConfigs(); // Re-render to show new slot
                     showToast("Break/Activity slot added.", 'info');
                 } else {
@@ -2322,6 +2710,7 @@ What We’re Doing
             const agentIndex = allAgentConfigs.findIndex(config => config.id === agentId);
             if (agentIndex !== -1 && allAgentConfigs[agentIndex].breakSlots[slotIndex]) {
                 allAgentConfigs[agentIndex].breakSlots[slotIndex][field] = value;
+                saveToLocalStorage(LS_KEYS.AGENT_CONFIGS, allAgentConfigs);
                 // Re-set alarm if time is updated
                 if (field === 'time') {
                     const agentName = allAgentConfigs[agentIndex].name;
@@ -2338,6 +2727,7 @@ What We’re Doing
             const agentIndex = allAgentConfigs.findIndex(config => config.id === agentId);
             if (agentIndex !== -1 && allAgentConfigs[agentIndex].breakSlots[slotIndex]) {
                 allAgentConfigs[agentIndex].breakSlots.splice(slotIndex, 1);
+                saveToLocalStorage(LS_KEYS.AGENT_CONFIGS, allAgentConfigs);
                 renderAgentConfigs(); // Re-render to remove slot
                 showToast("Break/Activity slot removed.", 'info');
             }
@@ -2348,6 +2738,7 @@ What We’re Doing
             if (entryIndex !== -1) {
                 const agentName = allAgentConfigs[entryIndex].name;
                 allAgentConfigs.splice(entryIndex, 1);
+                saveToLocalStorage(LS_KEYS.AGENT_CONFIGS, allAgentConfigs);
                 renderAgentConfigs();
                 showToast(`Agent "${agentName}" removed from configuration.`, 'error');
             }
@@ -2581,12 +2972,18 @@ Could you please help me report this image in a polite and natural tone? I want 
             const nextReportingFormatted = String(nextReportingHour).padStart(2, '0');
             nextReportingElem.textContent = `Next reporting: ${nextReportingFormatted}:00 UST`;
 
+            // Save current state of backlog type and hours
+            saveToLocalStorage(LS_KEYS.BACKLOG_TYPE, backlogType);
+            saveToLocalStorage(LS_KEYS.BACKLOG_MNL_HOUR, mnlHourInput.value);
+            saveToLocalStorage(LS_KEYS.BACKLOG_US_HOUR, usHourInput.value);
+
             showToast(`Backlog template for ${backlogType === 'startDay' ? 'Start Day' : 'Intraday'} generated!`, 'success');
         }
 
         function updateBacklogTimes() {
             const usHourInput = document.getElementById('usHourInput');
             const nextReportingElem = document.getElementById('nextReporting');
+            const mnlHourInput = document.getElementById('mnlHourInput'); // Added for saving
 
             // Ensure inputs are valid numbers
             let currentUsHour = parseInt(usHourInput.value);
@@ -2599,6 +2996,10 @@ Could you please help me report this image in a polite and natural tone? I want 
             let nextReportingHour = (currentUsHour + 1) % 24;
             const nextReportingFormatted = String(nextReportingHour).padStart(2, '0');
             nextReportingElem.textContent = `Next reporting: ${nextReportingFormatted}:00 UST`;
+
+            // Save updated hours
+            saveToLocalStorage(LS_KEYS.BACKLOG_MNL_HOUR, mnlHourInput.value);
+            saveToLocalStorage(LS_KEYS.BACKLOG_US_HOUR, usHourInput.value);
         }
 
 
@@ -2627,14 +3028,73 @@ Could you please help me report this image in a polite and natural tone? I want 
             showToast("Backlog template copied to clipboard!", 'success');
         }
 
-        // Initial generation when the page loads if the tab is active
-        document.addEventListener('DOMContentLoaded', () => {
-            // ... existing DOMContentLoaded code ...
-            if (document.getElementById('backlogTemplate').style.display !== 'none') {
-                generateBacklogTemplate();
-            }
-        });
+        // --- Clear All Data Function ---
+        function clearAllData() {
+            if (confirm("Are you sure you want to clear ALL saved data? This action cannot be undone.")) {
+                localStorage.clear(); // Clears all data from local storage
 
+                // Reset all input fields to their default or empty states
+                // IM Tasks
+                document.getElementById('agents').value = '';
+                document.getElementById('taskCount').value = '';
+                document.getElementById('shiftSchedule').value = '8PM';
+                document.getElementById('results').innerHTML = '';
+                generatedScheduleSections = [];
+
+                // Report Generator
+                document.getElementById('imQueueTasks').value = '0';
+                document.getElementById('imAgentsWorking').value = '0';
+                document.getElementById('ticketQueueTasks').value = '0';
+                document.getElementById('ticketAgentsWorking').value = '0';
+                document.getElementById('agentsOnBreak').value = '0';
+                document.getElementById('agentsOnLunch').value = '0';
+                document.getElementById('agentsOnCoaching').value = '0';
+                document.getElementById('agentsOnMeeting').value = '0';
+                document.getElementById('agentsOnTraining').value = '0';
+                document.getElementById('reportOutput').innerText = '';
+
+                // Attendance Report
+                document.getElementById('attendanceNames').value = '';
+                document.getElementById('attendanceShiftSchedule').value = '8PM';
+                document.getElementById('attendanceResults').innerHTML = '';
+                document.getElementById('attendanceReportOutput').innerHTML = '';
+                allAttendanceEntries = [];
+                attendanceSectionCollapseStates = {};
+
+                // Outage Report
+                document.getElementById('outageAccount').value = 'ByteDance - USDS';
+                document.getElementById('outageStartTime').value = '';
+                document.getElementById('outageAffected').value = '';
+                document.getElementById('outageSide').value = 'Client side';
+                document.getElementById('outageAssistCustomer').value = 'Yes';
+                document.getElementById('outageB2PAffecting').value = 'Yes';
+                document.getElementById('outageDescription').value = '';
+                document.getElementById('outageStatus').value = 'Ongoing';
+                document.getElementById('outageReportOutput').innerText = '';
+
+                // Intraday Traffic
+                document.getElementById('imInbound').value = '0';
+                document.getElementById('imForecast').value = '0';
+                document.getElementById('ticketInbound').value = '0';
+                document.getElementById('ticketForecast').value = '0';
+                document.getElementById('intradayTrafficReportOutput').innerText = '';
+
+                // Switch Template (no inputs to clear, only output)
+                document.getElementById('switchTemplateOutput').innerText = '';
+
+                // Agent Configuration (Break Schedule)
+                document.getElementById('agentConfigNames').value = '';
+                document.getElementById('agentConfigResults').innerHTML = '';
+                allAgentConfigs = [];
+
+                // Backlog Template
+                document.getElementById('backlogType').value = 'intraday';
+                generateBacklogTemplate(); // Regenerate to reset times to current
+                document.getElementById('backlogTemplateOutput').innerHTML = ''; // Clear output
+
+                showToast("All saved data has been cleared!", 'success');
+            }
+        }
     </script>
 </body>
 </html>
