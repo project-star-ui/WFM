@@ -1965,7 +1965,7 @@
 
                 const scheduleContent = document.createElement("div");
                 scheduleContent.className = "schedule-content";
-                scheduleContent.id = `${sectionId}-content`;
+                scheduleContent.id = `${sectionData.id}-content`; // Corrected ID here
 
                 if (sectionData.expectations && sectionData.expectations.length > 0) {
                     const expectationsMessageDiv = document.createElement("div");
@@ -2316,6 +2316,8 @@
         }
 
         function generateAttendanceReport() {
+            const selectedShift = document.getElementById("attendanceShiftSchedule").value;
+
             if (allAttendanceEntries.length === 0) {
                 showToast("No attendance entries to report.", 'info');
                 document.getElementById('attendanceReportOutput').innerHTML = "";
@@ -2325,20 +2327,27 @@
             const reportHtmlParts = [];
             const shiftData = {}; // Stores all relevant data per shift
 
-            // Initialize shiftData
-            Object.keys(shiftOrder).forEach(shift => {
-                shiftData[shift] = {
-                    totalHeadcount: 0,
-                    presentAgents: [],
-                    lateAgents: [],
-                    absentAgents: [],
-                    totalScheduledHours: 0, // Assuming 8 hours per agent
-                    actualPresentHours: 0
-                };
-            });
+            // Filter entries based on the selected shift
+            const filteredEntries = allAttendanceEntries.filter(entry => entry.shift === selectedShift);
 
-            // Populate shiftData
-            allAttendanceEntries.forEach(entry => {
+            if (filteredEntries.length === 0) {
+                showToast(`No attendance entries found for the ${selectedShift} shift.`, 'info');
+                document.getElementById('attendanceReportOutput').innerHTML = "";
+                return;
+            }
+
+            // Initialize shiftData for the selected shift
+            shiftData[selectedShift] = {
+                totalHeadcount: 0,
+                presentAgents: [],
+                lateAgents: [],
+                absentAgents: [],
+                totalScheduledHours: 0, // Assuming 8 hours per agent
+                actualPresentHours: 0
+            };
+
+            // Populate shiftData for the selected shift
+            filteredEntries.forEach(entry => {
                 const data = shiftData[entry.shift];
                 if (data) {
                     data.totalHeadcount++;
@@ -2351,17 +2360,7 @@
                         data.lateAgents.push({ name: entry.name, loginTime: entry.loginTime });
                         // Calculate actual present hours for late agents
                         if (entry.loginTime) {
-                            // Assuming a standard start time for the shift to calculate lateness
-                            // For simplicity, let's assume a fixed 8 AM start for all shifts for lateness calculation
-                            // A more robust solution would involve defining start times per shift.
-                            // For now, let's assume a late agent works 8 hours minus their lateness.
-                            // If loginTime is 09:00 and expected is 08:00, then 1 hour late.
-                            // This is a simplification. A full RTA system would track actual shift start times.
-                            // For the purpose of this exercise, let's assume a late agent is deducted 1 hour for any lateness.
-                            // Or, if loginTime is provided, we can calculate the difference from a nominal 8-hour shift.
-                            // Let's simplify: if late, deduct 1 hour from their 8 scheduled hours.
-                            // This is a placeholder logic.
-                            data.actualPresentHours += 7; // 8 hours - 1 hour deduction for lateness
+                            data.actualPresentHours += 7; // 8 hours - 1 hour deduction for lateness (simplified)
                         } else {
                             data.actualPresentHours += 8; // If late but no login time, assume full 8 hours for now
                         }
@@ -2372,74 +2371,67 @@
                 }
             });
 
-            // Sort shifts for consistent reporting
-            const sortedShifts = Object.keys(shiftData).sort((a, b) => {
-                return (shiftOrder[a] || Infinity) - (shiftOrder[b] || Infinity);
-            });
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
-            reportHtmlParts.push("<h3>Real-Time Analyst (RTA) Attendance Report</h3>");
-            reportHtmlParts.push(`<p><strong>Date:</strong> ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>`);
+            reportHtmlParts.push(`<h3>ATTENDANCE AS OF ${formattedDate.toUpperCase()}</h3>`);
             reportHtmlParts.push("<br>");
 
-            sortedShifts.forEach(shift => {
-                const data = shiftData[shift];
-                const totalHeadcount = data.totalHeadcount;
-                const presentCount = data.presentAgents.length;
-                const lateCount = data.lateAgents.length;
-                const absentCount = data.absentAgents.length;
+            const data = shiftData[selectedShift];
+            const totalHeadcount = data.totalHeadcount;
+            const presentCount = data.presentAgents.length;
+            const lateCount = data.lateAgents.length;
+            const absentCount = data.absentAgents.length;
 
-                // Expected present is total headcount minus those explicitly absent (not late)
-                const expectedPresentHeadcount = totalHeadcount - absentCount;
+            let attendanceRate = 0;
+            let showRate = 0;
 
-                let attendanceRate = 0; // (Present + Late) / Total Headcount
-                let showRate = 0;       // Actual Present Hours / Total Scheduled Hours
+            if (totalHeadcount > 0) {
+                attendanceRate = (((presentCount + lateCount) / totalHeadcount) * 100).toFixed(2);
+            }
 
-                if (totalHeadcount > 0) {
-                    attendanceRate = (((presentCount + lateCount) / totalHeadcount) * 100).toFixed(2);
-                }
+            if (data.totalScheduledHours > 0) {
+                showRate = ((data.actualPresentHours / data.totalScheduledHours) * 100).toFixed(2);
+            }
 
-                if (data.totalScheduledHours > 0) {
-                    showRate = ((data.actualPresentHours / data.totalScheduledHours) * 100).toFixed(2);
-                }
+            reportHtmlParts.push(`<h4>${selectedShift} Shift Performance:</h4>`);
+            reportHtmlParts.push(`<ul>`);
+            reportHtmlParts.push(`  <li><strong>Total Scheduled Headcount:</strong> ${totalHeadcount} agents</li>`);
+            reportHtmlParts.push(`  <li><strong>Agents Present:</strong> ${presentCount}</li>`);
+            reportHtmlParts.push(`  <li><strong>Agents Running Late:</strong> ${lateCount}</li>`);
+            reportHtmlParts.push(`  <li><strong>Agents Absent:</strong> ${absentCount}</li>`);
+            reportHtmlParts.push(`  <li><strong>Attendance Rate:</strong> ${attendanceRate}% (Based on agents present or late vs. total headcount)</li>`);
+            reportHtmlParts.push(`  <li><strong>Show Rate:</strong> ${showRate}% (Based on actual productive hours vs. total scheduled hours)</li>`);
+            reportHtmlParts.push(`</ul>`);
 
-                reportHtmlParts.push(`<h4>${shift} Shift Performance:</h4>`);
-                reportHtmlParts.push(`<ul>`);
-                reportHtmlParts.push(`  <li><strong>Total Scheduled Headcount:</strong> ${totalHeadcount} agents</li>`);
-                reportHtmlParts.push(`  <li><strong>Agents Present:</strong> ${presentCount}</li>`);
-                reportHtmlParts.push(`  <li><strong>Agents Running Late:</strong> ${lateCount}</li>`);
-                reportHtmlParts.push(`  <li><strong>Agents Absent:</strong> ${absentCount}</li>`);
-                reportHtmlParts.push(`  <li><strong>Attendance Rate:</strong> ${attendanceRate}% (Based on agents present or late vs. total headcount)</li>`);
-                reportHtmlParts.push(`  <li><strong>Show Rate:</strong> ${showRate}% (Based on actual productive hours vs. total scheduled hours)</li>`);
-                reportHtmlParts.push(`</ul>`);
+            if (data.presentAgents.length > 0) {
+                reportHtmlParts.push(`  <h5>Details for Present Agents:</h5>`);
+                reportHtmlParts.push(`  <ul>`);
+                data.presentAgents.sort().forEach(agentName => {
+                    reportHtmlParts.push(`    <li>${agentName}</li>`);
+                });
+                reportHtmlParts.push(`  </ul>`);
+            }
 
-                if (data.presentAgents.length > 0) {
-                    reportHtmlParts.push(`  <h5>Details for Present Agents:</h5>`);
-                    reportHtmlParts.push(`  <ul>`);
-                    data.presentAgents.sort().forEach(agentName => {
-                        reportHtmlParts.push(`    <li>${agentName}</li>`);
-                    });
-                    reportHtmlParts.push(`  </ul>`);
-                }
+            if (data.lateAgents.length > 0) {
+                reportHtmlParts.push(`  <h5>Details for Late Agents:</h5>`);
+                reportHtmlParts.push(`  <ul>`);
+                data.lateAgents.sort((a, b) => a.name.localeCompare(b.name)).forEach(agent => {
+                    reportHtmlParts.push(`    <li>${agent.name} (Actual Login: ${agent.loginTime || 'Not Provided'})</li>`);
+                });
+                reportHtmlParts.push(`  </ul>`);
+            }
 
-                if (data.lateAgents.length > 0) {
-                    reportHtmlParts.push(`  <h5>Details for Late Agents:</h5>`);
-                    reportHtmlParts.push(`  <ul>`);
-                    data.lateAgents.sort((a, b) => a.name.localeCompare(b.name)).forEach(agent => {
-                        reportHtmlParts.push(`    <li>${agent.name} (Actual Login: ${agent.loginTime || 'Not Provided'})</li>`);
-                    });
-                    reportHtmlParts.push(`  </ul>`);
-                }
+            if (data.absentAgents.length > 0) {
+                reportHtmlParts.push(`  <h5>Details for Absent Agents:</h5>`);
+                reportHtmlParts.push(`  <ul>`);
+                data.absentAgents.sort((a, b) => a.name.localeCompare(b.name)).forEach(agent => {
+                    reportHtmlParts.push(`    <li>${agent.name} (Reason: ${agent.reason})</li>`);
+                });
+                reportHtmlParts.push(`  </ul>`);
+            }
+            reportHtmlParts.push(`<br>`); // Add a break between shift reports
 
-                if (data.absentAgents.length > 0) {
-                    reportHtmlParts.push(`  <h5>Details for Absent Agents:</h5>`);
-                    reportHtmlParts.push(`  <ul>`);
-                    data.absentAgents.sort((a, b) => a.name.localeCompare(b.name)).forEach(agent => {
-                        reportHtmlParts.push(`    <li>${agent.name} (Reason: ${agent.reason})</li>`);
-                    });
-                    reportHtmlParts.push(`  </ul>`);
-                }
-                reportHtmlParts.push(`<br>`); // Add a break between shift reports
-            });
 
             document.getElementById('attendanceReportOutput').innerHTML = reportHtmlParts.join('\n');
             showToast("RTA Attendance Report generated!", 'success');
