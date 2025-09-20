@@ -1655,9 +1655,6 @@
             // Backlog Template
             document.getElementById('backlogType').value = loadFromLocalStorage(LS_KEYS.BACKLOG_TYPE) || 'intraday';
             // The generateBacklogTemplate() call in DOMContentLoaded will handle initial display and time updates
-            // We load the values here, but generateBacklogTemplate will overwrite them with current times
-            // unless we specifically want to persist the *last entered* hour, which is less useful for a dynamic time report.
-            // For now, let's let generateBacklogTemplate set current times.
             // If specific hour persistence is desired, this logic would need adjustment.
             // document.getElementById('mnlHourInput').value = loadFromLocalStorage(LS_KEYS.BACKLOG_MNL_HOUR) || document.getElementById('mnlHourInput').value;
             // document.getElementById('usHourInput').value = loadFromLocalStorage(LS_KEYS.BACKLOG_US_HOUR) || document.getElementById('usHourInput').value;
@@ -2821,7 +2818,7 @@ What We’re Doing
         }
 
         function deleteAgentConfig(entryId) {
-            const entryIndex = allAgentConfigs.findIndex(entry => entry.id === entryId);
+            const entryIndex = allAgentConfigs.findIndex(config => config.id === entryId);
             if (entryIndex !== -1) {
                 const agentName = allAgentConfigs[entryIndex].name;
                 allAgentConfigs.splice(entryIndex, 1);
@@ -2892,8 +2889,8 @@ What We’re Doing
 
             breakDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
-            // Adjust breakDate to be 20 minutes *before* the actual break time
-            breakDate.setMinutes(breakDate.getMinutes() - 20);
+            // Adjust breakDate to be 35 minutes *before* the actual break time
+            breakDate.setMinutes(breakDate.getMinutes() - 35); // Changed from 20 to 35
 
             // If the adjusted break time is in the past, assume it's for the next day
             // This logic needs to be careful: if current time is 10:00 and break is 10:15 (alarm 09:55),
@@ -2924,7 +2921,7 @@ What We’re Doing
                         breakSound.play().catch(e => console.error("Error playing sound:", e));
                     }
                     // Use 'break-alarm' type for emphasized notification
-                    showToast(`${agentName}'s ${breakType.toLowerCase()} is in 20 minutes! (${formatDisplayTime(breakTime)})`, 'break-alarm');
+                    showToast(`${agentName}'s ${breakType.toLowerCase()} is in 35 minutes! (${formatDisplayTime(breakTime)})`, 'break-alarm'); // Changed text to 35 minutes
 
                     // Visually mark the slot as "upcoming" or "alerted"
                     const slotContainer = document.getElementById(slotContainerId);
@@ -2980,7 +2977,7 @@ What We’re Doing
 
                 }, timeUntilAlarm);
             } else {
-                // If the 20-min-before alarm time is already past, mark as completed immediately
+                // If the 35-min-before alarm time is already past, mark as completed immediately
                 const slotContainer = document.getElementById(slotContainerId);
                 if (slotContainer) {
                     slotContainer.style.opacity = '0.6';
