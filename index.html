@@ -1184,8 +1184,9 @@
             <div class="nested-tab" onclick="showNestedTab('intradayTraffic')">Intraday Traffic</div>
             <div class="nested-tab" onclick="showNestedTab('outage')">Outage Report</div>
             <div class="nested-tab" onclick="showNestedTab('backlog')">Backlog Template</div>
+            <div class="nested-tab" onclick="showNestedTab('tph')">TPH Template</div>
             <!-- Modified TPH Tab for external redirect -->
-            <div class="nested-tab" onclick="window.open('https://project-star-ui.github.io/TPH/', '_blank');">TPH</div>
+            <div class="nested-tab" onclick="window.open('https://project-star-ui.github.io/TPH/', '_blank');">TPH (External)</div>
         </div>
 
         <!-- Attendance Report Content -->
@@ -1374,6 +1375,13 @@
             </div>
             <button onclick="copyBacklogTemplate()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Backlog Template</button>
         </div>
+
+        <!-- TPH Template Content -->
+        <div id="tph-content" style="display: none;">
+            <button onclick="generateTPHTemplate()">Generate TPH Template</button>
+            <div class="report-output" id="tphTemplateOutput"></div>
+            <button onclick="copyTPHTemplate()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy TPH Template</button>
+        </div>
     </div>
 
     <audio id="breakSound" src="audio/notif.mp3" preload="auto"></audio>
@@ -1462,7 +1470,8 @@
             AGENT_CONFIGS: 'agentConfigs',
             BACKLOG_TYPE: 'backlogType',
             BACKLOG_MNL_HOUR: 'backlogMnlHour',
-            BACKLOG_US_HOUR: 'backlogUsHour'
+            BACKLOG_US_HOUR: 'backlogUsHour',
+            TPH_TEMPLATE_OUTPUT: 'tphTemplateOutput' // New key for TPH template
         };
 
         // --- Toast Notification System ---
@@ -1593,6 +1602,10 @@
             });
             document.getElementById('mnlHourInput').addEventListener('input', () => saveToLocalStorage(LS_KEYS.BACKLOG_MNL_HOUR, document.getElementById('mnlHourInput').value));
             document.getElementById('usHourInput').addEventListener('input', () => saveToLocalStorage(LS_KEYS.BACKLOG_US_HOUR, document.getElementById('usHourInput').value));
+
+            // TPH Template
+            // The TPH template output is generated on demand, but we can save its last generated state
+            // if needed. For now, it's generated fresh each time the button is clicked.
         }
 
         // Load input fields on page load
@@ -1655,6 +1668,9 @@
             // If specific hour persistence is desired, this logic would need adjustment.
             // document.getElementById('mnlHourInput').value = loadFromLocalStorage(LS_KEYS.BACKLOG_MNL_HOUR) || document.getElementById('mnlHourInput').value;
             // document.getElementById('usHourInput').value = loadFromLocalStorage(LS_KEYS.BACKLOG_US_HOUR) || document.getElementById('usHourInput').value;
+
+            // TPH Template
+            document.getElementById('tphTemplateOutput').innerText = loadFromLocalStorage(LS_KEYS.TPH_TEMPLATE_OUTPUT) || '';
         }
 
 
@@ -1696,8 +1712,7 @@
         // --- Nested Tab Switching with Animation ---
         function showNestedTab(tabId) {
             const activitiesContent = ['tasks-content', 'agentConfig-content', 'switchTemplate-content'];
-            // Removed 'tph-content' from reportingContent as it's now a direct link
-            const reportingContent = ['attendance-content', 'report-content', 'intradayTraffic-content', 'outage-content', 'backlog-content'];
+            const reportingContent = ['attendance-content', 'report-content', 'intradayTraffic-content', 'outage-content', 'backlog-content', 'tph-content'];
 
             let currentContentGroup = [];
             if (activitiesContent.includes(`${tabId}-content`)) {
@@ -1731,19 +1746,20 @@
             // Update active class for nested tabs
             const nestedTabs = document.querySelectorAll('.nested-tabs .nested-tab');
             nestedTabs.forEach(t => t.classList.remove('active'));
-            // Special handling for TPH tab since it's a direct link and doesn't have a content div
-            if (tabId !== 'tph') {
-                Array.from(nestedTabs).find(t => t.textContent.toLowerCase().includes(
-                    tabId === 'tasks' ? 'im tasks' :
-                    tabId === 'agentConfig' ? 'break schedule' :
-                    tabId === 'switchTemplate' ? 'switch template' :
-                    tabId === 'attendance' ? 'attendance report' :
-                    tabId === 'report' ? 'report generator' :
-                    tabId === 'intradayTraffic' ? 'intraday traffic' :
-                    tabId === 'outage' ? 'outage report' :
-                    'backlog template'
-                )).classList.add('active');
-            }
+            // Special handling for TPH (External) tab since it's a direct link and doesn't have a content div
+            Array.from(nestedTabs).find(t => {
+                const text = t.textContent.toLowerCase();
+                if (tabId === 'tasks' && text.includes('im tasks')) return true;
+                if (tabId === 'agentConfig' && text.includes('break schedule')) return true;
+                if (tabId === 'switchTemplate' && text.includes('switch template')) return true;
+                if (tabId === 'attendance' && text.includes('attendance report')) return true;
+                if (tabId === 'report' && text.includes('report generator')) return true;
+                if (tabId === 'intradayTraffic' && text.includes('intraday traffic')) return true;
+                if (tabId === 'outage' && text.includes('outage report')) return true;
+                if (tabId === 'backlog' && text.includes('backlog template')) return true;
+                if (tabId === 'tph' && text.includes('tph template')) return true;
+                return false;
+            })?.classList.add('active');
 
 
             // Specific actions for certain tabs when shown
@@ -3041,6 +3057,49 @@ Could you please help me report this image in a polite and natural tone? I want 
             showToast("Backlog template copied to clipboard!", 'success');
         }
 
+        function generateTPHTemplate() {
+            const tphOutputDiv = document.getElementById("tphTemplateOutput");
+
+            const now = new Date();
+            const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
+
+            const phDateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
+            const formattedPhDate = phTime.toLocaleDateString('en-US', phDateOptions);
+
+            const phHour = phTime.getHours();
+            const ampm = phHour >= 12 ? 'PM' : 'AM';
+            const displayHour = phHour % 12 === 0 ? 12 : phHour % 12;
+            const formattedPhTime = `${displayHour} ${ampm}`;
+
+            const template = `Hi @All, here’s your current running TPH as of ${formattedPhDate}, ${formattedPhTime}. Please continue with your ticket handling to help us stay on track. We appreciate your efforts!
+
+TPH Summary:
+
+
+TPH Per Hour:
+`;
+            tphOutputDiv.innerText = template;
+            saveToLocalStorage(LS_KEYS.TPH_TEMPLATE_OUTPUT, template); // Save the generated template
+            showToast("TPH Template generated successfully!", 'success');
+        }
+
+        function copyTPHTemplate() {
+            const tphText = document.getElementById("tphTemplateOutput").innerText;
+            if (tphText.trim() === "") {
+                showToast("No TPH template to copy. Generate a template first.", 'info');
+                return;
+            }
+
+            navigator.clipboard.writeText(tphText)
+                .then(() => {
+                    showToast("TPH Template copied to clipboard!", 'success');
+                })
+                .catch(err => {
+                    console.error('Failed to copy TPH template: ', err);
+                    showToast("Failed to copy TPH template. Please try again.", 'error');
+                });
+        }
+
         function clearAllData() {
             if (confirm("Are you sure you want to clear ALL saved data? This action cannot be undone.")) {
                 localStorage.clear();
@@ -3092,8 +3151,10 @@ Could you please help me report this image in a polite and natural tone? I want 
                 allAgentConfigs = [];
 
                 document.getElementById('backlogType').value = 'intraday';
-                generateBacklogTemplate();
+                generateBacklogTemplate(); // Re-initialize to default values
                 document.getElementById('backlogTemplateOutput').innerHTML = '';
+
+                document.getElementById('tphTemplateOutput').innerText = ''; // Clear TPH output
 
                 showToast("All saved data has been cleared!", 'success');
             }
