@@ -590,18 +590,18 @@
         }
 
         .attendance-entry strong {
-            color: var(--primary-color); /* Keep primary color for name */
-            font-size: 1.1em; /* Slightly smaller font for compactness */
-            flex-basis: auto; /* Allow name to take necessary space */
-            margin-right: 10px; /* Space between name and select */
-            flex-grow: 1; /* Allow name to grow */
-            word-wrap: break-word; /* Allow long names to wrap */
+            color: var(--primary-color);
+            font-size: 1.1em;
+            flex-basis: auto;
+            margin-right: 10px;
+            flex-grow: 1;
+            word-wrap: break-word;
         }
 
         .attendance-entry .actions {
             display: flex;
             gap: 5px;
-            flex-shrink: 0; /* Prevent actions from shrinking */
+            flex-shrink: 0;
         }
 
         .attendance-entry .actions button {
@@ -614,15 +614,15 @@
         }
 
         .attendance-entry select,
-        .attendance-entry input[type="time"] { /* Added for attendance login time */
-            width: auto; /* Allow select to size based on content */
-            max-width: 180px; /* Limit width for better layout */
+        .attendance-entry input[type="time"] {
+            width: auto;
+            max-width: 180px;
             margin-right: 10px;
             padding: 8px 12px;
             font-size: 0.95em;
-            background-position: right 8px center; /* Adjust arrow position */
-            padding-right: 30px; /* Adjust padding for arrow */
-            flex-shrink: 0; /* Prevent select from shrinking */
+            background-position: right 8px center;
+            padding-right: 30px;
+            flex-shrink: 0;
         }
 
         /* New style for break separators */
@@ -664,13 +664,13 @@
             .tab {
                 margin: 5px 0;
                 padding: 15px 20px;
-                min-width: unset; /* Allow tabs to shrink more */
+                min-width: unset;
             }
 
             button {
                 font-size: 1.2em;
                 padding: 15px 25px;
-                max-width: 100%; /* Ensure buttons can take full width */
+                max-width: 100%;
             }
 
             .agent-block {
@@ -710,8 +710,8 @@
             .toast-container {
                 bottom: 10px;
                 right: 10px;
-                left: 10px; /* Full width on small screens */
-                flex-direction: column; /* Newest on bottom for better visibility */
+                left: 10px;
+                flex-direction: column;
             }
 
             .toast {
@@ -721,21 +721,20 @@
             }
 
             .report-input-grid {
-                grid-template-columns: 1fr; /* Stack on small screens */
+                grid-template-columns: 1fr;
                 gap: 5px;
             }
 
             .report-input-grid label {
-                text-align: left; /* Align labels to left when stacked */
-                padding-right: 0; /* Remove padding when stacked */
+                text-align: left;
+                padding-right: 0;
             }
 
             .report-input-grid input[type="number"] {
-                max-width: 100%; /* Allow full width on small screens */
-                justify-self: stretch; /* Stretch to fill width */
+                max-width: 100%;
+                justify-self: stretch;
             }
 
-            /* Attendance Status specific responsiveness */
             .attendance-entry {
                 flex-direction: column;
                 align-items: flex-start;
@@ -748,7 +747,7 @@
                 justify-content: flex-end;
             }
             .attendance-entry select,
-            .attendance-entry input[type="time"] { /* Added for attendance login time */
+            .attendance-entry input[type="time"] {
                 width: 100%;
                 max-width: unset;
                 margin-right: 0;
@@ -799,40 +798,36 @@
         }
 
         /* Additional responsiveness for form elements and buttons */
-        /* Ensure inputs and textareas take full width on smaller screens */
         @media (max-width: 600px) {
             textarea, input[type="text"], input[type="number"], input[type="time"], select {
                 width: 100%;
-                min-width: unset; /* Remove any min-width constraints */
+                min-width: unset;
             }
 
-            /* Adjust button max-width to be more flexible */
             button {
                 max-width: 100%;
-                padding: 15px 20px; /* Slightly reduce padding for smaller buttons */
-                font-size: 1.1em; /* Slightly reduce font size */
+                padding: 15px 20px;
+                font-size: 1.1em;
             }
 
-            /* Adjust label margins for better spacing on small screens */
             label {
                 margin-top: 15px;
                 margin-bottom: 5px;
             }
 
-            /* Ensure the report input grid stacks properly */
             .report-input-grid {
-                grid-template-columns: 1fr; /* Stack labels and inputs vertically */
-                gap: 10px; /* Increase gap for better readability */
+                grid-template-columns: 1fr;
+                gap: 10px;
             }
 
             .report-input-grid label {
-                text-align: left; /* Align labels to the left when stacked */
-                padding-right: 0; /* Remove padding */
+                text-align: left;
+                padding-right: 0;
             }
 
             .report-input-grid input[type="number"] {
-                max-width: 100%; /* Allow number inputs to take full width */
-                text-align: left; /* Align numbers to the left when stacked */
+                max-width: 100%;
+                text-align: left;
             }
         }
         /* Styles for the new Switch Template tab */
@@ -844,10 +839,10 @@
         }
 
         .template-buttons button {
-            margin-top: 0; /* Override default button margin */
+            margin-top: 0;
             padding: 15px 20px;
             font-size: 1.1em;
-            max-width: unset; /* Allow buttons to fill grid space */
+            max-width: unset;
         }
 
         /* Styles for Agent Configuration Tab */
@@ -855,25 +850,25 @@
             background: var(--card-background);
             padding: 15px;
             margin-bottom: 10px;
-            border-left: 5px solid var(--secondary-color); /* Different color for config */
+            border-left: 5px solid var(--secondary-color);
             border-radius: var(--border-radius-medium);
             box-shadow: 0 3px 10px var(--shadow-light);
             display: flex;
-            flex-direction: column; /* Stack name and slots vertically */
-            gap: 10px; /* Space between elements */
+            flex-direction: column;
+            gap: 10px;
         }
 
         .agent-config-entry strong {
             color: var(--secondary-color);
             font-size: 1.1em;
             margin-bottom: 5px;
-            word-break: break-word; /* Allow long names to wrap */
-            flex-grow: 1; /* Allow name to take available space */
+            word-break: break-word;
+            flex-grow: 1;
         }
 
         .agent-config-entry .break-slot-container {
             display: flex;
-            flex-wrap: wrap; /* Allow items to wrap */
+            flex-wrap: wrap;
             gap: 10px;
             align-items: center;
             padding: 5px 0;
@@ -881,17 +876,17 @@
         }
 
         .agent-config-entry .break-slot-container:first-of-type {
-            border-top: none; /* No border for the first slot */
+            border-top: none;
         }
 
         .agent-config-entry .break-slot-container select,
         .agent-config-entry .break-slot-container input[type="text"] {
-            flex-grow: 1; /* Allow selects and inputs to grow */
-            min-width: 100px; /* Minimum width for selects/inputs */
-            max-width: 180px; /* Max width for selects/inputs */
+            flex-grow: 1;
+            min-width: 100px;
+            max-width: 180px;
             padding: 8px 12px;
             font-size: 0.95em;
-            margin-top: 0; /* Remove default margin */
+            margin-top: 0;
         }
 
         .agent-config-entry .break-slot-container .remove-slot-button {
@@ -901,7 +896,7 @@
             max-width: unset;
             width: auto;
             box-shadow: none;
-            background-color: var(--danger-color); /* Red for remove button */
+            background-color: var(--danger-color);
             color: #fff;
         }
 
@@ -909,7 +904,7 @@
             margin-top: 10px;
             padding: 8px 15px;
             font-size: 0.95em;
-            max-width: 200px; /* Smaller add slot button */
+            max-width: 200px;
             background-color: var(--primary-color);
             color: #1c1c1c;
             box-shadow: none;
@@ -917,7 +912,7 @@
 
         .agent-config-entry .actions {
             display: flex;
-            justify-content: flex-end; /* Align delete button to the right */
+            justify-content: flex-end;
             margin-top: 10px;
         }
 
@@ -960,10 +955,10 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            white-space: nowrap; /* Prevent text from wrapping */
+            white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis; /* Add ellipsis for overflow */
-            min-height: 50px; /* Ensure a minimum height for consistency */
+            text-overflow: ellipsis;
+            min-height: 50px;
         }
 
         .template-buttons button i {
@@ -1003,13 +998,13 @@
 
         .backlog-time-input-group label {
             margin: 0;
-            min-width: 80px; /* Adjust as needed */
+            min-width: 80px;
             font-size: 1em;
             color: var(--text-color);
         }
 
         .backlog-time-input-group input[type="number"] {
-            width: 70px; /* Fixed width for hour input */
+            width: 70px;
             padding: 8px 12px;
             font-size: 1em;
             text-align: center;
@@ -1050,26 +1045,26 @@
         .attendance-report-output-container ul ul {
             list-style: circle;
             margin-left: 20px;
-            padding: 0; /* Remove default padding from nested ul */
+            padding: 0;
             margin-top: 5px;
         }
 
         .attendance-report-output-container li {
             margin-bottom: 5px;
-            word-wrap: break-word; /* Ensure names wrap within list items */
-            white-space: normal; /* Override any nowrap from parent */
+            word-wrap: break-word;
+            white-space: normal;
         }
 
         /* Clear All Data Button */
         .clear-all-button {
             background-color: var(--danger-color);
             box-shadow: 0 8px 25px var(--danger-color);
-            margin-top: 50px; /* More space from other elements */
+            margin-top: 50px;
             margin-bottom: 20px;
         }
 
         .clear-all-button:hover {
-            background-color: #d32f2f; /* Darker red on hover */
+            background-color: #d32f2f;
             box-shadow: 0 12px 35px #d32f2f;
         }
 
@@ -1081,9 +1076,9 @@
             margin-bottom: 20px;
             flex-wrap: wrap;
             width: 100%;
-            max-width: 600px; /* Slightly narrower for nested tabs */
+            max-width: 600px;
             gap: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle separator */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 10px;
         }
 
@@ -1188,7 +1183,9 @@
             <div class="nested-tab" onclick="showNestedTab('report')">Report Generator</div>
             <div class="nested-tab" onclick="showNestedTab('intradayTraffic')">Intraday Traffic</div>
             <div class="nested-tab" onclick="showNestedTab('outage')">Outage Report</div>
-            <div class="nested-tab" onclick="showNestedTab('backlog')">Backlog Template</div> <!-- New nested tab -->
+            <div class="nested-tab" onclick="showNestedTab('backlog')">Backlog Template</div>
+            <!-- Modified TPH Tab for external redirect -->
+            <div class="nested-tab" onclick="window.open('https://project-star-ui.github.io/TPH/', '_blank');">TPH</div>
         </div>
 
         <!-- Attendance Report Content -->
@@ -1347,16 +1344,16 @@
             <button onclick="copyOutageReport()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Outage Report</button>
         </div>
 
-        <!-- Backlog Template Content (Moved from top-level tab) -->
+        <!-- Backlog Template Content -->
         <div id="backlog-content" style="display: none;">
             <label for="backlogType">SPS Backlog Update:</label>
             <select id="backlogType" onchange="generateBacklogTemplate()">
                 <option value="startDay">Start Day</option>
-                <option value="intraday" selected>Intraday</option> <!-- Set Intraday as default selected -->
+                <option value="intraday" selected>Intraday</option>
             </select>
 
             <div class="backlog-output" id="backlogTemplateOutput">
-                <p id="backlogTitle" style="font-weight: bold;"></p> <!-- New element for the dynamic title -->
+                <p id="backlogTitle" style="font-weight: bold;"></p>
 
                 <div class="backlog-time-input-group">
                     <label for="mnlHourInput">MNL Time:</label>
@@ -1373,7 +1370,7 @@
 
                 <p id="nextReporting"></p>
                 <h3 style="text-align: center;">BACKLOGS MONITORING</h3>
-                <p id="backlogAdditionalText" style="margin-top: 20px;"></p> <!-- New element for additional text -->
+                <p id="backlogAdditionalText" style="margin-top: 20px;"></p>
             </div>
             <button onclick="copyBacklogTemplate()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Backlog Template</button>
         </div>
@@ -1663,7 +1660,7 @@
 
         // --- Main Tab Switching with Animation ---
         function showMainTab(tabId) {
-            const mainContainers = ['activities', 'reporting']; // Removed 'backlog'
+            const mainContainers = ['activities', 'reporting'];
             mainContainers.forEach(id => {
                 const container = document.getElementById(id);
                 if (id === tabId) {
@@ -1699,7 +1696,8 @@
         // --- Nested Tab Switching with Animation ---
         function showNestedTab(tabId) {
             const activitiesContent = ['tasks-content', 'agentConfig-content', 'switchTemplate-content'];
-            const reportingContent = ['attendance-content', 'report-content', 'intradayTraffic-content', 'outage-content', 'backlog-content']; // Added 'backlog-content'
+            // Removed 'tph-content' from reportingContent as it's now a direct link
+            const reportingContent = ['attendance-content', 'report-content', 'intradayTraffic-content', 'outage-content', 'backlog-content'];
 
             let currentContentGroup = [];
             if (activitiesContent.includes(`${tabId}-content`)) {
@@ -1733,19 +1731,23 @@
             // Update active class for nested tabs
             const nestedTabs = document.querySelectorAll('.nested-tabs .nested-tab');
             nestedTabs.forEach(t => t.classList.remove('active'));
-            Array.from(nestedTabs).find(t => t.textContent.toLowerCase().includes(
-                tabId === 'tasks' ? 'im tasks' :
-                tabId === 'agentConfig' ? 'break schedule' :
-                tabId === 'switchTemplate' ? 'switch template' :
-                tabId === 'attendance' ? 'attendance report' :
-                tabId === 'report' ? 'report generator' :
-                tabId === 'intradayTraffic' ? 'intraday traffic' :
-                tabId === 'outage' ? 'outage report' :
-                'backlog template' // Added for backlog
-            )).classList.add('active');
+            // Special handling for TPH tab since it's a direct link and doesn't have a content div
+            if (tabId !== 'tph') {
+                Array.from(nestedTabs).find(t => t.textContent.toLowerCase().includes(
+                    tabId === 'tasks' ? 'im tasks' :
+                    tabId === 'agentConfig' ? 'break schedule' :
+                    tabId === 'switchTemplate' ? 'switch template' :
+                    tabId === 'attendance' ? 'attendance report' :
+                    tabId === 'report' ? 'report generator' :
+                    tabId === 'intradayTraffic' ? 'intraday traffic' :
+                    tabId === 'outage' ? 'outage report' :
+                    'backlog template'
+                )).classList.add('active');
+            }
+
 
             // Specific actions for certain tabs when shown
-            if (tabId === 'backlog') { // Now handled as a nested tab
+            if (tabId === 'backlog') {
                 generateBacklogTemplate();
             }
         }
@@ -1962,7 +1964,7 @@
 
                 const scheduleContent = document.createElement("div");
                 scheduleContent.className = "schedule-content";
-                scheduleContent.id = `${sectionData.id}-content`; // Corrected ID here
+                scheduleContent.id = `${sectionData.id}-content`;
 
                 if (sectionData.expectations && sectionData.expectations.length > 0) {
                     const expectationsMessageDiv = document.createElement("div");
@@ -2007,7 +2009,7 @@
             }
 
             header.classList.toggle('hidden-content');
-            content.classList.toggle('expanded'); // Use 'expanded' class for max-height transition
+            content.classList.toggle('expanded');
         }
 
         function removeTaskAssignment(button, sectionId, agentName) {
@@ -2016,16 +2018,14 @@
             agentBlock.style.transform = 'translateX(-100%)';
             agentBlock.addEventListener('transitionend', () => {
                 agentBlock.remove();
-                // Update the generatedScheduleSections array and local storage
                 const sectionIndex = generatedScheduleSections.findIndex(s => s.id === sectionId);
                 if (sectionIndex !== -1) {
                     delete generatedScheduleSections[sectionIndex].assignments[agentName];
-                    // If no more assignments in this section, remove the section
                     if (Object.keys(generatedScheduleSections[sectionIndex].assignments).length === 0) {
                         generatedScheduleSections.splice(sectionIndex, 1);
                     }
                     saveToLocalStorage(LS_KEYS.IM_GENERATED_SECTIONS, generatedScheduleSections);
-                    sortAndRenderSchedules(); // Re-render to ensure UI is consistent
+                    sortAndRenderSchedules();
                 }
             }, { once: true });
             showToast("Task assignment removed.", 'info');
@@ -2046,25 +2046,20 @@
             const reportOutputDiv = document.getElementById("reportOutput");
 
             const now = new Date();
-            const phOffsetMinutes = 8 * 60; // Philippines is UTC+8
-            const localOffsetMinutes = now.getTimezoneOffset(); // Local timezone offset in minutes
-            // Calculate PH time by adding PH offset and subtracting local offset
+            const phOffsetMinutes = 8 * 60;
+            const localOffsetMinutes = now.getTimezoneOffset();
             const phTimeDate = new Date(now.getTime() + (phOffsetMinutes * 60 * 1000) + (localOffsetMinutes * 60 * 1000));
 
-            // Calculate US Central Time (UST) which is UTC-6.
-            // PH is UTC+8, so UST is 14 hours behind PH (8 - (-6) = 14)
             let usTimeDate = new Date(phTimeDate.getTime() - (14 * 60 * 60 * 1000));
 
-            // Subtract 1 hour from US Central Time
             usTimeDate.setHours(usTimeDate.getHours() - 1);
 
             const usHours = String(usTimeDate.getHours()).padStart(2, '0');
             const formattedUsTime = `${usHours}:00`;
 
             const options = { month: 'long', day: 'numeric', year: 'numeric' };
-            const formattedDate = usTimeDate.toLocaleDateString('en-US', options); // Date should be based on US time
+            const formattedDate = usTimeDate.toLocaleDateString('en-US', options);
 
-            // Make the header bold
             let reportHeader = `As of ${formattedUsTime} (UST) ${formattedDate}.\nUS-BDEE-SPS\n\n`;
 
             const imAgentText = imAgentsWorking === 1 ? "agent" : "agents";
@@ -2106,13 +2101,12 @@
                 report += `${activitySentence}\n`;
             }
 
-            reportOutputDiv.innerText = report; // Changed to innerText to avoid bold tag, and reduce spacing
+            reportOutputDiv.innerText = report;
             showToast("Report generated successfully!", 'success');
         }
 
-        // New function to copy the report
         function copyReport() {
-            const reportText = document.getElementById("reportOutput").innerText; // Use innerText to get plain text
+            const reportText = document.getElementById("reportOutput").innerText;
             if (reportText.trim() === "") {
                 showToast("No report to copy. Generate a report first.", 'info');
                 return;
@@ -2128,7 +2122,6 @@
                 });
         }
 
-        // --- Attendance Status Functions ---
         function addAttendanceEntries() {
             const attendanceNamesInput = document.getElementById("attendanceNames").value.trim();
             const shiftSchedule = document.getElementById("attendanceShiftSchedule").value;
@@ -2150,29 +2143,28 @@
                 allAttendanceEntries.push({
                     id: entryId,
                     name: agentName,
-                    status: attendanceStatuses[0], // Default to "Present"
+                    status: attendanceStatuses[0],
                     shift: shiftSchedule,
-                    loginTime: '' // New field for actual login time
+                    loginTime: ''
                 });
             });
 
             saveToLocalStorage(LS_KEYS.ATTENDANCE_ENTRIES, allAttendanceEntries);
             sortAndRenderAttendanceSections();
             showToast("Attendance entries added.", 'success');
-            document.getElementById("attendanceNames").value = ''; // Clear textarea after adding
+            document.getElementById("attendanceNames").value = '';
         }
 
         function updateAttendanceStatus(entryId, newStatus) {
             const entryIndex = allAttendanceEntries.findIndex(entry => entry.id === entryId);
             if (entryIndex !== -1) {
                 allAttendanceEntries[entryIndex].status = newStatus;
-                // If status changes from "Running late" to something else, clear loginTime
                 if (newStatus !== "Running late / Advised halfday") {
                     allAttendanceEntries[entryIndex].loginTime = '';
                 }
                 saveToLocalStorage(LS_KEYS.ATTENDANCE_ENTRIES, allAttendanceEntries);
                 showToast(`Status for ${allAttendanceEntries[entryIndex].name} updated to ${newStatus}.`, 'info');
-                sortAndRenderAttendanceSections(); // Re-render to reflect status change and potentially login time input
+                sortAndRenderAttendanceSections();
             }
         }
 
@@ -2189,17 +2181,16 @@
             const entryIndex = allAttendanceEntries.findIndex(entry => entry.id === entryId);
             if (entryIndex !== -1) {
                 const agentName = allAttendanceEntries[entryIndex].name;
-                allAttendanceEntries.splice(entryIndex, 1); // Remove from array
+                allAttendanceEntries.splice(entryIndex, 1);
                 saveToLocalStorage(LS_KEYS.ATTENDANCE_ENTRIES, allAttendanceEntries);
                 showToast(`Attendance entry for ${agentName} deleted.`, 'error');
-                sortAndRenderAttendanceSections(); // Re-render to ensure correct order
+                sortAndRenderAttendanceSections();
             }
         }
 
         function sortAndRenderAttendanceSections() {
             const attendanceResultsDiv = document.getElementById("attendanceResults");
 
-            // 1. Capture current collapse states before clearing
             const currentSections = attendanceResultsDiv.querySelectorAll('.schedule-section');
             currentSections.forEach(section => {
                 const shift = section.getAttribute('data-shift-schedule');
@@ -2209,9 +2200,8 @@
             saveToLocalStorage(LS_KEYS.ATTENDANCE_COLLAPSE_STATES, attendanceSectionCollapseStates);
 
 
-            attendanceResultsDiv.innerHTML = ''; // Clear all existing entries
+            attendanceResultsDiv.innerHTML = '';
 
-            // Group entries by shift
             const groupedByShift = allAttendanceEntries.reduce((acc, entry) => {
                 if (!acc[entry.shift]) {
                     acc[entry.shift] = [];
@@ -2220,7 +2210,6 @@
                 return acc;
             }, {});
 
-            // Sort shifts based on predefined order
             const sortedShifts = Object.keys(groupedByShift).sort((a, b) => {
                 return (shiftOrder[a] || Infinity) - (shiftOrder[b] || Infinity);
             });
@@ -2228,15 +2217,12 @@
             sortedShifts.forEach(shift => {
                 const shiftEntries = groupedByShift[shift];
 
-                // Sort entries within each shift by status and then by name
                 shiftEntries.sort((a, b) => {
-                    // Sort by status first
                     const statusAIndex = attendanceStatuses.indexOf(a.status);
                     const statusBIndex = attendanceStatuses.indexOf(b.status);
                     if (statusAIndex < statusBIndex) return -1;
                     if (statusAIndex > statusBIndex) return 1;
 
-                    // Then by name
                     return a.name.localeCompare(b.name);
                 });
 
@@ -2261,7 +2247,7 @@
                 shiftEntries.forEach(entryData => {
                     const div = document.createElement("div");
                     div.className = "agent-block attendance-entry";
-                    div.id = entryData.id; // Ensure the ID is set for direct manipulation if needed
+                    div.id = entryData.id;
                     div.setAttribute('data-agent-name', entryData.name);
                     div.setAttribute('data-status', entryData.status);
                     div.setAttribute('data-shift', entryData.shift);
@@ -2270,7 +2256,6 @@
                         `<option value="${status}" ${status === entryData.status ? 'selected' : ''}>${status}</option>`
                     ).join('');
 
-                    // Conditionally render login time input for "Running late" status
                     let loginTimeInputHtml = '';
                     if (entryData.status === "Running late / Advised halfday") {
                         loginTimeInputHtml = `
@@ -2298,17 +2283,13 @@
                 scheduleSection.appendChild(scheduleContent);
                 attendanceResultsDiv.appendChild(scheduleSection);
 
-                // 2. Apply stored collapse states after rendering
-                // Check if the state was explicitly true (expanded)
                 if (attendanceSectionCollapseStates[shift] === true) {
-                    scheduleHeader.classList.add('hidden-content'); // Add class to header to rotate icon
-                    scheduleContent.classList.add('expanded'); // Expand content
+                    scheduleHeader.classList.add('hidden-content');
+                    scheduleContent.classList.add('expanded');
                 } else if (attendanceSectionCollapseStates[shift] === false) {
-                    // If it was explicitly false (collapsed), ensure it stays collapsed
                     scheduleHeader.classList.remove('hidden-content');
                     scheduleContent.classList.remove('expanded');
                 }
-                // If state was undefined (first render), it remains collapsed by default CSS
             });
         }
 
@@ -2322,9 +2303,8 @@
             }
 
             const reportHtmlParts = [];
-            const shiftData = {}; // Stores all relevant data per shift
+            const shiftData = {};
 
-            // Filter entries based on the selected shift
             const filteredEntries = allAttendanceEntries.filter(entry => entry.shift === selectedShift);
 
             if (filteredEntries.length === 0) {
@@ -2333,37 +2313,33 @@
                 return;
             }
 
-            // Initialize shiftData for the selected shift
             shiftData[selectedShift] = {
                 totalHeadcount: 0,
                 presentAgents: [],
                 lateAgents: [],
                 absentAgents: [],
-                totalScheduledHours: 0, // Assuming 8 hours per agent
+                totalScheduledHours: 0,
                 actualPresentHours: 0
             };
 
-            // Populate shiftData for the selected shift
             filteredEntries.forEach(entry => {
                 const data = shiftData[entry.shift];
                 if (data) {
                     data.totalHeadcount++;
-                    data.totalScheduledHours += 8; // Each agent is scheduled for 8 hours
+                    data.totalScheduledHours += 8;
 
                     if (entry.status === "Present") {
                         data.presentAgents.push(entry.name);
                         data.actualPresentHours += 8;
                     } else if (entry.status === "Running late / Advised halfday") {
                         data.lateAgents.push({ name: entry.name, loginTime: entry.loginTime });
-                        // Calculate actual present hours for late agents
                         if (entry.loginTime) {
-                            data.actualPresentHours += 7; // 8 hours - 1 hour deduction for lateness (simplified)
+                            data.actualPresentHours += 7;
                         } else {
-                            data.actualPresentHours += 8; // If late but no login time, assume full 8 hours for now
+                            data.actualPresentHours += 8;
                         }
                     } else {
                         data.absentAgents.push({ name: entry.name, reason: entry.status });
-                        // Absent agents contribute 0 to actualPresentHours
                     }
                 }
             });
@@ -2427,7 +2403,7 @@
                 });
                 reportHtmlParts.push(`  </ul>`);
             }
-            reportHtmlParts.push(`<br>`); // Add a break between shift reports
+            reportHtmlParts.push(`<br>`);
 
 
             document.getElementById('attendanceReportOutput').innerHTML = reportHtmlParts.join('\n');
@@ -2437,12 +2413,9 @@
 
         function copyAttendanceReport() {
             const reportOutputDiv = document.getElementById("attendanceReportOutput");
-            // Create a temporary textarea to hold the text content
             const tempTextArea = document.createElement('textarea');
-            // Convert the HTML content to plain text for copying
             let reportText = '';
 
-            // Iterate through the generated HTML structure to build a clean text report
             reportOutputDiv.querySelectorAll('h3, p, h4, h5, ul, li').forEach(element => {
                 if (element.tagName === 'H3' || element.tagName === 'P') {
                     reportText += element.textContent.trim() + '\n\n';
@@ -2451,7 +2424,6 @@
                 } else if (element.tagName === 'H5') {
                     reportText += `  ${element.textContent.trim()}\n`;
                 } else if (element.tagName === 'LI') {
-                    // Determine indentation based on nesting level
                     let indent = '';
                     let parent = element.parentElement;
                     while (parent && parent !== reportOutputDiv) {
@@ -2464,7 +2436,7 @@
                 }
             });
 
-            tempTextArea.value = reportText.trim(); // Trim any leading/trailing whitespace
+            tempTextArea.value = reportText.trim();
 
             document.body.appendChild(tempTextArea);
             tempTextArea.select();
@@ -2473,7 +2445,6 @@
             showToast("Attendance Report copied to clipboard!", 'success');
         }
 
-        // --- Outage Report Functions ---
         function generateOutageReport() {
             const account = document.getElementById('outageAccount').value;
             const startTime = document.getElementById('outageStartTime').value;
@@ -2489,7 +2460,6 @@
                 return;
             }
 
-            // Format the start time for readability
             let formattedStartTime = '';
             try {
                 const dateObj = new Date(startTime);
@@ -2499,7 +2469,7 @@
                     hour12: true
                 });
             } catch (e) {
-                formattedStartTime = startTime; // Fallback if date parsing fails
+                formattedStartTime = startTime;
             }
 
             const reportText = `
@@ -2534,21 +2504,17 @@ Status: ${status}
                 });
         }
 
-        // --- New Backlog Report Functions ---
         function generateUSTBacklog() {
             const reportOutputDiv = document.getElementById("reportOutput");
             const now = new Date();
 
-            // Calculate US Central Time (UST) which is UTC-6.
-            // Get UTC time, then add/subtract offset for UST
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            let ustTimeDate = new Date(utc + (-6 * 3600000)); // UTC-6
+            let ustTimeDate = new Date(utc + (-6 * 3600000));
 
-            // Subtract 1 hour from US Central Time
             ustTimeDate.setHours(ustTimeDate.getHours() - 1);
 
             const usHours = String(ustTimeDate.getHours()).padStart(2, '0');
-            const formattedUstTime = `${usHours}:00`; // Changed to formattedUstTime for consistency
+            const formattedUstTime = `${usHours}:00`;
 
             const options = { month: 'long', day: 'numeric', year: 'numeric' };
             const formattedDate = ustTimeDate.toLocaleDateString('en-US', options);
@@ -2565,14 +2531,12 @@ We have already advised the agents to prioritize open, assigned, and reviewing p
             const reportOutputDiv = document.getElementById("reportOutput");
             const now = new Date();
 
-            // Calculate Philippine Time (PH) which is UTC+8.
-            // Get UTC time, then add/subtract offset for PH
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const phTimeDate = new Date(utc + (8 * 3600000)); // UTC+8
+            const phTimeDate = new Date(utc + (8 * 3600000));
 
             const phHours = phTimeDate.getHours();
             const ampm = phHours >= 12 ? 'PM' : 'AM';
-            const displayHour = phHours % 12 === 0 ? 12 : phHours % 12; // Convert 0 to 12 for 12 AM/PM
+            const displayHour = phHours % 12 === 0 ? 12 : phHours % 12;
             const formattedPhHour = `${displayHour}${ampm}`;
 
             const options = { month: 'long', day: 'numeric', year: 'numeric' };
@@ -2602,7 +2566,6 @@ ASSIGNED`;
             showToast("Reminder generated!", 'success');
         }
 
-        // New function for Handling CO
         function generateHandlingCO() {
             const reportOutputDiv = document.getElementById("reportOutput");
             const handlingCOText = `Please check your current handling and prioritize your tasks if you’re on the list below. Focus especially on those with higher handling times or pending tasks.`;
@@ -2611,7 +2574,6 @@ ASSIGNED`;
             showToast("Handling CO message generated!", 'success');
         }
 
-        // --- Intraday Traffic Report Functions ---
         function generateIntradayTrafficReport() {
             const imInbound = parseInt(document.getElementById("imInbound").value);
             const imForecast = parseInt(document.getElementById("imForecast").value);
@@ -2625,7 +2587,6 @@ ASSIGNED`;
             }
 
             const now = new Date();
-            // Subtract one day from the current date
             now.setDate(now.getDate() - 1);
             const options = { month: 'long', day: 'numeric', year: 'numeric' };
             const formattedDate = now.toLocaleDateString('en-US', options);
@@ -2703,7 +2664,6 @@ What We’re Doing
                 });
         }
 
-        // --- Switch Template Functions ---
         function generateSwitchTemplate(templateType) {
             const templates = switchTemplates[templateType];
             if (!templates || templates.length === 0) {
@@ -2712,7 +2672,6 @@ What We’re Doing
                 return;
             }
 
-            // Select a random template from the array
             const randomIndex = Math.floor(Math.random() * templates.length);
             const selectedTemplate = templates[randomIndex];
 
@@ -2737,7 +2696,6 @@ What We’re Doing
                 });
         }
 
-        // --- Agent Configuration Functions ---
         function addAgentConfigEntries() {
             const agentNamesInput = document.getElementById('agentConfigNames').value.trim();
             if (!agentNamesInput) {
@@ -2763,13 +2721,13 @@ What We’re Doing
                 allAgentConfigs.push({
                     id: entryId,
                     name: agentName,
-                    breakSlots: [] // Initialize with no break slots
+                    breakSlots: []
                 });
             });
 
             saveToLocalStorage(LS_KEYS.AGENT_CONFIGS, allAgentConfigs);
             renderAgentConfigs();
-            document.getElementById('agentConfigNames').value = ''; // Clear input
+            document.getElementById('agentConfigNames').value = '';
             showToast("Agent(s) added to configuration.", 'success');
         }
 
@@ -2778,11 +2736,11 @@ What We’re Doing
             if (agentIndex !== -1) {
                 if (allAgentConfigs[agentIndex].breakSlots.length < 6) {
                     allAgentConfigs[agentIndex].breakSlots.push({
-                        type: breakActivityOptions[0], // Default to first option
+                        type: breakActivityOptions[0],
                         time: ''
                     });
                     saveToLocalStorage(LS_KEYS.AGENT_CONFIGS, allAgentConfigs);
-                    renderAgentConfigs(); // Re-render to show new slot
+                    renderAgentConfigs();
                     showToast("Break/Activity slot added.", 'info');
                 } else {
                     showToast("Maximum 6 break/activity slots per agent.", 'info');
@@ -2795,12 +2753,10 @@ What We’re Doing
             if (agentIndex !== -1 && allAgentConfigs[agentIndex].breakSlots[slotIndex]) {
                 allAgentConfigs[agentIndex].breakSlots[slotIndex][field] = value;
                 saveToLocalStorage(LS_KEYS.AGENT_CONFIGS, allAgentConfigs);
-                // Re-set alarm if time is updated
                 if (field === 'time') {
                     const agentName = allAgentConfigs[agentIndex].name;
                     const slot = allAgentConfigs[agentIndex].breakSlots[slotIndex];
-                    // Generate a unique ID for this specific slot for the alarm
-                    const slotAlarmId = `${agentId}-slot-container-${slotIndex}`; // Use the container ID
+                    const slotAlarmId = `${agentId}-slot-container-${slotIndex}`;
                     setBreakAlarmAgentConfig(agentName, slot.type, slot.time, slotAlarmId);
                 }
                 showToast(`Break/Activity updated for ${allAgentConfigs[agentIndex].name}.`, 'info');
@@ -2812,7 +2768,7 @@ What We’re Doing
             if (agentIndex !== -1 && allAgentConfigs[agentIndex].breakSlots[slotIndex]) {
                 allAgentConfigs[agentIndex].breakSlots.splice(slotIndex, 1);
                 saveToLocalStorage(LS_KEYS.AGENT_CONFIGS, allAgentConfigs);
-                renderAgentConfigs(); // Re-render to remove slot
+                renderAgentConfigs();
                 showToast("Break/Activity slot removed.", 'info');
             }
         }
@@ -2830,9 +2786,9 @@ What We’re Doing
 
         function renderAgentConfigs() {
             const agentConfigResultsDiv = document.getElementById('agentConfigResults');
-            agentConfigResultsDiv.innerHTML = ''; // Clear existing entries
+            agentConfigResultsDiv.innerHTML = '';
 
-            allAgentConfigs.sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically by name
+            allAgentConfigs.sort((a, b) => a.name.localeCompare(b.name));
 
             allAgentConfigs.forEach(config => {
                 const div = document.createElement('div');
@@ -2843,10 +2799,8 @@ What We’re Doing
                     let optionsHtml = breakActivityOptions.map(option =>
                         `<option value="${option}" ${option === slot.type ? 'selected' : ''}>${option}</option>`
                     ).join('');
-                    // Generate a unique ID for this specific slot for the alarm
                     const slotContainerId = `${config.id}-slot-container-${index}`;
-                    // Set alarm for each slot when rendered
-                    if (slot.time) { // Only set alarm if time is provided
+                    if (slot.time) {
                         setBreakAlarmAgentConfig(config.name, slot.type, slot.time, slotContainerId);
                     }
                     return `
@@ -2874,42 +2828,34 @@ What We’re Doing
             });
         }
 
-        // New function for Agent Configuration break alarms
         function setBreakAlarmAgentConfig(agentName, breakType, breakTime, slotContainerId) {
-            // Clear any existing alarms for this slot to prevent duplicates
             clearTimeout(window[`alarmTimeout_${slotContainerId}`]);
 
             const now = new Date();
             const breakDate = new Date();
             const [hours, minutes] = breakTime.split(':');
 
-            if (!hours || !minutes) { // If time is not valid, don't set alarm
+            if (!hours || !minutes) {
                 return;
             }
 
             breakDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
-            // Adjust breakDate to be 35 minutes *before* the actual break time
-            breakDate.setMinutes(breakDate.getMinutes() - 35); // Changed from 20 to 35
+            breakDate.setMinutes(breakDate.getMinutes() - 35);
 
-            // If the adjusted break time is in the past, assume it's for the next day
-            // This logic needs to be careful: if current time is 10:00 and break is 10:15 (alarm 09:55),
-            // and we set it for next day, it will be 09:55 next day.
-            // We only want to set for next day if the *adjusted* time is already past *today*.
             if (breakDate < now) {
                 breakDate.setDate(breakDate.getDate() + 1);
             }
 
             const timeUntilAlarm = breakDate - now;
 
-            // Function to format time for display (e.g., 14:30 -> 02:30 PM)
             const formatDisplayTime = (time24hr) => {
                 const [h, m] = time24hr.split(':');
                 let hours = parseInt(h);
                 const minutes = parseInt(m);
                 const ampm = hours >= 12 ? 'PM' : 'AM';
                 hours = hours % 12;
-                hours = hours ? hours : 12; // the hour '0' should be '12'
+                hours = hours ? hours : 12;
                 const strMinutes = minutes < 10 ? '0' + minutes : minutes;
                 return `${hours}:${strMinutes} ${ampm}`;
             };
@@ -2920,45 +2866,39 @@ What We’re Doing
                     if (breakSound) {
                         breakSound.play().catch(e => console.error("Error playing sound:", e));
                     }
-                    // Use 'break-alarm' type for emphasized notification
-                    showToast(`${agentName}'s ${breakType.toLowerCase()} is in 35 minutes! (${formatDisplayTime(breakTime)})`, 'break-alarm'); // Changed text to 35 minutes
+                    showToast(`${agentName}'s ${breakType.toLowerCase()} is in 35 minutes! (${formatDisplayTime(breakTime)})`, 'break-alarm');
 
-                    // Visually mark the slot as "upcoming" or "alerted"
                     const slotContainer = document.getElementById(slotContainerId);
                     if (slotContainer) {
-                        slotContainer.style.borderLeftColor = 'orange'; // Highlight with orange
+                        slotContainer.style.borderLeftColor = 'orange';
                         slotContainer.style.boxShadow = '0 5px 15px rgba(255, 165, 0, 0.5)';
                     }
 
-                    // Set another timeout for the actual break time to mark it as completed
                     const actualBreakTime = new Date();
                     actualBreakTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-                    if (actualBreakTime < now) { // If actual break time is already past today
+                    if (actualBreakTime < now) {
                         actualBreakTime.setDate(actualBreakTime.getDate() + 1);
                     }
-                    const timeUntilActualBreak = actualBreakTime - new Date(); // Recalculate from current time
+                    const timeUntilActualBreak = actualBreakTime - new Date();
 
                     if (timeUntilActualBreak > 0) {
                         setTimeout(() => {
                             const slotContainer = document.getElementById(slotContainerId);
                             if (slotContainer) {
                                 slotContainer.style.opacity = '0.6';
-                                slotContainer.style.borderLeftColor = '#607d8b'; // Dimmed color
+                                slotContainer.style.borderLeftColor = '#607d8b';
                                 slotContainer.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
-                                // Hide select and input, and remove button
                                 slotContainer.querySelectorAll('select, input, button').forEach(el => {
                                     el.style.display = 'none';
                                 });
-                                // Add a text element to show the completed break
                                 const completedText = document.createElement('span');
                                 completedText.textContent = `${breakType} at ${formatDisplayTime(breakTime)} - COMPLETED`;
                                 completedText.style.color = 'var(--text-color)';
                                 completedText.style.fontWeight = 'bold';
-                                slotContainer.prepend(completedText); // Add at the beginning
+                                slotContainer.prepend(completedText);
                             }
                         }, timeUntilActualBreak);
                     } else {
-                         // If actual break time is already past, mark as completed immediately
                         const slotContainer = document.getElementById(slotContainerId);
                         if (slotContainer) {
                             slotContainer.style.opacity = '0.6';
@@ -2977,7 +2917,6 @@ What We’re Doing
 
                 }, timeUntilAlarm);
             } else {
-                // If the 35-min-before alarm time is already past, mark as completed immediately
                 const slotContainer = document.getElementById(slotContainerId);
                 if (slotContainer) {
                     slotContainer.style.opacity = '0.6';
@@ -2995,7 +2934,6 @@ What We’re Doing
             }
         }
 
-        // --- Backlog Template Functions ---
         function generateBacklogTemplate() {
             const backlogType = document.getElementById('backlogType').value;
             const backlogTitleElem = document.getElementById('backlogTitle');
@@ -3003,22 +2941,20 @@ What We’re Doing
             const mnlDateDisplay = document.getElementById('mnlDateDisplay');
             const usHourInput = document.getElementById('usHourInput');
             const nextReportingElem = document.getElementById('nextReporting');
-            const backlogAdditionalTextElem = document.getElementById('backlogAdditionalText'); // New element
+            const backlogAdditionalTextElem = document.getElementById('backlogAdditionalText');
 
-            // Set the dynamic title based on selection
             if (backlogType === 'startDay') {
                 backlogTitleElem.textContent = "SPS Backlog update (Start Day)";
-                backlogAdditionalTextElem.textContent = ""; // Clear additional text for Start Day
+                backlogAdditionalTextElem.textContent = "";
             } else {
                 backlogTitleElem.textContent = "SPS Backlog update (Intraday)";
                 backlogAdditionalTextElem.textContent = `
 Could you please help me report this image in a polite and natural tone? I want to explain that there’s a high volume of messages in IM, so we’re still balancing the distribution to make sure both queues work efficiently. Also, that the 3-5 day unassigned and assigned tickets are still being prioritized. Thank you!
-                `; // Set additional text for Intraday
+                `;
             }
 
             const now = new Date();
 
-            // MNL Time (UTC+8)
             const mnlOptions = {
                 hour: '2-digit',
                 hour12: false,
@@ -3037,26 +2973,23 @@ Could you please help me report this image in a polite and natural tone? I want 
             mnlHourInput.value = mnlHour;
             mnlDateDisplay.textContent = `- ${mnlMonth} ${mnlDay}, ${mnlYear}`;
 
-            // US Time (Central Time - UTC-6), less 2 hours (updated from 1 hour)
             const usOptions = {
                 hour: '2-digit',
                 hour12: false,
-                timeZone: 'America/Chicago' // Central Time
+                timeZone: 'America/Chicago'
             };
             const usFormatter = new Intl.DateTimeFormat('en-US', usOptions);
             const usParts = usFormatter.formatToParts(now);
             let usHour = parseInt(usParts.find(p => p.type === 'hour').value);
 
-            usHour = (usHour - 2 + 24) % 24; // Subtract 2 hours, handle wrap-around for 00 to 23
+            usHour = (usHour - 2 + 24) % 24;
 
             usHourInput.value = usHour;
 
-            // Next Reporting Time (hourly, on the hour)
             let nextReportingHour = (parseInt(usHourInput.value) + 1) % 24;
             const nextReportingFormatted = String(nextReportingHour).padStart(2, '0');
             nextReportingElem.textContent = `Next reporting: ${nextReportingFormatted}:00 UST`;
 
-            // Save current state of backlog type and hours
             saveToLocalStorage(LS_KEYS.BACKLOG_TYPE, backlogType);
             saveToLocalStorage(LS_KEYS.BACKLOG_MNL_HOUR, mnlHourInput.value);
             saveToLocalStorage(LS_KEYS.BACKLOG_US_HOUR, usHourInput.value);
@@ -3067,21 +3000,18 @@ Could you please help me report this image in a polite and natural tone? I want 
         function updateBacklogTimes() {
             const usHourInput = document.getElementById('usHourInput');
             const nextReportingElem = document.getElementById('nextReporting');
-            const mnlHourInput = document.getElementById('mnlHourInput'); // Added for saving
+            const mnlHourInput = document.getElementById('mnlHourInput');
 
-            // Ensure inputs are valid numbers
             let currentUsHour = parseInt(usHourInput.value);
             if (isNaN(currentUsHour) || currentUsHour < 0 || currentUsHour > 23) {
-                currentUsHour = 0; // Default to 0 if invalid
+                currentUsHour = 0;
                 usHourInput.value = 0;
             }
 
-            // Update Next Reporting Time based on edited US hour
             let nextReportingHour = (currentUsHour + 1) % 24;
             const nextReportingFormatted = String(nextReportingHour).padStart(2, '0');
             nextReportingElem.textContent = `Next reporting: ${nextReportingFormatted}:00 UST`;
 
-            // Save updated hours
             saveToLocalStorage(LS_KEYS.BACKLOG_MNL_HOUR, mnlHourInput.value);
             saveToLocalStorage(LS_KEYS.BACKLOG_US_HOUR, usHourInput.value);
         }
@@ -3089,11 +3019,10 @@ Could you please help me report this image in a polite and natural tone? I want 
 
         function copyBacklogTemplate() {
             const backlogOutputDiv = document.getElementById('backlogTemplateOutput');
-            // Create a temporary textarea to hold the text content
             const tempTextArea = document.createElement('textarea');
 
             const mnlHour = document.getElementById('mnlHourInput').value;
-            const mnlDate = document.getElementById('mnlDateDisplay').textContent.trim().substring(2); // Remove "- "
+            const mnlDate = document.getElementById('mnlDateDisplay').textContent.trim().substring(2);
             const usHour = document.getElementById('usHourInput').value;
             const nextReporting = document.getElementById('nextReporting').textContent;
             const backlogAdditionalText = document.getElementById('backlogAdditionalText').textContent.trim();
@@ -3103,7 +3032,7 @@ Could you please help me report this image in a polite and natural tone? I want 
                                  `US Time: ${String(usHour).padStart(2, '0')}:00\n` +
                                  `${nextReporting}\n\n` +
                                  `BACKLOGS MONITORING\n` +
-                                 `${backlogAdditionalText}`; // Directly add the static title and new text
+                                 `${backlogAdditionalText}`;
 
             document.body.appendChild(tempTextArea);
             tempTextArea.select();
@@ -3112,20 +3041,16 @@ Could you please help me report this image in a polite and natural tone? I want 
             showToast("Backlog template copied to clipboard!", 'success');
         }
 
-        // --- Clear All Data Function ---
         function clearAllData() {
             if (confirm("Are you sure you want to clear ALL saved data? This action cannot be undone.")) {
-                localStorage.clear(); // Clears all data from local storage
+                localStorage.clear();
 
-                // Reset all input fields to their default or empty states
-                // IM Tasks
                 document.getElementById('agents').value = '';
                 document.getElementById('taskCount').value = '';
                 document.getElementById('shiftSchedule').value = '8PM';
                 document.getElementById('results').innerHTML = '';
                 generatedScheduleSections = [];
 
-                // Report Generator
                 document.getElementById('imQueueTasks').value = '0';
                 document.getElementById('imAgentsWorking').value = '0';
                 document.getElementById('ticketQueueTasks').value = '0';
@@ -3137,7 +3062,6 @@ Could you please help me report this image in a polite and natural tone? I want 
                 document.getElementById('agentsOnTraining').value = '0';
                 document.getElementById('reportOutput').innerText = '';
 
-                // Attendance Report
                 document.getElementById('attendanceNames').value = '';
                 document.getElementById('attendanceShiftSchedule').value = '8PM';
                 document.getElementById('attendanceResults').innerHTML = '';
@@ -3145,7 +3069,6 @@ Could you please help me report this image in a polite and natural tone? I want 
                 allAttendanceEntries = [];
                 attendanceSectionCollapseStates = {};
 
-                // Outage Report
                 document.getElementById('outageAccount').value = 'ByteDance - USDS';
                 document.getElementById('outageStartTime').value = '';
                 document.getElementById('outageAffected').value = '';
@@ -3156,25 +3079,21 @@ Could you please help me report this image in a polite and natural tone? I want 
                 document.getElementById('outageStatus').value = 'Ongoing';
                 document.getElementById('outageReportOutput').innerText = '';
 
-                // Intraday Traffic
                 document.getElementById('imInbound').value = '0';
                 document.getElementById('imForecast').value = '0';
                 document.getElementById('ticketInbound').value = '0';
                 document.getElementById('ticketForecast').value = '0';
                 document.getElementById('intradayTrafficReportOutput').innerText = '';
 
-                // Switch Template (no inputs to clear, only output)
                 document.getElementById('switchTemplateOutput').innerText = '';
 
-                // Agent Configuration (Break Schedule)
                 document.getElementById('agentConfigNames').value = '';
                 document.getElementById('agentConfigResults').innerHTML = '';
                 allAgentConfigs = [];
 
-                // Backlog Template
                 document.getElementById('backlogType').value = 'intraday';
-                generateBacklogTemplate(); // Regenerate to reset times to current
-                document.getElementById('backlogTemplateOutput').innerHTML = ''; // Clear output
+                generateBacklogTemplate();
+                document.getElementById('backlogTemplateOutput').innerHTML = '';
 
                 showToast("All saved data has been cleared!", 'success');
             }
