@@ -1526,6 +1526,12 @@
                 <option value="intraday" selected>Intraday</option>
             </select>
 
+            <label for="imHighVolume">Is IM high Volume?</label>
+            <select id="imHighVolume" onchange="generateBacklogTemplate()">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+
             <div class="backlog-output" id="backlogTemplateOutput">
                 <p id="backlogTitle" style="font-weight: bold;"></p>
 
@@ -1543,6 +1549,7 @@
                 </div>
 
                 <p id="nextReporting"></p>
+                <p id="imQueueStatus"></p> <!-- New element for IM Queue status -->
                 <h3 style="text-align: center;">BACKLOGS MONITORING</h3>
                 <p id="backlogAdditionalText" style="margin-top: 20px;"></p>
             </div>
@@ -1642,6 +1649,7 @@
             INTRADAY_TRAFFIC_INPUTS: 'intradayTrafficInputs',
             AGENT_CONFIGS: 'agentConfigs',
             BACKLOG_TYPE: 'backlogType',
+            BACKLOG_IM_HIGH_VOLUME: 'backlogImHighVolume', // New key for IM high volume
             BACKLOG_MNL_HOUR: 'backlogMnlHour',
             BACKLOG_US_HOUR: 'backlogUsHour',
             TPH_TEMPLATE_OUTPUT: 'tphTemplateOutput' // New key for TPH template
@@ -1773,6 +1781,10 @@
                 saveToLocalStorage(LS_KEYS.BACKLOG_TYPE, document.getElementById('backlogType').value);
                 generateBacklogTemplate(); // Regenerate to update times based on new type
             });
+            document.getElementById('imHighVolume').addEventListener('change', () => {
+                saveToLocalStorage(LS_KEYS.BACKLOG_IM_HIGH_VOLUME, document.getElementById('imHighVolume').value);
+                generateBacklogTemplate(); // Regenerate to update text based on new selection
+            });
             document.getElementById('mnlHourInput').addEventListener('input', () => saveToLocalStorage(LS_KEYS.BACKLOG_MNL_HOUR, document.getElementById('mnlHourInput').value));
             document.getElementById('usHourInput').addEventListener('input', () => saveToLocalStorage(LS_KEYS.BACKLOG_US_HOUR, document.getElementById('usHourInput').value));
 
@@ -1837,6 +1849,7 @@
 
             // Backlog Template
             document.getElementById('backlogType').value = loadFromLocalStorage(LS_KEYS.BACKLOG_TYPE) || 'intraday';
+            document.getElementById('imHighVolume').value = loadFromLocalStorage(LS_KEYS.BACKLOG_IM_HIGH_VOLUME) || 'yes';
             // The generateBacklogTemplate() call in DOMContentLoaded will handle initial display and time updates
             // If specific hour persistence is desired, this logic would need adjustment.
             // document.getElementById('mnlHourInput').value = loadFromLocalStorage(LS_KEYS.BACKLOG_MNL_HOUR) || document.getElementById('mnlHourInput').value;
@@ -2159,7 +2172,7 @@
                     const expectationsMessageDiv = document.createElement("div");
                     expectationsMessageDiv.className = "expectations-message";
                     const agentsList = sectionData.expectations.map(agent => `<li>${agent}</li>`).join('');
-                    expectationsMessageDiv.innerHTML = `<strong>Setting Expectations for ${sectionData.shift} Shift:</strong> The agents listed below will handle IM tasks in sequence if a transfer to the IM queue is needed, with the order arranged according to their break schedules: <ul>${agentsList}</ul>`;
+                    expectationsMessageDiv.innerHTML = `<strong>Setting Expectations for ${shiftData.shift} Shift:</strong> The agents listed below will handle IM tasks in sequence if a transfer to the IM queue is needed, with the order arranged according to their break schedules: <ul>${agentsList}</ul>`;
                     scheduleContent.appendChild(expectationsMessageDiv);
                 }
 
@@ -3133,22 +3146,36 @@ What We’re Doing
 
         function generateBacklogTemplate() {
             const backlogType = document.getElementById('backlogType').value;
+            const imHighVolume = document.getElementById('imHighVolume').value; // Get the new dropdown value
             const backlogTitleElem = document.getElementById('backlogTitle');
             const mnlHourInput = document.getElementById('mnlHourInput');
             const mnlDateDisplay = document.getElementById('mnlDateDisplay');
             const usHourInput = document.getElementById('usHourInput');
             const nextReportingElem = document.getElementById('nextReporting');
+            const imQueueStatusElem = document.getElementById('imQueueStatus'); // New element for IM Queue status
             const backlogAdditionalTextElem = document.getElementById('backlogAdditionalText');
 
+            // Update backlog title
             if (backlogType === 'startDay') {
                 backlogTitleElem.textContent = "SPS Backlog update (Start Day)";
-                backlogAdditionalTextElem.textContent = "";
             } else {
                 backlogTitleElem.textContent = "SPS Backlog update (Intraday)";
-                backlogAdditionalTextElem.textContent = `
-Could you please help me report this image in a polite and natural tone? I want to explain that there’s a high volume of messages in IM, so we’re still balancing the distribution to make sure both queues work efficiently. Also, that the 3-5 day unassigned and assigned tickets are still being prioritized. Thank you!
-                `;
             }
+
+            // Update IM Queue status based on imHighVolume selection
+            if (imHighVolume === 'yes') {
+                imQueueStatusElem.textContent = `As a professional RTA, I'd like to provide an update on our current situation. We're experiencing a high volume of messages in our IM queue, and our team is diligently working to balance the distribution across both IM and ticket queues to ensure efficient handling. We are also actively prioritizing 3-5 day unassigned and assigned tickets to prevent further aging. Your continued focus on these priorities is greatly appreciated.`;
+            } else {
+                imQueueStatusElem.textContent = `As a professional RTA, I'd like to provide an update on our current situation. While we're not currently experiencing an exceptionally high volume of messages in our IM queue, our team is continuously balancing the distribution across both IM and ticket queues to maintain efficiency. We are also actively prioritizing 3-5 day unassigned and assigned tickets to prevent further aging. Your continued focus on these priorities is greatly appreciated.`;
+            }
+
+            // Set the additional text for the backlog template
+            backlogAdditionalTextElem.textContent = `
+IM QUEUE
+
+BACKLOGS
+            `;
+
 
             const now = new Date();
 
@@ -3188,6 +3215,7 @@ Could you please help me report this image in a polite and natural tone? I want 
             nextReportingElem.textContent = `Next reporting: ${nextReportingFormatted}:00 UST`;
 
             saveToLocalStorage(LS_KEYS.BACKLOG_TYPE, backlogType);
+            saveToLocalStorage(LS_KEYS.BACKLOG_IM_HIGH_VOLUME, imHighVolume); // Save new dropdown value
             saveToLocalStorage(LS_KEYS.BACKLOG_MNL_HOUR, mnlHourInput.value);
             saveToLocalStorage(LS_KEYS.BACKLOG_US_HOUR, usHourInput.value);
 
@@ -3222,14 +3250,16 @@ Could you please help me report this image in a polite and natural tone? I want 
             const mnlDate = document.getElementById('mnlDateDisplay').textContent.trim().substring(2);
             const usHour = document.getElementById('usHourInput').value;
             const nextReporting = document.getElementById('nextReporting').textContent;
+            const imQueueStatus = document.getElementById('imQueueStatus').textContent.trim(); // Get IM Queue status
             const backlogAdditionalText = document.getElementById('backlogAdditionalText').textContent.trim();
 
             tempTextArea.value = `${document.getElementById('backlogTitle').textContent}\n` +
                                  `MNL Time: ${String(mnlHour).padStart(2, '0')}:00 ${mnlDate}\n` +
                                  `US Time: ${String(usHour).padStart(2, '0')}:00\n` +
                                  `${nextReporting}\n\n` +
-                                 `BACKLOGS MONITORING\n` +
-                                 `${backlogAdditionalText}`;
+                                 `${imQueueStatus}\n\n` + // Include IM Queue status
+                                 `${backlogAdditionalText}\n\n` +
+                                 `BACKLOGS MONITORING`; // Add "BACKLOGS MONITORING" at the end
 
             document.body.appendChild(tempTextArea);
             tempTextArea.select();
@@ -3332,6 +3362,7 @@ TPH Per Hour:
                 allAgentConfigs = [];
 
                 document.getElementById('backlogType').value = 'intraday';
+                document.getElementById('imHighVolume').value = 'yes'; // Reset new dropdown
                 generateBacklogTemplate(); // Re-initialize to default values
                 document.getElementById('backlogTemplateOutput').innerHTML = '';
 
