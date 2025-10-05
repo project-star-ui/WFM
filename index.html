@@ -1549,9 +1549,9 @@
                 </div>
 
                 <p id="nextReporting"></p>
-                <p id="imQueueStatus"></p> <!-- New element for IM Queue status -->
+                <p id="imQueueStatus" style="margin-top: 20px;"></p> <!-- This will now be below BACKLOGS MONITORING -->
                 <h3 style="text-align: center;">BACKLOGS MONITORING</h3>
-                <p id="backlogAdditionalText" style="margin-top: 20px;"></p>
+                <p id="backlogAdditionalText"></p>
             </div>
             <button onclick="copyBacklogTemplate()" style="margin-top: 20px;"><i class="fas fa-copy"></i> Copy Backlog Template</button>
         </div>
@@ -2172,7 +2172,7 @@
                     const expectationsMessageDiv = document.createElement("div");
                     expectationsMessageDiv.className = "expectations-message";
                     const agentsList = sectionData.expectations.map(agent => `<li>${agent}</li>`).join('');
-                    expectationsMessageDiv.innerHTML = `<strong>Setting Expectations for ${shiftData.shift} Shift:</strong> The agents listed below will handle IM tasks in sequence if a transfer to the IM queue is needed, with the order arranged according to their break schedules: <ul>${agentsList}</ul>`;
+                    expectationsMessageDiv.innerHTML = `<strong>Setting Expectations for ${sectionData.shift} Shift:</strong> The agents listed below will handle IM tasks in sequence if a transfer to the IM queue is needed, with the order arranged according to their break schedules: <ul>${agentsList}</ul>`;
                     scheduleContent.appendChild(expectationsMessageDiv);
                 }
 
@@ -2183,7 +2183,7 @@
                 imAssignmentHeader.style.marginBottom = '15px';
                 scheduleContent.appendChild(imAssignmentHeader);
 
-                for (const [agent, message] of Object.entries(sectionData.assignments)) { /* Corrected: use sectionData.assignments */
+                for (const [agent, message] of Object.entries(sectionData.assignments)) {
                     const div = document.createElement("div");
                     div.className = "agent-block";
                     div.innerHTML = `<strong>${agent}</strong> <span>- ${message}</span>
@@ -2422,7 +2422,7 @@
                 shiftEntries.sort((a, b) => {
                     const statusAIndex = attendanceStatuses.indexOf(a.status);
                     const statusBIndex = attendanceStatuses.indexOf(b.status);
-                    if (statusAIndex < statusBIndex) return -1; /* Corrected: statusBBIndex to statusBIndex */
+                    if (statusAIndex < statusBIndex) return -1;
                     if (statusAIndex > statusBIndex) return 1;
 
                     return a.name.localeCompare(b.name);
@@ -3164,9 +3164,9 @@ What We’re Doing
 
             // Update IM Queue status based on imHighVolume selection
             if (imHighVolume === 'yes') {
-                imQueueStatusElem.textContent = `As a professional RTA, I'd like to provide an update on our current situation. We're experiencing a high volume of messages in our IM queue, and our team is diligently working to balance the distribution across both IM and ticket queues to ensure efficient handling. We are also actively prioritizing 3-5 day unassigned and assigned tickets to prevent further aging. Your continued focus on these priorities is greatly appreciated.`;
+                imQueueStatusElem.textContent = `Currently, we're experiencing a high volume of messages in our IM queue, and our team is diligently working to balance the distribution across both IM and ticket queues to ensure efficient handling. We are also actively prioritizing 3-5 day unassigned and assigned tickets to prevent further aging. Your continued focus on these priorities is greatly appreciated.`;
             } else {
-                imQueueStatusElem.textContent = `As a professional RTA, I'd like to provide an update on our current situation. While we're not currently experiencing an exceptionally high volume of messages in our IM queue, our team is continuously balancing the distribution across both IM and ticket queues to maintain efficiency. We are also actively prioritizing 3-5 day unassigned and assigned tickets to prevent further aging. Your continued focus on these priorities is greatly appreciated.`;
+                imQueueStatusElem.textContent = `Currently, we're not experiencing an exceptionally high volume of messages in our IM queue, our team is continuously balancing the distribution across both IM and ticket queues to maintain efficiency. We are also actively prioritizing 3-5 day unassigned and assigned tickets to prevent further aging. Your continued focus on these priorities is greatly appreciated.`;
             }
 
             // Set the additional text for the backlog template
@@ -3251,15 +3251,16 @@ BACKLOGS
             const usHour = document.getElementById('usHourInput').value;
             const nextReporting = document.getElementById('nextReporting').textContent;
             const imQueueStatus = document.getElementById('imQueueStatus').textContent.trim(); // Get IM Queue status
-            const backlogAdditionalText = document.getElementById('backlogAdditionalText').textContent.trim();
 
+            // Construct the text in the desired order
             tempTextArea.value = `${document.getElementById('backlogTitle').textContent}\n` +
                                  `MNL Time: ${String(mnlHour).padStart(2, '0')}:00 ${mnlDate}\n` +
                                  `US Time: ${String(usHour).padStart(2, '0')}:00\n` +
                                  `${nextReporting}\n\n` +
-                                 `${imQueueStatus}\n\n` + // Include IM Queue status
-                                 `${backlogAdditionalText}\n\n` +
-                                 `BACKLOGS MONITORING`; // Add "BACKLOGS MONITORING" at the end
+                                 `IM QUEUE\n\n` +
+                                 `BACKLOGS\n\n` +
+                                 `BACKLOGS MONITORING\n\n` +
+                                 `${imQueueStatus}`; // Place the dynamic message here
 
             document.body.appendChild(tempTextArea);
             tempTextArea.select();
